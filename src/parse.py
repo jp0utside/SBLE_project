@@ -1,7 +1,6 @@
 import pandas as pd
 import math
 from trip import trip
-
 from filter import *
 
 def pandas_format():
@@ -30,6 +29,10 @@ def add_datetimes(data):
     data["datetime"] = pd.to_datetime(data["timestamp"], unit='s')
     return data
 
+"""
+Function to generate array of trip objects using SBLE and notification data
+Parsing process follows procedure used in matlab code
+"""
 def get_trips(sble_data, notif_data):
     all_trips = []
     users = get_users(sble_data)
@@ -193,6 +196,10 @@ def get_trips(sble_data, notif_data):
     
     return all_trips
 
+"""
+Function to get trip objects WITHOUT merging trips as outlined in the matlab code
+"""
+
 def get_trips_unmerged(sble_data, notif_data):
     all_trips = []
     users = get_users(sble_data)
@@ -325,6 +332,9 @@ def get_trips_unmerged(sble_data, notif_data):
 
     return all_trips
 
+"""
+Single function to generate trip objects, including other parsing options
+"""
 def get_trips_quick(clean_majors = True, clean_minors = False, merge = True, include_pretrips = True):
     if merge:
         trips = group_sort(get_trips(get_SBLE_data(), get_notif_data()))
@@ -337,6 +347,9 @@ def get_trips_quick(clean_majors = True, clean_minors = False, merge = True, inc
             i.clean_minors()
     return trips
 
+"""
+Helper function to merge two trip objects that fit the critera
+"""
 def merge_trips(t1, t2):
     new_trip = trip(t1.user, t1.start)
     
@@ -357,6 +370,10 @@ def merge_trips(t1, t2):
 
     return new_trip
 
+"""
+Sorting function to sort array of trip objects
+First by user alphabetically, then by chronological order
+"""
 def group_sort(trips):
     if len(trips) <= 1:
         return trips
@@ -400,6 +417,9 @@ def merge(left, right):
         j += 1
     return sorted_trips
 
+"""
+Function to add trip indices to each trip object, based on the total number of trips for each user in the array
+"""
 def add_trip_numbers(trips):
     trips = group_sort(trips)
     trip_idx = 1
@@ -412,6 +432,10 @@ def add_trip_numbers(trips):
             trip_idx += 1
         i.trip_idx = trip_idx
 
+"""
+Function to get RSSI difference metrics in a 2d array format rather than through a dataframe
+Primarily used to compare to matlab data
+"""
 def get_rssi_diff(trips):
     final = []
 
@@ -461,6 +485,9 @@ def deepen_trips(trips):
     else:
         return trips
 
+"""
+Function to report trip data in a similar manner to the way matlab reports the data
+"""
 def report_trip_data(trips):
     add_trip_numbers(trips)
     for i in trips:

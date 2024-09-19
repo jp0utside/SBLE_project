@@ -50,6 +50,10 @@ hex_colors = [
 def pandas_format():
     pd.options.display.float_format = '{:.0f}'.format
 
+"""
+Function to plot latitude and longitude data for a given trip.
+Pre-trip data plotted in red, mid-trip data plotted in blue.
+"""
 def graph_trip(trip):
     stop_data = get_stop_data()
     data = trip.data.copy()
@@ -98,7 +102,11 @@ def graph_map(trip):
     
 
 
-
+"""
+Function to graph RSSI readings over time for a single trip.
+Red and blue markers represent pre-trip readings for minors one and two respectively,
+gold and purple markers represent the same but for mid-trip readings.
+"""
 def graph_rssi(trip):
     data = trip.data.copy()
 
@@ -118,7 +126,7 @@ def graph_rssi(trip):
     mid_two.loc[mid_two["rssi"] == 0, "rssi"] = -100
 
     plt.scatter(pre_one["timestamp"], pre_one["rssi"], color="red", marker="x", s = 75, linewidths=.5, label="Minor 1, Pre-trip")
-    plt.scatter(pre_two["timestamp"], pre_two["rssi"], color="red", marker="o", facecolors = 'none', s = 75, linewidths=.5, label="Minor 2, Pre-trip")
+    plt.scatter(pre_two["timestamp"], pre_two["rssi"], color="blue", marker="o", facecolors = 'none', s = 75, linewidths=.5, label="Minor 2, Pre-trip")
     plt.scatter(mid_one["timestamp"], mid_one["rssi"], color="gold", marker="x", s = 75, linewidths=.5, label="Minor 1, Mid-trip")
     plt.scatter(mid_two["timestamp"], mid_two["rssi"], color="purple", marker="o", facecolors = 'none', s = 75, linewidths=.5, label="Minor 2, Mid-trip")
 
@@ -248,7 +256,9 @@ def graph_rssi_cdf_means_no_zero(data):
     plt.show()
 
 
-
+"""
+Function to plot data used in training models alongside linear boundaries found by those models.
+"""
 def plot_data_with_clf(X_train, y_train, clf):
     c = {"front": "blue", "middle":"green", "back":"red"}
 

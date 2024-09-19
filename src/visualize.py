@@ -71,6 +71,10 @@ def graph_trip(trip):
 
     plt.show()
 
+"""
+(Non) Function to graph latitude and longitude data for a trip on top of a map.
+
+"""
 def graph_map(trip):
     data = trip.data.copy()
     stop_data = get_stop_data()

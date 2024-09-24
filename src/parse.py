@@ -10,15 +10,15 @@ def pandas_format():
     
 
 def get_stop_data():
-    stop_data = pd.read_csv("/Users/Jake/Computer Science/capstone/Archive/stops.csv")
+    stop_data = pd.read_csv("/Users/Jake/Computer Science/SBLE_project/matlab_archive/stops.csv")
     return stop_data
 
 def get_SBLE_data():
-    SBLE_data = pd.read_csv("/Users/Jake/Computer Science/capstone/Archive/SBLE_data November 23.csv")
+    SBLE_data = pd.read_csv("/Users/Jake/Computer Science/SBLE_project/matlab_archive/SBLE_data November 23.csv")
     return SBLE_data
 
 def get_notif_data():
-    notif_data = pd.read_csv("/Users/Jake/Computer Science/capstone/Archive/SBLE_notification November 23.csv")
+    notif_data = pd.read_csv("/Users/Jake/Computer Science/SBLE_project/matlab_archive/SBLE_notification November 23.csv")
     return notif_data
 
 def get_users(data):

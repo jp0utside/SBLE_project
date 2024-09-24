@@ -59,9 +59,9 @@ def main():
     # basic_linear(data)
     # print("Matlab: ")
     # check_acc()
-    trips = get_trips_quick()
-    data = get_tagged_dataset(trips)
-    linear_classifier_averages(data, random.randint(0,100))
+    # trips = get_trips_quick()
+    # data = get_tagged_dataset(trips)
+    # linear_classifier_averages(data, random.randint(0,100))
 
 
 if __name__ == "__main__":

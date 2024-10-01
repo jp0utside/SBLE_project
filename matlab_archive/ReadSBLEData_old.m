@@ -39,9 +39,9 @@ else
 end  
 %%
 currdir = pwd;
-theDir = '/Users/Jake/Computer Science/capstone/Archive';
-fn_data = dir('/Users/Jake/Computer Science/capstone/Archive/SBLE_data November 23.csv');
-fn_not = dir('/Users/Jake/Computer Science/capstone/Archive/SBLE_notification November 23.csv');
+theDir = '/Users/Jake/Computer Science/SBLE_project/matlab_archive';
+fn_data = dir('/Users/Jake/Computer Science/SBLE_project/matlab_archive/SBLE_data November 23.csv');
+fn_not = dir('/Users/Jake/Computer Science/SBLE_project/matlab_archive/SBLE_notification November 23.csv');
 
 SBLE_d = []; SBLE_n = [];
 for i = 1:length(fn_data)

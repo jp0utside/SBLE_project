@@ -1,0 +1,2205 @@
+timestamp,username,message_type,message
+1682983419.21096,Zebra,collecting_data,true
+1682983483.640894,Zebra,sitting_on_bus,true
+1682983501.679795,Zebra,seat_location,front
+1682983674.2729921,Zebra,collecting_data,false
+1683142169.465236,Reptile,collecting_data,true
+1683142188.670895,Reptile,sitting_on_bus,true
+1683142205.3532,Reptile,seat_location,back
+1683142388.120332,Reptile,collecting_data,false
+1683144300.509099,Spider,collecting_data,true
+1683144346.72511,Spider,sitting_on_bus,true
+1683144363.674159,Spider,seat_location,front
+1683144779.7382932,Spider,collecting_data,false
+1683149181.828366,Spider,collecting_data,true
+1683149285.932178,Spider,collecting_data,true
+1683149291.836551,Spider,sitting_on_bus,true
+1683149309.3452358,Spider,seat_location,front
+1683149453.491638,Spider,collecting_data,false
+1683153483.987352,Dog,collecting_data,true
+1683153515.637967,Dog,collecting_data,true
+1683153630.758542,Dog,collecting_data,true
+1683153638.2187061,Dog,sitting_on_bus,true
+1683153654.4266229,Dog,seat_location,middle
+1683153705.9189649,Dog,collecting_data,false
+1683220662.818087,Spider,collecting_data,true
+1683224718.024539,Elk,collecting_data,true
+1683224812.152345,Elk,sitting_on_bus,true
+1683224905.4350228,Elk,collecting_data,true
+1683224908.180962,Elk,sitting_on_bus,true
+1683224928.398165,Elk,seat_location,front
+1683225204.445765,Elk,collecting_data,true
+1683225364.529876,Elk,sitting_on_bus,true
+1683225381.043642,Elk,seat_location,front
+1683225478.264978,Elk,collecting_data,false
+1683237199.576086,Spider,collecting_data,true
+1683237240.103334,Spider,sitting_on_bus,true
+1683237256.4745522,Spider,seat_location,front
+1683237670.746008,Spider,collecting_data,false
+1683242177.096329,Guinea pig,collecting_data,true
+1683242212.7583609,Guinea pig,collecting_data,true
+1683242216.401936,Guinea pig,sitting_on_bus,true
+1683242234.114708,Guinea pig,seat_location,front
+1683242386.9162679,Guinea pig,collecting_data,true
+1683242413.432405,Guinea pig,sitting_on_bus,true
+1683242431.35995,Guinea pig,seat_location,front
+1683242445.636002,Guinea pig,collecting_data,false
+1683298460.003257,Zebra,collecting_data,true
+1683298501.0001101,Zebra,sitting_on_bus,true
+1683298521.236876,Zebra,seat_location,middle
+1683298814.5456429,Zebra,collecting_data,false
+1683304689.114346,Zebra,collecting_data,true
+1683304699.657227,Zebra,sitting_on_bus,true
+1683304718.1315842,Zebra,seat_location,middle
+1683317375.6732879,Dog,collecting_data,true
+1683317382.002847,Cat,collecting_data,true
+1683317486.3591452,Dog,sitting_on_bus,true
+1683317501.2039618,Dog,seat_location,middle
+1683317509.073889,Cat,sitting_on_bus,true
+1683317525.4068189,Cat,seat_location,middle
+1683317641.766807,Cat,collecting_data,false
+1683317642.897795,Dog,collecting_data,false
+1683326003.1051478,Cat,collecting_data,true
+1683326006.785231,Cat,sitting_on_bus,true
+1683326024.0040278,Cat,seat_location,middle
+1683326081.435628,Cat,collecting_data,false
+1683349938.103057,Guinea pig,collecting_data,true
+1683350276.625104,Guinea pig,collecting_data,true
+1683350327.690748,Guinea pig,collecting_data,true
+1683350353.216197,Guinea pig,collecting_data,true
+1683350356.545576,Guinea pig,sitting_on_bus,true
+1683350373.965421,Guinea pig,seat_location,back
+1683350580.794396,Guinea pig,collecting_data,false
+1683560211.661361,Horse,collecting_data,true
+1683560224.057208,Horse,sitting_on_bus,true
+1683560259.039257,Horse,seat_location,front
+1683560496.0501518,Horse,collecting_data,false
+1683560519.6575131,Horse,collecting_data,true
+1683576269.067565,Spider,collecting_data,true
+1683576278.5930328,Spider,sitting_on_bus,true
+1683576295.37626,Spider,seat_location,front
+1683576586.560956,Spider,collecting_data,false
+1683592568.3888211,Zebra,collecting_data,true
+1683592583.307939,Zebra,sitting_on_bus,true
+1683592601.5235949,Zebra,seat_location,back
+1683592657.7625198,Zebra,collecting_data,false
+1683603621.4020948,Dolphin,collecting_data,true
+1683604095.696607,Dolphin,sitting_on_bus,true
+1683604361.8167439,Dolphin,seat_location,back
+1683604679.686257,Dolphin,collecting_data,false
+1683658990.681159,Elk,collecting_data,true
+1683659050.711876,Elk,collecting_data,true
+1683659053.3417811,Elk,sitting_on_bus,true
+1683659072.615953,Elk,seat_location,middle
+1683659417.7660441,Elk,collecting_data,false
+1683663648.957171,Elk,collecting_data,true
+1683663651.213531,Dog,collecting_data,true
+1683663672.7680259,Cat,collecting_data,true
+1683663700.5333571,Dog,collecting_data,true
+1683663723.868814,Dog,sitting_on_bus,true
+1683663726.876885,Elk,sitting_on_bus,true
+1683663727.9382439,Cat,sitting_on_bus,true
+1683663739.97999,Dog,seat_location,front
+1683663745.728424,Cat,seat_location,front
+1683663747.133525,Elk,seat_location,middle
+1683663822.894726,Cat,collecting_data,false
+1683663836.94401,Dog,collecting_data,false
+1683664651.4632092,Elk,collecting_data,true
+1683664899.351644,Elk,sitting_on_bus,true
+1683664907.919225,Elk,seat_location,back
+1683664924.37854,Elk,collecting_data,false
+1683733773.980627,Horse,collecting_data,true
+1683733777.150847,Horse,sitting_on_bus,true
+1683733796.184832,Horse,seat_location,middle
+1683734257.6573381,Horse,collecting_data,false
+1683749090.80639,Cat,collecting_data,true
+1683749120.479934,Dog,collecting_data,true
+1683749172.739243,Cat,sitting_on_bus,true
+1683749175.372864,Dog,collecting_data,true
+1683749189.500176,Cat,seat_location,middle
+1683749194.3432531,Dog,sitting_on_bus,true
+1683749210.678502,Dog,seat_location,middle
+1683749255.047276,Cat,collecting_data,false
+1683749256.472228,Dog,collecting_data,false
+1683764873.191536,Zebra,collecting_data,true
+1683764906.9291658,Zebra,sitting_on_bus,true
+1683764925.189687,Zebra,seat_location,back
+1683765337.273366,Zebra,collecting_data,false
+1683836342.4297051,Dog,collecting_data,true
+1683836375.884996,Cat,collecting_data,true
+1683836391.3092952,Dog,sitting_on_bus,true
+1683836395.04107,Cat,sitting_on_bus,true
+1683836408.076195,Dog,seat_location,front
+1683836411.311722,Cat,seat_location,front
+1683836496.3896031,Dog,collecting_data,false
+1683836497.773666,Cat,collecting_data,false
+1683921994.233789,Dog,collecting_data,true
+1683922024.278306,Cat,collecting_data,true
+1683922038.2205591,Dog,sitting_on_bus,true
+1683922039.1349878,Cat,sitting_on_bus,true
+1683922055.657164,Cat,seat_location,back
+1683922056.194501,Dog,seat_location,back
+1683922130.9046512,Dog,collecting_data,false
+1683922136.91839,Cat,collecting_data,false
+1683953335.70098,Guinea pig,collecting_data,true
+1683953384.189097,Guinea pig,collecting_data,true
+1683953387.563731,Guinea pig,sitting_on_bus,true
+1683953404.107696,Guinea pig,seat_location,back
+1683953505.755765,Guinea pig,collecting_data,true
+1683953509.029241,Guinea pig,sitting_on_bus,true
+1683953525.0205169,Guinea pig,seat_location,back
+1683953613.0436711,Guinea pig,collecting_data,false
+1684033709.43006,Horse,collecting_data,true
+1684033743.2844992,Horse,collecting_data,true
+1684033767.810161,Horse,sitting_on_bus,true
+1684033786.080227,Horse,seat_location,middle
+1684034041.4291,Horse,collecting_data,false
+1684170555.906663,Cuckoo,collecting_data,true
+1684181188.549649,Dog,collecting_data,true
+1684181208.007172,Cat,collecting_data,true
+1684181255.902714,Dog,sitting_on_bus,true
+1684181261.6326509,Cat,collecting_data,true
+1684181264.574409,Cat,sitting_on_bus,true
+1684181272.710923,Dog,seat_location,middle
+1684181281.138562,Cat,seat_location,middle
+1684181391.66473,Cat,collecting_data,false
+1684181399.1526752,Dog,collecting_data,false
+1684203008.339473,Zebra,collecting_data,true
+1684203067.686126,Zebra,sitting_on_bus,true
+1684203085.713194,Zebra,seat_location,middle
+1684203349.818536,Zebra,collecting_data,false
+1684262043.618444,Jaguar,collecting_data,true
+1684262117.244164,Jaguar,collecting_data,true
+1684262120.92037,Jaguar,sitting_on_bus,true
+1684262137.9164948,Jaguar,seat_location,middle
+1684262322.629777,Jaguar,collecting_data,false
+1684267695.954418,Jaguar,collecting_data,true
+1684267703.9938421,Elk,collecting_data,true
+1684267794.910462,Elk,sitting_on_bus,true
+1684267794.9905229,Jaguar,sitting_on_bus,true
+1684267804.365844,Jaguar,collecting_data,true
+1684267807.2305598,Jaguar,sitting_on_bus,true
+1684267810.539561,Elk,seat_location,back
+1684267823.676686,Jaguar,seat_location,middle
+1684267852.193527,Jaguar,seat_location,back
+1684267996.091686,Jaguar,collecting_data,false
+1684268162.2147698,Elk,seat_location,back
+1684268193.8658261,Elk,collecting_data,false
+1684268339.396968,Toad,collecting_data,true
+1684268426.7289119,Toad,sitting_on_bus,true
+1684268443.218612,Toad,seat_location,middle
+1684268563.901716,Starfish,collecting_data,true
+1684268646.451931,Toad,collecting_data,true
+1684269963.7087212,Jaguar,collecting_data,true
+1684270011.176951,Jaguar,sitting_on_bus,true
+1684270027.093046,Jaguar,seat_location,middle
+1684270582.1387239,Jaguar,collecting_data,false
+1684271349.699695,Jaguar,collecting_data,true
+1684271391.6726398,Jaguar,sitting_on_bus,true
+1684271408.078166,Jaguar,seat_location,middle
+1684271811.5049129,Jaguar,collecting_data,false
+1684273714.132865,Cod,collecting_data,true
+1684273763.810426,Cod,collecting_data,true
+1684273766.8786511,Cod,sitting_on_bus,true
+1684273783.598672,Cod,seat_location,back
+1684273931.6183681,Cod,collecting_data,false
+1684274724.9623032,Jaguar,collecting_data,true
+1684274780.730588,Jaguar,sitting_on_bus,true
+1684274797.116877,Jaguar,seat_location,back
+1684275034.680007,Jaguar,collecting_data,false
+1684275928.8828459,Toad,collecting_data,true
+1684277084.631857,Starfish,collecting_data,true
+1684277188.7982721,Starfish,sitting_on_bus,true
+1684277210.50052,Starfish,seat_location,back
+1684277221.043441,Starfish,seat_location,middle
+1684277228.0282679,Reptile,collecting_data,true
+1684277231.591754,Reptile,sitting_on_bus,true
+1684277237.6922479,Starfish,collecting_data,false
+1684277248.742351,Reptile,seat_location,middle
+1684277777.0734658,Reptile,collecting_data,false
+1684279094.193945,Reptile,collecting_data,true
+1684279100.412558,Reptile,sitting_on_bus,true
+1684279120.5518909,Reptile,seat_location,middle
+1684279650.519342,Reptile,collecting_data,true
+1684281993.197479,Jaguar,collecting_data,true
+1684282004.285242,Cod,collecting_data,true
+1684282099.803996,Cod,collecting_data,true
+1684282120.703012,Cod,sitting_on_bus,true
+1684282121.3950539,Jaguar,collecting_data,true
+1684282137.4679852,Cod,seat_location,front
+1684282196.18594,Jaguar,collecting_data,true
+1684282325.905463,Cod,collecting_data,false
+1684283201.120081,Dog,collecting_data,true
+1684283258.132215,Dog,sitting_on_bus,true
+1684283273.391078,Dog,seat_location,middle
+1684283834.592679,Toad,collecting_data,true
+1684283837.945893,Toad,sitting_on_bus,true
+1684283854.6177058,Toad,seat_location,middle
+1684283898.606139,Toad,collecting_data,false
+1684284027.793747,Dog,collecting_data,false
+1684298682.299821,Reptile,collecting_data,true
+1684298713.722917,Reptile,sitting_on_bus,true
+1684298730.960631,Reptile,seat_location,middle
+1684299191.9490108,Reptile,collecting_data,false
+1684299929.2880101,Reptile,collecting_data,true
+1684299968.074667,Reptile,sitting_on_bus,true
+1684299974.4166322,Reptile,collecting_data,true
+1684299986.424833,Reptile,sitting_on_bus,true
+1684300004.033208,Reptile,seat_location,middle
+1684300502.1907148,Reptile,collecting_data,false
+1684345120.2578092,Fly,collecting_data,true
+1684345146.338964,Fly,sitting_on_bus,true
+1684345163.4481258,Fly,seat_location,back
+1684345238.073189,Fly,collecting_data,false
+1684346982.4897819,Shrimp,collecting_data,true
+1684346991.114334,Shrimp,sitting_on_bus,true
+1684347024.0241609,Shrimp,seat_location,back
+1684347162.668746,Shrimp,collecting_data,false
+1684348605.315562,Toad,collecting_data,true
+1684348610.723387,Toad,sitting_on_bus,true
+1684348626.526227,Toad,seat_location,middle
+1684348753.7390819,Toad,collecting_data,true
+1684348758.004356,Toad,sitting_on_bus,true
+1684348774.654931,Toad,seat_location,middle
+1684348858.677129,Toad,collecting_data,true
+1684348914.5057979,Toad,sitting_on_bus,true
+1684348930.371558,Toad,seat_location,middle
+1684348964.484411,Jaguar,collecting_data,true
+1684348994.475297,Toad,collecting_data,false
+1684349084.756603,Jaguar,sitting_on_bus,true
+1684349100.993918,Jaguar,seat_location,middle
+1684349311.73593,Jaguar,seat_location,back
+1684349667.865704,Jaguar,collecting_data,false
+1684354142.006692,Spider,collecting_data,true
+1684354318.1788669,Spider,collecting_data,true
+1684354484.551013,Spider,collecting_data,true
+1684354531.150877,Spider,sitting_on_bus,true
+1684354546.1595302,Spider,seat_location,front
+1684354636.816351,Spider,collecting_data,false
+1684357607.630259,Starfish,collecting_data,true
+1684357616.895914,Starfish,sitting_on_bus,true
+1684357636.754204,Starfish,seat_location,middle
+1684357659.540981,Starfish,seat_location,middle
+1684357742.077249,Starfish,collecting_data,false
+1684358857.4831471,Spider,collecting_data,true
+1684359015.891845,Spider,sitting_on_bus,true
+1684359032.294574,Spider,seat_location,back
+1684359143.9292622,Spider,collecting_data,false
+1684359201.6348581,Squid,collecting_data,true
+1684359270.383681,Squid,sitting_on_bus,true
+1684359287.716321,Squid,seat_location,back
+1684359333.660095,Squid,seat_location,back
+1684362403.6753259,Elk,collecting_data,true
+1684362865.127571,Jaguar,collecting_data,true
+1684362954.315508,Jaguar,collecting_data,true
+1684363176.618705,Jaguar,sitting_on_bus,true
+1684363193.938261,Jaguar,seat_location,front
+1684363515.453927,Jaguar,collecting_data,false
+1684368901.386236,Fly,collecting_data,true
+1684368973.321929,Fly,collecting_data,true
+1684368976.594336,Fly,sitting_on_bus,true
+1684368994.068368,Fly,seat_location,back
+1684369696.4180532,Fly,collecting_data,false
+1684369959.550232,Possum,collecting_data,true
+1684370022.87186,Possum,sitting_on_bus,true
+1684370039.707128,Possum,seat_location,back
+1684370396.9941769,Possum,collecting_data,false
+1684374281.100543,Toad,collecting_data,true
+1684374296.603807,Toad,sitting_on_bus,true
+1684374312.8382,Toad,seat_location,back
+1684374395.564159,Toad,collecting_data,false
+1684375490.030398,Jaguar,collecting_data,true
+1684380306.277135,Cod,collecting_data,true
+1684380343.427314,Cod,collecting_data,true
+1684380349.5413861,Cod,sitting_on_bus,true
+1684380366.883827,Cod,seat_location,back
+1684380509.653067,Cod,collecting_data,false
+1684386208.550374,Jaguar,collecting_data,true
+1684386266.561369,Jaguar,sitting_on_bus,true
+1684386277.181643,Jaguar,collecting_data,true
+1684386280.267978,Jaguar,sitting_on_bus,true
+1684386296.575611,Jaguar,seat_location,middle
+1684386452.059445,Jaguar,collecting_data,false
+1684391002.902869,Jaguar,collecting_data,true
+1684391023.758418,Jaguar,sitting_on_bus,true
+1684391040.063205,Jaguar,seat_location,middle
+1684391209.8017669,Jaguar,collecting_data,false
+1684420908.287097,Squid,collecting_data,true
+1684420911.860574,Squid,sitting_on_bus,true
+1684420930.110567,Squid,seat_location,middle
+1684421208.13465,Squid,collecting_data,false
+1684421310.180712,Possum,collecting_data,true
+1684421412.999792,Possum,sitting_on_bus,true
+1684421424.7457461,Possum,seat_location,back
+1684422003.402786,Possum,collecting_data,false
+1684427049.635222,Horse,collecting_data,true
+1684427108.701647,Horse,collecting_data,true
+1684427117.595564,Horse,sitting_on_bus,true
+1684427134.87891,Horse,seat_location,back
+1684427292.9548311,Horse,collecting_data,false
+1684431832.1868591,Jaguar,collecting_data,true
+1684434302.638033,Elk,collecting_data,true
+1684434360.714467,Elk,sitting_on_bus,true
+1684434377.330349,Elk,seat_location,front
+1684435395.874032,Cat,collecting_data,true
+1684440750.511796,Possum,collecting_data,true
+1684440796.1147509,Possum,sitting_on_bus,true
+1684440815.2944632,Possum,seat_location,middle
+1684441194.741122,Possum,collecting_data,false
+1684441280.373166,Starfish,collecting_data,true
+1684441333.812491,Starfish,sitting_on_bus,true
+1684441355.5719829,Starfish,seat_location,back
+1684441583.3861852,Starfish,collecting_data,false
+1684442799.718981,Squid,collecting_data,true
+1684442827.7708921,Squid,sitting_on_bus,true
+1684442845.0572429,Squid,seat_location,back
+1684445100.677222,Jaguar,collecting_data,true
+1684445167.5992808,Jaguar,collecting_data,true
+1684445242.5268378,Jaguar,collecting_data,true
+1684445256.580377,Jaguar,sitting_on_bus,true
+1684445272.9675431,Jaguar,seat_location,back
+1684445423.891172,Jaguar,collecting_data,false
+1684445738.7144241,Toad,collecting_data,true
+1684445764.973995,Toad,sitting_on_bus,true
+1684445889.9088721,Toad,collecting_data,true
+1684445902.974866,Toad,sitting_on_bus,true
+1684445920.120745,Toad,seat_location,middle
+1684446015.071676,Toad,collecting_data,false
+1684446078.913872,Toad,collecting_data,true
+1684446705.070934,Cod,collecting_data,true
+1684446750.687232,Cod,collecting_data,true
+1684446806.5077171,Cod,collecting_data,true
+1684446809.316071,Cod,sitting_on_bus,true
+1684446826.041393,Cod,seat_location,middle
+1684447035.7357779,Cod,collecting_data,false
+1684453864.793433,Starfish,collecting_data,true
+1684453905.1602058,Starfish,sitting_on_bus,true
+1684453922.216167,Starfish,seat_location,front
+1684453984.385991,Starfish,collecting_data,false
+1684511240.684649,Horse,collecting_data,true
+1684511296.635532,Horse,collecting_data,true
+1684511299.617553,Horse,sitting_on_bus,true
+1684511316.509046,Horse,seat_location,front
+1684511665.127963,Horse,collecting_data,false
+1684511678.636814,Horse,collecting_data,true
+1684517683.525488,Starfish,collecting_data,true
+1684517730.884431,Starfish,sitting_on_bus,true
+1684517750.518489,Starfish,seat_location,front
+1684517817.552868,Starfish,collecting_data,false
+1684520118.4451761,Possum,collecting_data,true
+1684520132.513068,Possum,sitting_on_bus,true
+1684520149.1289759,Possum,seat_location,middle
+1684520749.308072,Possum,collecting_data,false
+1684522198.345372,Jaguar,collecting_data,true
+1684522215.499323,Jaguar,sitting_on_bus,true
+1684522231.558076,Jaguar,seat_location,middle
+1684522575.23157,Jaguar,collecting_data,false
+1684522592.34232,Jaguar,collecting_data,true
+1684526159.403123,Jaguar,collecting_data,true
+1684526169.0944,Jaguar,sitting_on_bus,true
+1684526183.521562,Jaguar,seat_location,back
+1684526509.928924,Jaguar,collecting_data,false
+1684526662.685371,Spider,collecting_data,true
+1684526713.198487,Spider,collecting_data,true
+1684526716.228621,Spider,sitting_on_bus,true
+1684526738.397026,Spider,seat_location,middle
+1684526910.176453,Cat,collecting_data,true
+1684526932.930448,Cat,sitting_on_bus,true
+1684526948.878358,Cat,seat_location,middle
+1684526958.989006,Spider,collecting_data,false
+1684527192.0678349,Cat,collecting_data,false
+1684531358.6837091,Squid,collecting_data,true
+1684531370.109324,Squid,sitting_on_bus,true
+1684531385.3137078,Squid,seat_location,middle
+1684531469.108644,Squid,collecting_data,false
+1684532022.22177,Cat,collecting_data,true
+1684532035.7023401,Cat,sitting_on_bus,true
+1684532053.832855,Cat,seat_location,middle
+1684532110.337441,Cat,collecting_data,false
+1684559705.157843,Guinea pig,collecting_data,true
+1684559748.749794,Guinea pig,sitting_on_bus,true
+1684559777.7606292,Guinea pig,seat_location,back
+1684560129.8470988,Guinea pig,collecting_data,false
+1684723741.282752,Jaguar,collecting_data,true
+1684723767.238652,Jaguar,sitting_on_bus,true
+1684723783.463756,Jaguar,seat_location,middle
+1684723946.1615639,Jaguar,collecting_data,false
+1684730330.699687,Jaguar,collecting_data,true
+1684730352.901216,Jaguar,sitting_on_bus,true
+1684730368.933033,Jaguar,seat_location,middle
+1684730545.791638,Jaguar,collecting_data,false
+1684775833.352402,Parrot,collecting_data,true
+1684775836.64065,Parrot,sitting_on_bus,true
+1684775854.7864652,Parrot,seat_location,back
+1684776363.265675,Parrot,collecting_data,false
+1684776655.744309,Starfish,collecting_data,true
+1684776723.05506,Starfish,collecting_data,true
+1684776726.793114,Starfish,sitting_on_bus,true
+1684776743.067455,Starfish,seat_location,middle
+1684776826.345794,Starfish,collecting_data,false
+1684781690.5556731,Parrot,collecting_data,true
+1684781693.634762,Parrot,sitting_on_bus,true
+1684781743.116332,Parrot,seat_location,middle
+1684781926.929847,Parrot,collecting_data,false
+1684781948.811667,Squid,collecting_data,true
+1684781955.717313,Squid,sitting_on_bus,true
+1684781972.555001,Squid,seat_location,back
+1684782125.247602,Squid,collecting_data,true
+1684782143.79075,Squid,sitting_on_bus,true
+1684782158.018204,Squid,seat_location,back
+1684783528.06616,Squid,collecting_data,true
+1684783579.677108,Squid,sitting_on_bus,true
+1684783596.572056,Squid,seat_location,middle
+1684783955.1292682,Squid,collecting_data,false
+1684784817.50988,Parrot,collecting_data,true
+1684788245.040946,Toad,collecting_data,true
+1684788260.483278,Toad,sitting_on_bus,true
+1684788278.063242,Toad,seat_location,middle
+1684788605.6639462,Toad,collecting_data,false
+1684800285.748951,Jaguar,collecting_data,true
+1684800427.100898,Jaguar,collecting_data,true
+1684800891.793521,Jaguar,sitting_on_bus,true
+1684800907.284529,Jaguar,seat_location,back
+1684801150.102709,Jaguar,collecting_data,false
+1684863937.838729,Jaguar,collecting_data,true
+1684863977.3416538,Jaguar,sitting_on_bus,true
+1684864053.1050649,Jaguar,collecting_data,true
+1684864066.241899,Jaguar,sitting_on_bus,true
+1684864083.773422,Jaguar,seat_location,middle
+1684864415.710599,Jaguar,collecting_data,false
+1684866979.498551,Dog,collecting_data,true
+1684866998.8923469,Cat,collecting_data,true
+1684867040.242872,Dog,sitting_on_bus,true
+1684867040.8326778,Cat,sitting_on_bus,true
+1684867056.86544,Dog,seat_location,front
+1684867057.6036181,Cat,seat_location,front
+1684867121.322641,Dog,collecting_data,false
+1684867129.019831,Cat,collecting_data,false
+1684867133.085058,Horse,collecting_data,true
+1684867189.884388,Horse,collecting_data,true
+1684867255.698421,Horse,collecting_data,true
+1684867259.442251,Horse,sitting_on_bus,true
+1684867280.726285,Horse,seat_location,front
+1684867494.174768,Horse,collecting_data,false
+1684868663.43805,Dolphin,collecting_data,true
+1684868705.500873,Dolphin,sitting_on_bus,true
+1684868722.196959,Dolphin,seat_location,middle
+1684868966.9461331,Dolphin,collecting_data,false
+1684869327.6081471,Jaguar,collecting_data,true
+1684869525.015102,Jaguar,collecting_data,true
+1684869527.645767,Jaguar,sitting_on_bus,true
+1684869544.794053,Jaguar,seat_location,back
+1684869897.330037,Jaguar,collecting_data,false
+1684870679.924059,Jaguar,collecting_data,true
+1684870723.765981,Jaguar,sitting_on_bus,true
+1684870739.379456,Jaguar,seat_location,middle
+1684871108.017328,Jaguar,collecting_data,false
+1684872802.247995,Dog,collecting_data,true
+1684872802.667159,Cat,collecting_data,true
+1684872873.54985,Cat,sitting_on_bus,true
+1684872874.289452,Dog,sitting_on_bus,true
+1684872890.211853,Cat,seat_location,middle
+1684872890.865859,Dog,seat_location,middle
+1684872944.622519,Cat,collecting_data,false
+1684872947.929531,Dog,collecting_data,false
+1684872986.179792,Jaguar,collecting_data,true
+1684873059.1301908,Jaguar,sitting_on_bus,true
+1684873076.170104,Jaguar,seat_location,front
+1684873217.3888788,Starfish,collecting_data,true
+1684873259.822027,Starfish,collecting_data,true
+1684873274.164514,Starfish,sitting_on_bus,true
+1684873292.149256,Starfish,seat_location,front
+1684873428.18607,Jaguar,collecting_data,false
+1684873460.770596,Starfish,collecting_data,false
+1684878978.765802,Cod,collecting_data,true
+1684879004.831448,Cod,sitting_on_bus,true
+1684879021.97829,Cod,seat_location,middle
+1684879344.220397,Cod,collecting_data,false
+1684879818.270697,Toad,collecting_data,true
+1684879839.4087272,Toad,sitting_on_bus,true
+1684879855.482534,Toad,seat_location,front
+1684892637.465478,Zebra,collecting_data,true
+1684892682.92973,Zebra,sitting_on_bus,true
+1684892702.324378,Zebra,seat_location,middle
+1684893155.5920172,Zebra,collecting_data,false
+1684894385.6308742,Jaguar,collecting_data,true
+1684894425.9400969,Jaguar,sitting_on_bus,true
+1684894443.703833,Jaguar,seat_location,back
+1684894793.537211,Jaguar,collecting_data,true
+1684894804.3979201,Jaguar,sitting_on_bus,true
+1684894821.312108,Jaguar,seat_location,back
+1684894936.283148,Jaguar,collecting_data,false
+1684904024.1400208,Jaguar,collecting_data,true
+1684904036.088279,Jaguar,sitting_on_bus,true
+1684904053.2527828,Jaguar,seat_location,back
+1684904195.9510942,Jaguar,collecting_data,false
+1684943484.522365,Horse,collecting_data,true
+1684949465.877806,Starfish,collecting_data,true
+1684949487.844802,Starfish,collecting_data,true
+1684949496.561142,Starfish,sitting_on_bus,true
+1684949512.905927,Starfish,seat_location,front
+1684949545.36275,Starfish,collecting_data,false
+1684953225.141468,Toad,collecting_data,true
+1684953302.942968,Toad,sitting_on_bus,true
+1684953320.1562982,Toad,seat_location,middle
+1684953484.792475,Toad,collecting_data,true
+1684953488.966146,Toad,sitting_on_bus,true
+1684953505.865584,Toad,seat_location,middle
+1684953641.879308,Toad,collecting_data,false
+1684953652.7944121,Toad,collecting_data,true
+1684958972.548351,Dog,collecting_data,true
+1684958977.643553,Cat,collecting_data,true
+1684959064.586046,Cat,sitting_on_bus,true
+1684959065.242245,Dog,sitting_on_bus,true
+1684959081.891422,Dog,seat_location,middle
+1684959177.905931,Dog,collecting_data,false
+1684964145.802737,Gecko,collecting_data,true
+1684964161.907755,Gecko,sitting_on_bus,true
+1684964180.1139479,Gecko,seat_location,middle
+1684964468.6565151,Jaguar,collecting_data,true
+1684964526.404142,Gecko,collecting_data,false
+1684964538.653146,Jaguar,sitting_on_bus,true
+1684964555.2175732,Jaguar,seat_location,back
+1684964924.5755901,Jaguar,collecting_data,false
+1684973525.483613,Squid,collecting_data,true
+1684973554.506984,Squid,sitting_on_bus,true
+1684973573.4236832,Squid,seat_location,back
+1684973773.152823,Squid,collecting_data,false
+1684973786.483512,Squid,collecting_data,true
+1684979507.4868,Zebra,collecting_data,true
+1684979559.1285172,Zebra,sitting_on_bus,true
+1684979575.78836,Zebra,seat_location,front
+1684979972.733612,Zebra,collecting_data,false
+1684986547.440143,Jaguar,collecting_data,true
+1685038489.084084,Jaguar,collecting_data,true
+1685038547.5093942,Jaguar,sitting_on_bus,true
+1685038563.7724252,Jaguar,seat_location,middle
+1685038978.9213228,Jaguar,collecting_data,false
+1685039808.263016,Elk,collecting_data,true
+1685039848.3904638,Elk,sitting_on_bus,true
+1685039866.982695,Elk,seat_location,middle
+1685039918.8786669,Elk,collecting_data,true
+1685039923.602573,Elk,sitting_on_bus,true
+1685039939.723259,Elk,seat_location,middle
+1685040261.672373,Elk,collecting_data,false
+1685045951.650128,Starfish,collecting_data,true
+1685045981.452275,Starfish,collecting_data,true
+1685045991.2769651,Starfish,sitting_on_bus,true
+1685046006.3285022,Jaguar,collecting_data,true
+1685046008.046577,Starfish,seat_location,front
+1685046092.228854,Jaguar,sitting_on_bus,true
+1685046108.013813,Jaguar,seat_location,middle
+1685046254.11217,Starfish,collecting_data,false
+1685046293.417515,Horse,collecting_data,true
+1685046297.530326,Horse,sitting_on_bus,true
+1685046315.592633,Horse,seat_location,back
+1685046545.072175,Jaguar,collecting_data,false
+1685046559.327076,Jaguar,collecting_data,true
+1685046747.1154342,Horse,collecting_data,false
+1685046782.2062402,Dog,collecting_data,true
+1685046840.143996,Dog,collecting_data,true
+1685046843.4032202,Dog,sitting_on_bus,true
+1685046859.652423,Dog,seat_location,front
+1685046927.125505,Dog,collecting_data,false
+1685050592.0211802,Jaguar,collecting_data,true
+1685050621.835285,Jaguar,sitting_on_bus,true
+1685050635.266047,Jaguar,seat_location,middle
+1685050775.0924702,Jaguar,collecting_data,false
+1685051703.2323189,Cod,collecting_data,true
+1685051761.4856071,Cod,collecting_data,true
+1685051764.53667,Cod,sitting_on_bus,true
+1685051781.0399551,Cod,seat_location,back
+1685051916.764882,Cod,collecting_data,false
+1685052926.6850982,Cat,collecting_data,true
+1685053001.318758,Cat,collecting_data,true
+1685053016.182028,Cat,sitting_on_bus,true
+1685053033.020808,Cat,seat_location,back
+1685053284.707954,Cat,collecting_data,true
+1685053302.257086,Cat,sitting_on_bus,true
+1685053318.813157,Cat,seat_location,back
+1685053374.003563,Cat,collecting_data,false
+1685055748.578212,Elk,collecting_data,true
+1685056683.381359,Starfish,collecting_data,true
+1685056715.0635471,Starfish,collecting_data,true
+1685056717.998373,Starfish,sitting_on_bus,true
+1685056735.9380631,Starfish,seat_location,middle
+1685056779.637774,Starfish,collecting_data,false
+1685056832.737011,Elk,sitting_on_bus,true
+1685056848.9619489,Elk,seat_location,front
+1685056865.2661839,Elk,collecting_data,false
+1685058687.942169,Toad,collecting_data,true
+1685058700.058383,Toad,sitting_on_bus,true
+1685058716.010478,Toad,seat_location,front
+1685059129.844695,Toad,collecting_data,false
+1685059678.020931,Cat,collecting_data,true
+1685059724.698765,Cat,sitting_on_bus,true
+1685059740.4851952,Cat,seat_location,back
+1685059879.754579,Cat,collecting_data,false
+1685066284.686168,Zebra,collecting_data,true
+1685066319.3200169,Zebra,sitting_on_bus,true
+1685066335.62008,Zebra,seat_location,middle
+1685066829.0664082,Zebra,collecting_data,false
+1685116117.460239,Jaguar,collecting_data,true
+1685116169.469621,Jaguar,sitting_on_bus,true
+1685116185.811747,Jaguar,seat_location,middle
+1685116218.635814,Reptile,collecting_data,true
+1685116235.608748,Reptile,sitting_on_bus,true
+1685116252.115835,Reptile,seat_location,middle
+1685116435.2548862,Jaguar,collecting_data,false
+1685116608.8105469,Reptile,collecting_data,false
+1685117268.125231,Jaguar,collecting_data,true
+1685117297.987823,Jaguar,sitting_on_bus,true
+1685117313.056844,Jaguar,seat_location,front
+1685117402.15772,Jaguar,collecting_data,false
+1685117416.124757,Jaguar,collecting_data,true
+1685122262.763916,Starfish,collecting_data,true
+1685122284.920208,Starfish,collecting_data,true
+1685122307.600523,Starfish,sitting_on_bus,true
+1685122324.042381,Starfish,seat_location,back
+1685122390.083955,Starfish,collecting_data,false
+1685126382.869215,Jaguar,collecting_data,true
+1685126415.112551,Jaguar,sitting_on_bus,true
+1685126431.929966,Jaguar,seat_location,back
+1685126751.483465,Toad,collecting_data,true
+1685126776.476198,Toad,sitting_on_bus,true
+1685126795.017261,Toad,seat_location,middle
+1685127008.094593,Jaguar,collecting_data,false
+1685127081.368083,Toad,collecting_data,false
+1685130720.694121,Parrot,collecting_data,true
+1685130729.110413,Parrot,sitting_on_bus,true
+1685130745.976017,Parrot,seat_location,middle
+1685130798.144006,Spider,collecting_data,true
+1685130937.7828388,Parrot,collecting_data,false
+1685131339.964336,Spider,collecting_data,true
+1685131375.979981,Spider,collecting_data,true
+1685131404.206943,Spider,sitting_on_bus,true
+1685131420.5365338,Spider,seat_location,middle
+1685131476.792598,Spider,collecting_data,false
+1685131587.788939,Spider,collecting_data,true
+1685131628.265811,Spider,sitting_on_bus,true
+1685131644.51682,Spider,seat_location,middle
+1685131818.3637571,Spider,collecting_data,false
+1685137429.343399,Spider,collecting_data,true
+1685137478.371747,Spider,sitting_on_bus,true
+1685137495.18994,Spider,seat_location,middle
+1685137573.568606,Spider,collecting_data,false
+1685143199.873654,Squid,collecting_data,true
+1685165110.9415,Eel,collecting_data,true
+1685381757.6134958,Jaguar,collecting_data,true
+1685381890.768114,Jaguar,sitting_on_bus,true
+1685381919.2873201,Jaguar,collecting_data,true
+1685381921.98471,Jaguar,sitting_on_bus,true
+1685381938.735976,Jaguar,seat_location,middle
+1685383323.825324,Jaguar,collecting_data,false
+1685390277.688865,Jaguar,collecting_data,true
+1685390291.4604511,Jaguar,sitting_on_bus,true
+1685390307.989181,Jaguar,seat_location,back
+1685391305.882988,Jaguar,collecting_data,false
+1685413779.2972221,Shrimp,collecting_data,true
+1685415458.216084,Spider,collecting_data,true
+1685415465.898584,Spider,sitting_on_bus,true
+1685415482.155896,Spider,seat_location,middle
+1685415574.292675,Shrimp,collecting_data,true
+1685415577.2363858,Shrimp,sitting_on_bus,true
+1685415595.204109,Shrimp,seat_location,back
+1685416101.0277581,Spider,collecting_data,false
+1685459448.6647348,Zebra,collecting_data,true
+1685459476.212141,Zebra,sitting_on_bus,true
+1685459492.316942,Zebra,seat_location,front
+1685459900.505605,Zebra,collecting_data,false
+1685474465.210727,Spider,collecting_data,true
+1685475762.613204,Cat,collecting_data,true
+1685475766.184288,Cat,sitting_on_bus,true
+1685475798.6599011,Cat,seat_location,middle
+1685475917.7529302,Cat,collecting_data,false
+1685477188.82002,Cat,collecting_data,true
+1685477213.181254,Cat,sitting_on_bus,true
+1685477230.378845,Cat,seat_location,middle
+1685477374.854356,Cat,collecting_data,false
+1685477405.962578,Elk,collecting_data,true
+1685477511.089984,Elk,sitting_on_bus,true
+1685477527.775049,Elk,seat_location,back
+1685477660.826954,Elk,collecting_data,false
+1685477951.9651089,Elk,collecting_data,true
+1685477986.546167,Dolphin,collecting_data,true
+1685478025.4280949,Starfish,collecting_data,true
+1685478040.128344,Dolphin,sitting_on_bus,true
+1685478040.425551,Starfish,collecting_data,true
+1685478057.401616,Starfish,sitting_on_bus,true
+1685478059.077462,Dolphin,seat_location,middle
+1685478077.147769,Starfish,seat_location,middle
+1685478280.708899,Starfish,collecting_data,false
+1685478500.846828,Jaguar,collecting_data,true
+1685478566.9083781,Jaguar,sitting_on_bus,true
+1685478584.882547,Jaguar,seat_location,middle
+1685478910.742344,Jaguar,collecting_data,false
+1685479079.5966659,Dolphin,collecting_data,false
+1685490551.025945,Zebra,collecting_data,true
+1685490598.6581368,Zebra,sitting_on_bus,true
+1685490616.3495169,Zebra,seat_location,middle
+1685491044.148457,Zebra,collecting_data,false
+1685496106.7638721,Possum,collecting_data,true
+1685496151.414053,Possum,sitting_on_bus,true
+1685496167.2714372,Possum,seat_location,middle
+1685496534.607487,Possum,collecting_data,false
+1685497399.869652,Toad,collecting_data,true
+1685497414.899054,Toad,sitting_on_bus,true
+1685497431.2336612,Toad,seat_location,front
+1685497595.24679,Toad,collecting_data,false
+1685503492.744201,Cat,collecting_data,true
+1685503514.636406,Cuckoo,collecting_data,true
+1685503523.741077,Dog,collecting_data,true
+1685503541.548077,Dog,sitting_on_bus,true
+1685503542.831668,Cat,sitting_on_bus,true
+1685503561.3976998,Dog,seat_location,front
+1685503575.2162971,Cat,seat_location,back
+1685503593.1178598,Cuckoo,collecting_data,true
+1685503805.3702888,Dog,collecting_data,false
+1685503805.9556298,Cat,collecting_data,false
+1685506761.5932698,Dog,collecting_data,true
+1685506763.437573,Cat,collecting_data,true
+1685506800.466755,Dog,sitting_on_bus,true
+1685506801.953155,Cat,sitting_on_bus,true
+1685506817.141741,Dog,seat_location,front
+1685506819.9263449,Cat,seat_location,middle
+1685507029.630883,Cat,collecting_data,false
+1685507041.442902,Cat,collecting_data,true
+1685507057.270282,Dog,collecting_data,false
+1685558586.752001,Zebra,collecting_data,true
+1685558612.868936,Zebra,sitting_on_bus,true
+1685558644.764246,Zebra,seat_location,front
+1685563388.3766232,Spider,collecting_data,true
+1685563429.852988,Spider,sitting_on_bus,true
+1685563450.7693791,Spider,seat_location,back
+1685563776.049299,Spider,collecting_data,false
+1685564342.9442492,Squid,collecting_data,true
+1685564410.9640899,Squid,sitting_on_bus,true
+1685564780.376636,Dog,collecting_data,true
+1685564887.476459,Dog,sitting_on_bus,true
+1685564901.301218,Dog,seat_location,middle
+1685565121.5171962,Dog,collecting_data,false
+1685567842.3309078,Toad,collecting_data,true
+1685567849.038964,Toad,sitting_on_bus,true
+1685567866.083627,Toad,seat_location,middle
+1685568204.237354,Toad,collecting_data,false
+1685571833.833099,Cat,collecting_data,true
+1685571897.687861,Cat,sitting_on_bus,true
+1685571913.8889709,Cat,seat_location,middle
+1685571965.944382,Cat,collecting_data,false
+1685583612.127267,Fly,collecting_data,true
+1685583644.375218,Fly,sitting_on_bus,true
+1685583662.5506968,Fly,seat_location,middle
+1685583932.628745,Fly,collecting_data,false
+1685649876.752558,Squid,collecting_data,true
+1685649897.403421,Squid,sitting_on_bus,true
+1685649962.915536,Squid,seat_location,back
+1685649978.581411,Squid,collecting_data,false
+1685650988.638643,Starfish,collecting_data,true
+1685651002.484725,Dog,collecting_data,true
+1685651003.547261,Cat,collecting_data,true
+1685651034.354673,Starfish,collecting_data,true
+1685651087.6813722,Starfish,collecting_data,true
+1685651090.110066,Dog,sitting_on_bus,true
+1685651092.468775,Cat,sitting_on_bus,true
+1685651105.739188,Dog,seat_location,front
+1685651108.688793,Cat,seat_location,middle
+1685651153.316179,Starfish,collecting_data,true
+1685651196.8126779,Starfish,sitting_on_bus,true
+1685651213.306848,Starfish,seat_location,back
+1685651222.237051,Cat,collecting_data,false
+1685651223.997511,Dog,collecting_data,false
+1685651295.485705,Starfish,collecting_data,false
+1685654240.6707149,Jaguar,collecting_data,true
+1685667344.804352,Toad,collecting_data,true
+1685667354.065781,Toad,sitting_on_bus,true
+1685667370.369543,Toad,seat_location,front
+1685667817.043818,Toad,collecting_data,false
+1685724609.217682,Jaguar,collecting_data,true
+1685724653.929874,Jaguar,sitting_on_bus,true
+1685724670.7273989,Jaguar,seat_location,front
+1685725031.603333,Zebra,collecting_data,true
+1685725035.1199799,Jaguar,collecting_data,false
+1685725063.838386,Zebra,sitting_on_bus,true
+1685725082.00661,Zebra,seat_location,front
+1685725232.816638,Zebra,collecting_data,false
+1685727070.269331,Starfish,collecting_data,true
+1685727106.255749,Starfish,collecting_data,true
+1685727136.6124759,Starfish,sitting_on_bus,true
+1685727163.549189,Starfish,seat_location,front
+1685727217.808747,Starfish,collecting_data,false
+1685730966.6011171,Jaguar,collecting_data,true
+1685731011.356515,Jaguar,sitting_on_bus,true
+1685731027.0796719,Jaguar,seat_location,front
+1685731182.828343,Jaguar,collecting_data,false
+1685736225.8842812,Cat,collecting_data,true
+1685736226.493531,Dog,collecting_data,true
+1685736272.055767,Dog,sitting_on_bus,true
+1685736272.825211,Cat,sitting_on_bus,true
+1685736280.280892,Spider,collecting_data,true
+1685736289.035859,Dog,seat_location,middle
+1685736289.5293322,Cat,seat_location,middle
+1685736354.756599,Spider,sitting_on_bus,true
+1685736359.410193,Cat,collecting_data,false
+1685736367.9695501,Spider,seat_location,front
+1685736374.299509,Dog,collecting_data,false
+1685736551.160855,Spider,collecting_data,false
+1685736563.275944,Spider,collecting_data,true
+1685736566.245527,Spider,sitting_on_bus,true
+1685736582.460331,Spider,seat_location,front
+1685736675.607223,Spider,collecting_data,false
+1685752287.595514,Possum,collecting_data,true
+1685752295.672783,Possum,sitting_on_bus,true
+1685752311.939529,Possum,seat_location,back
+1685752528.897521,Possum,collecting_data,false
+1685769610.556013,Shrimp,collecting_data,true
+1685769628.389049,Shrimp,collecting_data,true
+1685769631.3102021,Shrimp,sitting_on_bus,true
+1685769648.052701,Shrimp,seat_location,back
+1685769652.315332,Guinea pig,collecting_data,true
+1685769657.547595,Guinea pig,sitting_on_bus,true
+1685769672.4116058,Guinea pig,seat_location,back
+1685769679.262954,Shrimp,collecting_data,false
+1685769930.872719,Guinea pig,collecting_data,false
+1685923634.553297,Guinea pig,collecting_data,true
+1685931443.358876,Jaguar,collecting_data,true
+1685931494.4999561,Jaguar,collecting_data,true
+1685931498.321446,Jaguar,sitting_on_bus,true
+1685931515.378634,Jaguar,seat_location,front
+1685931677.641309,Jaguar,collecting_data,false
+1685981997.1385589,Octopus,collecting_data,true
+1685982097.2095509,Octopus,sitting_on_bus,true
+1685982132.408506,Octopus,seat_location,front
+1685982154.389641,Octopus,seat_location,front
+1685982538.046846,Octopus,collecting_data,false
+1685982551.132565,Octopus,collecting_data,true
+1685986231.961525,Starfish,collecting_data,true
+1685986277.8960052,Starfish,sitting_on_bus,true
+1685986295.059336,Starfish,seat_location,front
+1685986331.5700479,Starfish,collecting_data,false
+1685995470.706703,Cat,collecting_data,true
+1685995472.60962,Dog,collecting_data,true
+1685995521.026264,Cat,sitting_on_bus,true
+1685995522.290186,Dog,sitting_on_bus,true
+1685995537.171545,Dog,seat_location,front
+1685995537.716893,Cat,seat_location,middle
+1685995604.288909,Cat,collecting_data,false
+1685995614.884953,Dog,collecting_data,false
+1685995617.711195,Cat,collecting_data,true
+1685995773.81594,Spider,collecting_data,true
+1685995820.4334888,Spider,collecting_data,true
+1685995923.7537332,Spider,collecting_data,true
+1685995933.137045,Spider,sitting_on_bus,true
+1685995950.242526,Spider,seat_location,middle
+1685996089.8248959,Zebra,collecting_data,true
+1685996122.778211,Spider,collecting_data,false
+1685996146.967883,Zebra,sitting_on_bus,true
+1685996164.67035,Zebra,seat_location,front
+1685996517.9617429,Zebra,collecting_data,false
+1686002720.6604571,Jaguar,collecting_data,true
+1686012188.2765489,Zebra,collecting_data,true
+1686012208.3920832,Zebra,sitting_on_bus,true
+1686012227.615086,Zebra,seat_location,middle
+1686012566.748409,Zebra,collecting_data,false
+1686064108.211618,Possum,collecting_data,true
+1686064197.133796,Possum,sitting_on_bus,true
+1686064214.7519212,Possum,seat_location,middle
+1686064547.381639,Zebra,collecting_data,true
+1686064570.096507,Zebra,sitting_on_bus,true
+1686064588.724728,Zebra,seat_location,middle
+1686064651.6787472,Possum,collecting_data,false
+1686064944.6260118,Zebra,collecting_data,false
+1686069388.48559,Shrimp,collecting_data,true
+1686069429.735363,Shrimp,sitting_on_bus,true
+1686069462.001339,Shrimp,seat_location,middle
+1686069899.481697,Shrimp,collecting_data,false
+1686070436.187218,Northern Blue,collecting_data,true
+1686070499.342984,Northern Blue,sitting_on_bus,true
+1686070517.493221,Northern Blue,seat_location,front
+1686070753.283972,Zebra,collecting_data,true
+1686070841.5471559,Zebra,sitting_on_bus,true
+1686070861.566349,Zebra,seat_location,middle
+1686070893.232115,Northern Blue,collecting_data,false
+1686071076.187203,Northern Blue,collecting_data,true
+1686071089.2101688,Zebra,collecting_data,false
+1686075768.600672,Jaguar,collecting_data,true
+1686075893.854013,Jaguar,sitting_on_bus,true
+1686075909.878564,Jaguar,seat_location,back
+1686079378.4420261,Jaguar,collecting_data,true
+1686079415.77388,Jaguar,sitting_on_bus,true
+1686079433.422029,Jaguar,seat_location,back
+1686079618.8244328,Jaguar,collecting_data,false
+1686080341.014195,Possum,collecting_data,true
+1686080384.283663,Possum,sitting_on_bus,true
+1686080400.8259969,Possum,seat_location,middle
+1686081010.9855042,Jaguar,collecting_data,true
+1686081030.7597141,Possum,collecting_data,false
+1686081042.3829288,Jaguar,sitting_on_bus,true
+1686081059.696612,Jaguar,seat_location,middle
+1686081464.755764,Jaguar,collecting_data,false
+1686082330.217297,Dog,collecting_data,true
+1686082330.8473601,Cat,collecting_data,true
+1686082379.28084,Cat,sitting_on_bus,true
+1686082381.070082,Dog,collecting_data,true
+1686082394.8731909,Dog,sitting_on_bus,true
+1686082395.625297,Cat,seat_location,middle
+1686082411.444516,Dog,seat_location,middle
+1686082459.050571,Dog,collecting_data,false
+1686082467.101495,Cat,collecting_data,false
+1686082768.410942,Starfish,collecting_data,true
+1686082793.012851,Starfish,sitting_on_bus,true
+1686082809.4746928,Starfish,seat_location,back
+1686082839.03216,Starfish,collecting_data,false
+1686082847.182473,Starfish,collecting_data,true
+1686082882.35823,Starfish,sitting_on_bus,true
+1686082898.298655,Starfish,seat_location,back
+1686082969.586084,Starfish,collecting_data,false
+1686091006.476321,Fly,collecting_data,true
+1686091019.6300302,Fly,sitting_on_bus,true
+1686091035.181503,Fly,seat_location,front
+1686091474.834069,Fly,collecting_data,false
+1686095769.768938,Jaguar,collecting_data,true
+1686095838.0593,Jaguar,sitting_on_bus,true
+1686095852.4863892,Jaguar,collecting_data,true
+1686095907.353139,Jaguar,sitting_on_bus,true
+1686095924.5313601,Jaguar,seat_location,middle
+1686096112.310833,Jaguar,collecting_data,false
+1686110036.6553578,Northern Blue,collecting_data,true
+1686110044.776177,Northern Blue,sitting_on_bus,true
+1686110062.371737,Northern Blue,seat_location,front
+1686110294.294729,Northern Blue,collecting_data,false
+1686118878.226173,Tiger,collecting_data,true
+1686119547.287856,Tiger,collecting_data,true
+1686157544.554054,Python,collecting_data,true
+1686158928.3751922,Starfish,collecting_data,true
+1686158948.5788841,Starfish,sitting_on_bus,true
+1686158965.063731,Starfish,seat_location,front
+1686158980.75196,Starfish,collecting_data,false
+1686158992.068224,Starfish,collecting_data,true
+1686158995.389029,Starfish,sitting_on_bus,true
+1686159011.8178701,Starfish,seat_location,back
+1686159027.7122378,Starfish,collecting_data,false
+1686159762.4971762,Jaguar,collecting_data,true
+1686159833.98947,Jaguar,collecting_data,true
+1686159839.328991,Jaguar,sitting_on_bus,true
+1686159856.300278,Jaguar,seat_location,front
+1686159937.5641022,Possum,collecting_data,true
+1686159954.132096,Jaguar,collecting_data,false
+1686159960.950321,Possum,sitting_on_bus,true
+1686159977.5765529,Possum,seat_location,back
+1686160751.940528,Possum,collecting_data,false
+1686162266.387903,Toad,collecting_data,true
+1686162319.141224,Toad,sitting_on_bus,true
+1686162335.04384,Toad,seat_location,middle
+1686162518.229114,Toad,collecting_data,true
+1686162525.553887,Toad,sitting_on_bus,true
+1686162542.6002069,Toad,seat_location,middle
+1686162661.622909,Toad,collecting_data,false
+1686168327.627088,Spider,collecting_data,true
+1686168388.205755,Spider,sitting_on_bus,true
+1686168403.9157329,Spider,seat_location,front
+1686168453.734568,Dog,collecting_data,true
+1686168477.2403069,Cat,collecting_data,true
+1686168502.126484,Dog,collecting_data,true
+1686168502.753686,Cat,collecting_data,true
+1686168504.813261,Dog,sitting_on_bus,true
+1686168505.335206,Cat,sitting_on_bus,true
+1686168521.521891,Dog,seat_location,middle
+1686168522.1818318,Cat,seat_location,middle
+1686168578.237482,Cat,collecting_data,false
+1686168595.1678119,Dog,collecting_data,false
+1686168658.05106,Spider,collecting_data,false
+1686169355.407467,Toad,collecting_data,true
+1686169542.02776,Toad,sitting_on_bus,true
+1686169557.7408261,Toad,seat_location,middle
+1686169714.109968,Squid,collecting_data,true
+1686169780.5289268,Squid,sitting_on_bus,true
+1686169786.1226149,Squid,seat_location,back
+1686169905.770498,Toad,collecting_data,false
+1686169927.005776,Squid,collecting_data,false
+1686172207.372014,Northern Blue,collecting_data,true
+1686172215.490392,Northern Blue,sitting_on_bus,true
+1686172232.2819428,Northern Blue,seat_location,back
+1686172628.300521,Northern Blue,collecting_data,false
+1686181055.581579,Elk,collecting_data,true
+1686181059.4365668,Elk,sitting_on_bus,true
+1686181075.134444,Elk,seat_location,front
+1686181091.721142,Elk,collecting_data,false
+1686189556.76483,Zebra,collecting_data,true
+1686189774.541621,Zebra,collecting_data,true
+1686189843.159328,Zebra,sitting_on_bus,true
+1686189861.897328,Zebra,seat_location,back
+1686190188.264309,Zebra,collecting_data,false
+1686243043.3538508,Spider,collecting_data,true
+1686245435.2759209,Jaguar,collecting_data,true
+1686245446.17555,Jaguar,sitting_on_bus,true
+1686245465.428008,Jaguar,seat_location,front
+1686245731.409317,Jaguar,collecting_data,false
+1686249301.7882571,Cat,collecting_data,true
+1686249347.536339,Cat,sitting_on_bus,true
+1686249364.285707,Cat,seat_location,front
+1686249438.290183,Cat,collecting_data,false
+1686252840.883157,Cat,collecting_data,true
+1686252840.987653,Dog,collecting_data,true
+1686252913.737306,Dog,collecting_data,true
+1686252916.435343,Dog,sitting_on_bus,true
+1686252933.292604,Dog,seat_location,middle
+1686252995.534441,Dog,collecting_data,false
+1686261719.923382,Northern Blue,collecting_data,true
+1686261735.1446052,Northern Blue,sitting_on_bus,true
+1686261752.087716,Northern Blue,seat_location,back
+1686262026.591254,Northern Blue,collecting_data,false
+1686269629.029241,Zebra,collecting_data,true
+1686269673.355826,Zebra,sitting_on_bus,true
+1686269691.254679,Zebra,seat_location,middle
+1686269975.371389,Zebra,collecting_data,false
+1686269998.024745,Zebra,collecting_data,true
+1686323844.989462,Zebra,collecting_data,true
+1686323850.090728,Zebra,sitting_on_bus,true
+1686323869.6071892,Zebra,seat_location,middle
+1686324192.344482,Zebra,collecting_data,false
+1686333045.3539019,Fly,collecting_data,true
+1686333104.570137,Fly,sitting_on_bus,true
+1686333121.457339,Fly,seat_location,middle
+1686333257.150447,Fly,collecting_data,false
+1686336380.3734012,Jaguar,collecting_data,true
+1686336447.166465,Jaguar,sitting_on_bus,true
+1686336463.774667,Jaguar,seat_location,back
+1686336624.644404,Jaguar,collecting_data,false
+1686336638.373304,Jaguar,collecting_data,true
+1686339574.893423,Parrot,collecting_data,true
+1686339578.388304,Parrot,sitting_on_bus,true
+1686339594.341655,Parrot,seat_location,back
+1686340048.893595,Parrot,collecting_data,false
+1686341197.5354838,Spider,collecting_data,true
+1686341215.904976,Spider,collecting_data,true
+1686341268.355859,Spider,sitting_on_bus,true
+1686341284.54253,Spider,seat_location,front
+1686341528.2885299,Spider,collecting_data,false
+1686342750.1687078,Jaguar,collecting_data,true
+1686342783.729451,Jaguar,sitting_on_bus,true
+1686342800.477442,Jaguar,seat_location,middle
+1686343071.9146209,Jaguar,collecting_data,false
+1686343454.89094,Possum,collecting_data,true
+1686343488.904811,Possum,sitting_on_bus,true
+1686343532.0871248,Possum,seat_location,middle
+1686343906.57202,Possum,collecting_data,false
+1686351215.5400128,Tiger,collecting_data,true
+1686372553.604393,Jaguar,collecting_data,true
+1686372613.907244,Jaguar,collecting_data,true
+1686372622.790362,Jaguar,sitting_on_bus,true
+1686372639.358336,Jaguar,seat_location,front
+1686372755.859227,Jaguar,collecting_data,false
+1686465090.126982,Cod,collecting_data,true
+1686465093.472544,Cod,sitting_on_bus,true
+1686465109.854625,Cod,seat_location,front
+1686465796.602148,Cod,collecting_data,false
+1686529434.586124,Zebra,collecting_data,true
+1686529471.7774029,Zebra,sitting_on_bus,true
+1686529492.8905358,Zebra,seat_location,middle
+1686529629.881551,Zebra,collecting_data,false
+1686544942.7921572,Jaguar,collecting_data,true
+1686544976.850173,Jaguar,sitting_on_bus,true
+1686544990.408534,Jaguar,collecting_data,true
+1686544993.6949701,Jaguar,sitting_on_bus,true
+1686545009.8360848,Jaguar,seat_location,front
+1686545510.525876,Jaguar,collecting_data,false
+1686585403.9919071,Jaguar,collecting_data,true
+1686585444.0518708,Jaguar,sitting_on_bus,true
+1686585460.52664,Jaguar,seat_location,front
+1686585808.827519,Jaguar,collecting_data,false
+1686596406.491432,Jaguar,collecting_data,true
+1686596453.753794,Jaguar,collecting_data,true
+1686596456.527443,Jaguar,sitting_on_bus,true
+1686596473.231195,Jaguar,seat_location,back
+1686596922.634788,Jaguar,collecting_data,false
+1686600959.830256,Toad,collecting_data,true
+1686600971.867279,Toad,sitting_on_bus,true
+1686600988.193851,Toad,seat_location,front
+1686601255.4878159,Toad,collecting_data,false
+1686601397.100325,Jaguar,collecting_data,true
+1686601431.870718,Jaguar,sitting_on_bus,true
+1686601447.7802792,Jaguar,seat_location,back
+1686601717.8202481,Jaguar,collecting_data,false
+1686618444.028321,Dog,collecting_data,true
+1686618445.372857,Cat,collecting_data,true
+1686618484.244306,Dog,sitting_on_bus,true
+1686618488.51853,Cat,sitting_on_bus,true
+1686618501.045984,Dog,seat_location,front
+1686618505.046671,Cat,seat_location,front
+1686618547.4825191,Cat,collecting_data,false
+1686618563.18967,Dog,collecting_data,false
+1686667584.8367581,Zebra,collecting_data,true
+1686667619.226025,Zebra,sitting_on_bus,true
+1686667637.3175569,Zebra,seat_location,front
+1686667897.915427,Zebra,collecting_data,false
+1686679164.279306,Possum,collecting_data,true
+1686679214.110783,Possum,sitting_on_bus,true
+1686679230.5095081,Possum,seat_location,middle
+1686679684.6989179,Possum,collecting_data,false
+1686693263.629758,Starfish,collecting_data,true
+1686693284.7542272,Starfish,sitting_on_bus,true
+1686693301.309169,Starfish,seat_location,back
+1686693439.848424,Starfish,collecting_data,false
+1686704267.56444,Zebra,collecting_data,true
+1686704311.7827039,Zebra,sitting_on_bus,true
+1686704337.0309958,Zebra,seat_location,middle
+1686704483.751895,Zebra,collecting_data,false
+1686706540.286262,Possum,collecting_data,true
+1686706582.748292,Possum,sitting_on_bus,true
+1686706600.686441,Possum,seat_location,back
+1686706710.566994,Possum,collecting_data,false
+1686759601.9911919,Jaguar,collecting_data,true
+1686759607.8583531,Jaguar,sitting_on_bus,true
+1686759625.367958,Jaguar,seat_location,front
+1686759954.26492,Jaguar,collecting_data,false
+1686771539.916837,Jaguar,collecting_data,true
+1686771590.4033508,Jaguar,collecting_data,true
+1686771593.648797,Jaguar,sitting_on_bus,true
+1686771610.4332151,Jaguar,seat_location,back
+1686771935.066839,Jaguar,collecting_data,false
+1686772365.511897,Jaguar,collecting_data,true
+1686772407.047544,Jaguar,sitting_on_bus,true
+1686772423.5909019,Jaguar,seat_location,back
+1686772625.3246388,Jaguar,collecting_data,false
+1686839656.13779,Spider,collecting_data,true
+1686839669.3179379,Spider,sitting_on_bus,true
+1686839678.5997782,Spider,seat_location,front
+1686839742.2809172,Spider,collecting_data,false
+1686849569.1530051,Jaguar,collecting_data,true
+1686849594.93993,Jaguar,sitting_on_bus,true
+1686849611.339195,Jaguar,seat_location,middle
+1686849815.001154,Jaguar,collecting_data,false
+1687473895.886808,Reptile,collecting_data,true
+1687474170.614029,Reptile,sitting_on_bus,true
+1687474187.0093122,Reptile,seat_location,middle
+1687474559.118517,Reptile,collecting_data,false
+1687479386.9019198,Reptile,collecting_data,true
+1687479423.29879,Reptile,sitting_on_bus,true
+1687479436.6408339,Reptile,seat_location,middle
+1687479941.481091,Reptile,collecting_data,false
+1687883803.2378988,Zebra,collecting_data,true
+1687884023.5121741,Zebra,sitting_on_bus,true
+1687884036.886168,Zebra,seat_location,front
+1687884231.232487,Zebra,collecting_data,false
+1687902074.935941,Toad,collecting_data,true
+1687902079.375747,Toad,sitting_on_bus,true
+1687902095.9138951,Toad,seat_location,front
+1687902366.6837249,Toad,collecting_data,false
+1688059453.7067661,Zebra,collecting_data,true
+1688059476.8451009,Zebra,sitting_on_bus,true
+1688059496.185595,Zebra,seat_location,middle
+1688068774.747361,Toad,collecting_data,true
+1688068780.0881572,Toad,sitting_on_bus,true
+1688068796.773412,Toad,seat_location,front
+1688069139.2762141,Toad,collecting_data,false
+1688087895.1044989,Zebra,collecting_data,true
+1688087968.856699,Zebra,sitting_on_bus,true
+1688087987.4525862,Zebra,seat_location,back
+1688088140.213196,Zebra,collecting_data,false
+1688762504.9066482,Zebra,collecting_data,true
+1688762577.156749,Zebra,sitting_on_bus,true
+1688762595.524588,Zebra,seat_location,middle
+1688762899.0311298,Zebra,collecting_data,false
+1688780148.3228312,Zebra,collecting_data,true
+1688780178.369905,Zebra,sitting_on_bus,true
+1688780196.903929,Zebra,seat_location,middle
+1688780485.878896,Zebra,collecting_data,false
+1689356190.137898,Gold Mops,collecting_data,true
+1689959921.379417,Gold Mops,collecting_data,true
+1690247895.053474,Zebra,collecting_data,true
+1690247944.2746248,Zebra,sitting_on_bus,true
+1690247962.492803,Zebra,seat_location,middle
+1690248157.643177,Zebra,collecting_data,false
+1690248169.051834,Zebra,collecting_data,true
+1690304416.386467,Zebra,collecting_data,true
+1690304466.6001391,Zebra,sitting_on_bus,true
+1690304484.512518,Zebra,seat_location,front
+1690304856.291662,Zebra,collecting_data,false
+1690304857.380959,Zebra,collecting_data,true
+1690395481.33569,Zebra,collecting_data,true
+1690395485.522503,Zebra,sitting_on_bus,true
+1690395506.799447,Zebra,seat_location,back
+1690395815.3565068,Zebra,collecting_data,false
+1690417529.907168,Zebra,collecting_data,true
+1690417559.1033921,Zebra,sitting_on_bus,true
+1690417578.3521252,Zebra,seat_location,middle
+1690417757.362142,Zebra,collecting_data,false
+1690491386.780803,Gold Mops,collecting_data,true
+1690491600.184389,Gold Mops,sitting_on_bus,true
+1690491620.3195329,Gold Mops,seat_location,middle
+1690491799.303207,Gold Mops,collecting_data,false
+1690491800.781501,Gold Mops,collecting_data,true
+1690852602.456718,Zebra,collecting_data,true
+1690852653.817941,Zebra,sitting_on_bus,true
+1690852669.825059,Zebra,seat_location,middle
+1690853015.4829779,Zebra,collecting_data,false
+1690990632.7926369,Squid,collecting_data,true
+1690990739.350535,Squid,sitting_on_bus,true
+1690990755.2131062,Squid,seat_location,back
+1691003478.678453,Zebra,collecting_data,true
+1691025332.437379,Zebra,collecting_data,true
+1691025547.6717649,Zebra,collecting_data,true
+1691025569.924241,Zebra,sitting_on_bus,true
+1691025586.005022,Zebra,seat_location,middle
+1691025770.3237371,Zebra,collecting_data,false
+1691028079.634022,Raven,collecting_data,true
+1691028106.755021,Raven,sitting_on_bus,true
+1691087167.494927,Squid,collecting_data,true
+1691087541.539825,Squid,sitting_on_bus,true
+1691097213.628027,Squid,collecting_data,true
+1691097218.298418,Squid,sitting_on_bus,true
+1691097233.736017,Squid,seat_location,front
+1691097383.246801,Squid,collecting_data,false
+1691167063.364554,Gold Mops,collecting_data,true
+1691167200.322171,Gold Mops,sitting_on_bus,true
+1691167218.426266,Gold Mops,seat_location,middle
+1691167462.0228062,Gold Mops,collecting_data,false
+1691167475.368537,Gold Mops,collecting_data,true
+1691208047.3606849,Fringe Flower,collecting_data,true
+1691422278.856247,Squid,collecting_data,true
+1691422289.968749,Squid,sitting_on_bus,true
+1691422307.122384,Squid,seat_location,front
+1691434844.453929,Squid,collecting_data,true
+1691509020.4918032,Squid,collecting_data,true
+1691509211.0930161,Squid,sitting_on_bus,true
+1691509227.61079,Squid,seat_location,front
+1691509760.09558,Squid,collecting_data,false
+1691514522.99788,Squid,collecting_data,true
+1691514547.689781,Squid,sitting_on_bus,true
+1691524460.08141,Emu,collecting_data,true
+1691524464.211502,Emu,sitting_on_bus,false
+1691524479.027419,Emu,sitting_on_bus,false
+1691524495.574111,Emu,sitting_on_bus,true
+1691524512.310322,Emu,seat_location,middle
+1691524533.6284451,Emu,collecting_data,answered no
+1691524549.4292378,Emu,collecting_data,answered no
+1691524566.9918342,Emu,collecting_data,false
+1691595981.8671808,Squid,collecting_data,true
+1691596482.829004,Squid,collecting_data,true
+1691596500.258091,Squid,sitting_on_bus,true
+1691596516.533668,Squid,seat_location,middle
+1691596772.523534,Squid,collecting_data,false
+1691618861.83184,Llama,collecting_data,true
+1691618889.5187678,Llama,sitting_on_bus,true
+1691618905.758843,Llama,seat_location,back
+1691618925.09356,Llama,seat_location,middle
+1691619031.561656,Llama,collecting_data,answered no
+1691619046.592345,Llama,collecting_data,false
+1691619258.835841,Llama,collecting_data,true
+1691619285.254297,Llama,sitting_on_bus,false
+1691619300.8575191,Llama,sitting_on_bus,true
+1691619318.6667829,Llama,seat_location,front
+1691619424.856425,Llama,collecting_data,false
+1691681462.428149,Squid,collecting_data,true
+1691681527.376951,Squid,sitting_on_bus,true
+1691681545.151227,Squid,seat_location,front
+1691782617.508333,Gold Mops,collecting_data,true
+1691782847.2453709,Gold Mops,sitting_on_bus,true
+1691782870.5441089,Gold Mops,seat_location,front
+1691783146.963851,Gold Mops,collecting_data,false
+1692113850.565721,Squid,collecting_data,true
+1692113916.956866,Squid,sitting_on_bus,true
+1692113933.475027,Squid,seat_location,middle
+1692114439.8279262,Squid,collecting_data,false
+1692294040.159984,Squid,collecting_data,true
+1692294049.6256099,Squid,sitting_on_bus,true
+1692294066.1174788,Squid,seat_location,front
+1692294513.370819,Squid,collecting_data,false
+1692665232.522585,Zebra,collecting_data,true
+1692668316.697287,Zebra,collecting_data,true
+1692668329.1071591,Zebra,sitting_on_bus,true
+1692668346.706034,Zebra,seat_location,middle
+1692668501.1738849,Zebra,collecting_data,false
+1692891104.194938,Squid,collecting_data,true
+1692891152.740337,Squid,sitting_on_bus,true
+1692891168.015717,Squid,seat_location,middle
+1692894419.781877,Squid,collecting_data,true
+1692912853.8622031,Rhapsody Blue,collecting_data,true
+1692913099.570849,Rhapsody Blue,sitting_on_bus,true
+1692913116.208353,Rhapsody Blue,seat_location,middle
+1692913363.254015,Rhapsody Blue,collecting_data,false
+1693018130.879389,Fringe Flower,collecting_data,true
+1693018214.414192,Fringe Flower,collecting_data,true
+1693018396.468042,Fringe Flower,collecting_data,true
+1695165554.305656,Llama,collecting_data,true
+1695165599.492348,Llama,sitting_on_bus,true
+1695165617.59372,Llama,seat_location,middle
+1695165659.0707011,Llama,collecting_data,false
+1695511198.2084842,Cat,collecting_data,true
+1695861856.850678,Jaguar,collecting_data,true
+1695861904.270355,Jaguar,collecting_data,true
+1695872025.9575381,Squid,collecting_data,true
+1695872060.4350271,Squid,sitting_on_bus,true
+1695872076.677136,Squid,seat_location,middle
+1695928267.1493158,Gold Mops,collecting_data,true
+1695928275.398007,Gold Mops,sitting_on_bus,true
+1695928372.1885672,Gold Mops,seat_location,middle
+1695928387.771467,Gold Mops,collecting_data,false
+1695934948.038389,Guinea pig,collecting_data,true
+1695934978.723157,Guinea pig,sitting_on_bus,true
+1695934995.503067,Guinea pig,seat_location,middle
+1695935152.852024,Guinea pig,collecting_data,false
+1695936902.460942,Papyrus Plants,collecting_data,true
+1695936912.282805,Papyrus Plants,sitting_on_bus,true
+1695936928.734354,Papyrus Plants,seat_location,back
+1695936956.878283,Papyrus Plants,collecting_data,answered no
+1695936970.775642,Papyrus Plants,collecting_data,answered no
+1695936986.1965861,Papyrus Plants,collecting_data,answered no
+1695937001.6020741,Papyrus Plants,collecting_data,answered no
+1695937016.863452,Papyrus Plants,collecting_data,answered no
+1695937034.3617458,Papyrus Plants,collecting_data,answered no
+1695937048.843202,Papyrus Plants,collecting_data,answered no
+1695937060.448155,Papyrus Plants,collecting_data,answered no
+1695937076.2084541,Papyrus Plants,collecting_data,answered no
+1695937081.457097,Papyrus Plants,seat_location,back
+1695937094.112803,Papyrus Plants,collecting_data,answered no
+1695937106.940619,Papyrus Plants,collecting_data,answered no
+1695937121.052216,Papyrus Plants,collecting_data,false
+1695945192.850548,Papyrus Plants,collecting_data,true
+1695945425.2392979,Papyrus Plants,sitting_on_bus,true
+1695945436.219214,Papyrus Plants,seat_location,front
+1695948041.88082,Papyrus Plants,collecting_data,false
+1696006982.872353,Squid,collecting_data,true
+1696007242.7436628,Squid,sitting_on_bus,true
+1696007258.562257,Squid,seat_location,front
+1696014445.001244,Squid,collecting_data,true
+1696014456.727144,Squid,sitting_on_bus,true
+1696014680.785171,Squid,collecting_data,true
+1696014733.034334,Squid,sitting_on_bus,true
+1696018071.733881,Papyrus Plants,collecting_data,true
+1696018076.763187,Papyrus Plants,sitting_on_bus,true
+1696018092.1931539,Papyrus Plants,seat_location,middle
+1696018915.729855,Papyrus Plants,collecting_data,false
+1696029600.432358,Squid,collecting_data,true
+1696029643.249178,Squid,sitting_on_bus,true
+1696029660.4262118,Squid,seat_location,middle
+1696031962.449338,Jaguar,collecting_data,true
+1696032040.6159601,Jaguar,collecting_data,true
+1696032080.00864,Jaguar,sitting_on_bus,true
+1696032096.162226,Jaguar,seat_location,back
+1696032227.0559049,Jaguar,collecting_data,false
+1696032851.291688,Guinea pig,collecting_data,true
+1696032895.961996,Guinea pig,collecting_data,true
+1696032929.113628,Guinea pig,collecting_data,true
+1696032943.540231,Guinea pig,sitting_on_bus,true
+1696032960.300056,Guinea pig,seat_location,middle
+1696033407.0067549,Guinea pig,collecting_data,false
+1696037437.789386,Squid,collecting_data,true
+1696037454.43714,Squid,sitting_on_bus,true
+1696278668.020045,Squid,collecting_data,true
+1696278726.781601,Squid,sitting_on_bus,true
+1696278744.17736,Squid,seat_location,front
+1696281651.322387,Gold Mops,collecting_data,true
+1696281665.9031029,Gold Mops,sitting_on_bus,true
+1696281747.6072621,Gold Mops,collecting_data,true
+1696281762.036444,Gold Mops,sitting_on_bus,true
+1696281778.625768,Gold Mops,seat_location,back
+1696281925.794331,Gold Mops,collecting_data,true
+1696281931.422491,Gold Mops,sitting_on_bus,true
+1696281946.215139,Gold Mops,seat_location,back
+1696281987.305409,Squid,collecting_data,true
+1696282009.732942,Squid,sitting_on_bus,true
+1696282041.619153,Squid,seat_location,middle
+1696282250.350241,Gold Mops,collecting_data,false
+1696298249.56877,Gold Mops,collecting_data,true
+1696298254.491194,Gold Mops,sitting_on_bus,true
+1696298270.472969,Gold Mops,seat_location,middle
+1696298318.99929,Gold Mops,collecting_data,answered no
+1696298341.5976892,Gold Mops,collecting_data,answered no
+1696298373.8713222,Gold Mops,collecting_data,answered no
+1696298460.962656,Gold Mops,collecting_data,answered no
+1696298558.364073,Gold Mops,collecting_data,answered no
+1696298862.1351252,Liverleaf,collecting_data,true
+1696298869.780531,Gold Mops,collecting_data,false
+1696298872.5920491,Liverleaf,sitting_on_bus,true
+1696298905.76023,Liverleaf,seat_location,back
+1696299174.494781,Liverleaf,collecting_data,false
+1696349953.092773,Squid,collecting_data,true
+1696349984.185919,Squid,sitting_on_bus,true
+1696349998.995861,Squid,seat_location,middle
+1696358526.12353,Creeping,collecting_data,true
+1696358695.247544,Creeping,collecting_data,true
+1696358700.1989532,Creeping,sitting_on_bus,true
+1696364307.098736,Cat,collecting_data,true
+1696364312.2179089,Cat,sitting_on_bus,true
+1696364328.866314,Cat,seat_location,middle
+1696364512.0164762,Cat,collecting_data,false
+1696368300.269058,Cat,collecting_data,true
+1696368321.305616,Cat,collecting_data,true
+1696368324.201188,Cat,sitting_on_bus,true
+1696368341.0350208,Cat,seat_location,back
+1696368547.4505749,Cat,collecting_data,false
+1696370066.086924,Papyrus Plants,collecting_data,true
+1696370130.027355,Papyrus Plants,sitting_on_bus,true
+1696370146.4036841,Papyrus Plants,seat_location,back
+1696370922.126687,Jaguar,collecting_data,true
+1696370979.432633,Jaguar,sitting_on_bus,true
+1696370994.903788,Jaguar,seat_location,front
+1696381378.11333,Guinea pig,collecting_data,true
+1696383338.5498052,Jaguar,collecting_data,true
+1696383371.1063719,Jaguar,sitting_on_bus,true
+1696383402.8937302,Jaguar,seat_location,middle
+1696430250.784976,Shrimp,collecting_data,true
+1696430265.4292269,Shrimp,sitting_on_bus,true
+1696430281.398355,Shrimp,seat_location,back
+1696430391.5978708,Shrimp,collecting_data,false
+1696444163.285592,Squid,collecting_data,true
+1696444213.598006,Squid,sitting_on_bus,true
+1696444230.9756222,Squid,seat_location,middle
+1696448371.503236,Toad,collecting_data,true
+1696448715.355164,Toad,sitting_on_bus,true
+1696448731.821373,Toad,seat_location,middle
+1696449155.538197,Toad,collecting_data,true
+1696449160.658499,Toad,sitting_on_bus,true
+1696449178.2898278,Toad,seat_location,middle
+1696449270.1158838,Toad,collecting_data,false
+1696451388.4481912,Squid,collecting_data,true
+1696458354.269843,Squid,collecting_data,true
+1696465484.581145,Zebra,collecting_data,true
+1696465660.527543,Zebra,sitting_on_bus,true
+1696465707.0334291,Zebra,seat_location,front
+1696465778.572299,Zebra,collecting_data,false
+1696516548.343236,Gold Mops,collecting_data,true
+1696530218.547954,Toad,collecting_data,true
+1696530299.874323,Toad,sitting_on_bus,true
+1696530316.1579509,Toad,seat_location,middle
+1696531804.6354918,Rhapsody Blue,collecting_data,true
+1696531812.484869,Rhapsody Blue,sitting_on_bus,true
+1696531832.278037,Rhapsody Blue,seat_location,back
+1696534514.339518,Cat,collecting_data,true
+1696534565.490922,Cat,sitting_on_bus,true
+1696534603.080615,Cat,collecting_data,true
+1696534606.869258,Cat,sitting_on_bus,true
+1696534623.503707,Cat,seat_location,middle
+1696534694.651536,Cat,collecting_data,false
+1696536563.493884,Cat,collecting_data,true
+1696536724.2289572,Cat,sitting_on_bus,true
+1696536741.1452851,Cat,seat_location,middle
+1696536825.835326,Cat,collecting_data,false
+1696537112.148215,Jaguar,collecting_data,true
+1696537155.785856,Jaguar,sitting_on_bus,true
+1696537172.852757,Jaguar,seat_location,front
+1696537657.073494,Jaguar,collecting_data,false
+1696543356.791223,Papyrus Plants,collecting_data,true
+1696543360.678966,Papyrus Plants,sitting_on_bus,true
+1696543381.36087,Papyrus Plants,seat_location,middle
+1696544049.743717,Papyrus Plants,collecting_data,false
+1696550720.591783,Liverleaf,collecting_data,true
+1696609230.307414,Gold Mops,collecting_data,true
+1696609233.5795069,Gold Mops,sitting_on_bus,true
+1696609269.008508,Gold Mops,seat_location,middle
+1696609495.514916,Gold Mops,collecting_data,false
+1696622047.0770822,Squid,collecting_data,true
+1696625477.195993,Zebra,collecting_data,true
+1696626183.796494,Zebra,collecting_data,true
+1696626272.60609,Zebra,sitting_on_bus,true
+1696626290.568869,Zebra,seat_location,middle
+1696635333.73562,Squid,collecting_data,true
+1696635340.6254048,Squid,sitting_on_bus,true
+1696635357.367564,Squid,seat_location,middle
+1696734407.565864,Guinea pig,collecting_data,true
+1696734445.873889,Guinea pig,sitting_on_bus,true
+1696734464.038728,Guinea pig,collecting_data,true
+1696734479.3998241,Guinea pig,sitting_on_bus,true
+1696734496.178957,Guinea pig,seat_location,back
+1696734732.268148,Guinea pig,collecting_data,false
+1696820885.77637,Liverleaf,collecting_data,true
+1696862410.093626,Shrimp,collecting_data,true
+1696862436.67683,Shrimp,collecting_data,true
+1696862440.091193,Shrimp,sitting_on_bus,true
+1696862457.5524049,Shrimp,seat_location,back
+1696862586.041244,Shrimp,collecting_data,false
+1696882112.747669,Liverleaf,collecting_data,true
+1696887302.409079,Papyrus Plants,collecting_data,true
+1696887305.79221,Papyrus Plants,sitting_on_bus,true
+1696887322.012865,Papyrus Plants,seat_location,back
+1696887886.00109,Papyrus Plants,collecting_data,false
+1696892240.4319649,Cat,collecting_data,true
+1696892409.3828468,Cat,sitting_on_bus,true
+1696892465.3990889,Cat,collecting_data,true
+1696892648.77169,Cat,sitting_on_bus,true
+1696892665.3055801,Cat,seat_location,front
+1696892735.658804,Cat,collecting_data,false
+1696903407.9804459,Liverleaf,collecting_data,true
+1696903476.622802,Liverleaf,sitting_on_bus,true
+1696903609.21262,Liverleaf,seat_location,middle
+1696903846.872282,Liverleaf,collecting_data,false
+1696906638.061599,Gold Mops,collecting_data,true
+1696906693.570647,Gold Mops,sitting_on_bus,true
+1696906710.608022,Gold Mops,seat_location,front
+1696906947.798357,Gold Mops,collecting_data,false
+1696955142.36254,Squid,collecting_data,true
+1696955251.180783,Squid,sitting_on_bus,true
+1696955268.16482,Squid,seat_location,middle
+1696955461.745946,Zebra,collecting_data,true
+1696955481.831305,Zebra,sitting_on_bus,true
+1696955498.992435,Zebra,seat_location,front
+1696955837.235526,Zebra,collecting_data,answered no
+1696955886.16889,Zebra,collecting_data,answered no
+1696955948.386411,Zebra,collecting_data,answered no
+1696956146.0359368,Zebra,collecting_data,false
+1696968935.482473,Cat,collecting_data,true
+1696968941.009429,Cat,sitting_on_bus,true
+1696968958.472343,Cat,seat_location,back
+1696969026.0771332,Cat,collecting_data,true
+1696969036.80601,Cat,sitting_on_bus,true
+1696969053.5889301,Cat,seat_location,back
+1696969091.392139,Cat,collecting_data,false
+1696969105.077849,Cat,collecting_data,true
+1696970582.68227,Squid,collecting_data,true
+1696970750.99679,Squid,sitting_on_bus,true
+1696970767.722892,Squid,seat_location,middle
+1696973202.625958,Cat,collecting_data,true
+1696973207.758666,Cat,sitting_on_bus,true
+1696973224.161613,Cat,seat_location,front
+1696973418.806654,Cat,collecting_data,false
+1696973959.540658,Papyrus Plants,collecting_data,true
+1696973965.122686,Papyrus Plants,sitting_on_bus,true
+1696973982.6393309,Papyrus Plants,seat_location,middle
+1696974341.981619,Papyrus Plants,collecting_data,false
+1696981098.338861,Zebra,collecting_data,true
+1696981289.95524,Zebra,sitting_on_bus,true
+1696981305.159059,Zebra,seat_location,front
+1696981389.336392,Zebra,collecting_data,false
+1697049212.684012,Squid,collecting_data,true
+1697049229.339282,Squid,sitting_on_bus,true
+1697049244.47467,Squid,seat_location,middle
+1697050417.37694,Cat,collecting_data,true
+1697050424.773447,Cat,sitting_on_bus,true
+1697050442.203881,Cat,seat_location,back
+1697050665.601409,Cat,collecting_data,true
+1697050668.899698,Cat,sitting_on_bus,true
+1697050685.520372,Cat,seat_location,back
+1697050805.731806,Cat,collecting_data,false
+1697069849.965275,Cat,collecting_data,true
+1697069963.166717,Cat,sitting_on_bus,true
+1697069980.0039902,Cat,seat_location,front
+1697070060.908884,Cat,collecting_data,false
+1697127554.3414822,Squid,collecting_data,true
+1697127582.510308,Squid,sitting_on_bus,true
+1697127598.967329,Squid,seat_location,middle
+1697137177.830399,Cat,sitting_on_bus,true
+1697137194.809094,Cat,collecting_data,true
+1697137198.1832628,Cat,sitting_on_bus,true
+1697137215.4983978,Cat,seat_location,back
+1697137295.965261,Cat,collecting_data,false
+1697141227.116288,Cat,collecting_data,true
+1697141408.300661,Cat,sitting_on_bus,true
+1697141427.927208,Cat,seat_location,middle
+1697141496.031429,Cat,collecting_data,false
+1697141877.712697,Liverleaf,collecting_data,true
+1697141958.483932,Liverleaf,collecting_data,true
+1697156834.009931,Zebra,collecting_data,true
+1697156986.337132,Zebra,sitting_on_bus,true
+1697157004.764028,Zebra,seat_location,back
+1697157292.7607121,Zebra,collecting_data,false
+1697165386.377019,Jaguar,collecting_data,true
+1697165421.347229,Jaguar,sitting_on_bus,true
+1697165437.3232589,Jaguar,seat_location,back
+1697165640.270869,Jaguar,collecting_data,false
+1697166129.7326632,Liverleaf,collecting_data,true
+1697166132.827211,Liverleaf,sitting_on_bus,true
+1697166295.395101,Liverleaf,seat_location,back
+1697166469.028386,Liverleaf,collecting_data,false
+1697213493.468001,Shrimp,collecting_data,true
+1697213497.583555,Shrimp,sitting_on_bus,true
+1697213530.374114,Shrimp,seat_location,back
+1697213605.30233,Shrimp,collecting_data,false
+1697250526.490124,Guinea pig,collecting_data,true
+1697250530.678955,Guinea pig,sitting_on_bus,true
+1697250547.278463,Guinea pig,seat_location,back
+1697250774.2728739,Guinea pig,collecting_data,false
+1697260423.918416,Guinea pig,collecting_data,true
+1697260427.093883,Guinea pig,sitting_on_bus,true
+1697260443.322761,Guinea pig,seat_location,back
+1697260652.081606,Guinea pig,collecting_data,false
+1697317791.6571012,Papyrus Plants,collecting_data,true
+1697317810.277467,Papyrus Plants,sitting_on_bus,true
+1697317827.753567,Papyrus Plants,seat_location,back
+1697318795.315012,Papyrus Plants,collecting_data,false
+1697338444.488019,Liverleaf,collecting_data,true
+1697338482.7151098,Liverleaf,sitting_on_bus,true
+1697338499.293151,Liverleaf,seat_location,middle
+1697338902.526754,Liverleaf,collecting_data,false
+1697493069.9663959,Papyrus Plants,collecting_data,true
+1697493073.65855,Papyrus Plants,sitting_on_bus,true
+1697493089.88898,Papyrus Plants,seat_location,back
+1697493554.993421,Papyrus Plants,collecting_data,false
+1697507778.49933,Liverleaf,collecting_data,true
+1697507791.748211,Liverleaf,sitting_on_bus,true
+1697507808.047378,Liverleaf,seat_location,front
+1697507957.8957062,Liverleaf,seat_location,middle
+1697508293.620328,Liverleaf,collecting_data,false
+1697559799.9529572,Zebra,collecting_data,true
+1697559873.0125542,Zebra,sitting_on_bus,true
+1697559890.462435,Zebra,seat_location,middle
+1697560311.503942,Squid,collecting_data,true
+1697560321.018575,Squid,sitting_on_bus,true
+1697560336.886759,Squid,seat_location,back
+1697560586.606989,Squid,collecting_data,false
+1697560593.5070791,Squid,collecting_data,true
+1697560802.715549,Zebra,collecting_data,false
+1697576018.7383652,Papyrus Plants,collecting_data,true
+1697576037.896731,Papyrus Plants,sitting_on_bus,true
+1697576138.186368,Papyrus Plants,seat_location,middle
+1697576150.7496738,Papyrus Plants,collecting_data,false
+1697576164.742799,Papyrus Plants,collecting_data,true
+1697577956.168726,Papyrus Plants,collecting_data,true
+1697577959.814337,Papyrus Plants,sitting_on_bus,true
+1697577976.902573,Papyrus Plants,seat_location,middle
+1697578568.452112,Papyrus Plants,collecting_data,false
+1697578627.146644,Squid,collecting_data,true
+1697578824.754959,Squid,sitting_on_bus,true
+1697578841.3855371,Squid,seat_location,middle
+1697639471.953435,Gold Mops,collecting_data,true
+1697639533.372006,Gold Mops,sitting_on_bus,true
+1697639549.138206,Gold Mops,seat_location,middle
+1697639617.7255359,Gold Mops,collecting_data,false
+1697639629.953141,Gold Mops,collecting_data,true
+1697639634.86342,Gold Mops,sitting_on_bus,true
+1697639650.505261,Gold Mops,seat_location,middle
+1697639758.9715672,Gold Mops,collecting_data,false
+1697655470.2062511,Papyrus Plants,collecting_data,true
+1697655541.981904,Papyrus Plants,sitting_on_bus,true
+1697655560.308414,Papyrus Plants,seat_location,middle
+1697655619.778277,Papyrus Plants,collecting_data,false
+1697668797.169022,Squid,collecting_data,true
+1697668808.1998029,Squid,sitting_on_bus,true
+1697668825.313446,Squid,seat_location,middle
+1697674422.037056,Squid,collecting_data,true
+1697738139.215786,Zebra,collecting_data,true
+1697738161.4487,Zebra,sitting_on_bus,true
+1697738179.924222,Zebra,seat_location,middle
+1697738302.328199,Zebra,collecting_data,false
+1697738314.214357,Zebra,collecting_data,true
+1697738319.187447,Zebra,sitting_on_bus,false
+1697740702.428728,Squid,collecting_data,true
+1697740983.4414601,Squid,sitting_on_bus,true
+1697740998.204036,Squid,seat_location,front
+1697741274.690876,Squid,collecting_data,false
+1697741828.4275842,Squid,collecting_data,true
+1697753944.4715261,Cat,collecting_data,true
+1697753948.733289,Cat,sitting_on_bus,true
+1697753965.6631021,Cat,seat_location,back
+1697754083.7364259,Cat,collecting_data,false
+1697757850.3939772,Papyrus Plants,collecting_data,true
+1697758395.265043,Papyrus Plants,sitting_on_bus,true
+1697758411.79419,Papyrus Plants,seat_location,front
+1697759301.981525,Shrimp,collecting_data,true
+1697759306.30303,Shrimp,sitting_on_bus,true
+1697759322.041177,Shrimp,seat_location,front
+1697759459.86087,Gold Mops,collecting_data,true
+1697759464.497937,Gold Mops,sitting_on_bus,true
+1697759481.282053,Gold Mops,seat_location,front
+1697759544.0638971,Shrimp,collecting_data,false
+1697759793.7855701,Gold Mops,seat_location,back
+1697759860.415347,Gold Mops,collecting_data,false
+1697759871.8637462,Gold Mops,collecting_data,true
+1697759876.014584,Gold Mops,sitting_on_bus,true
+1697759910.504246,Gold Mops,seat_location,back
+1697760293.2146559,Gold Mops,collecting_data,false
+1697760329.419791,Papyrus Plants,collecting_data,false
+1697771860.4004622,Guinea pig,collecting_data,true
+1697771871.058017,Guinea pig,sitting_on_bus,true
+1697771919.521618,Guinea pig,seat_location,back
+1697772139.728726,Guinea pig,collecting_data,false
+1697774575.959581,Guinea pig,collecting_data,true
+1697774640.6846251,Guinea pig,sitting_on_bus,true
+1697774659.543145,Guinea pig,seat_location,back
+1697774896.168494,Guinea pig,collecting_data,false
+1697825134.369348,Squid,collecting_data,true
+1697825137.8908238,Squid,sitting_on_bus,true
+1697825154.896107,Squid,seat_location,front
+1697827807.4223619,Cat,collecting_data,true
+1697827814.494053,Cat,sitting_on_bus,true
+1697827830.9809608,Cat,seat_location,back
+1697827992.751786,Cat,collecting_data,false
+1698084019.709649,Papyrus Plants,collecting_data,true
+1698084315.871863,Papyrus Plants,sitting_on_bus,true
+1698084335.283698,Papyrus Plants,seat_location,front
+1698084648.669808,Papyrus Plants,collecting_data,false
+1698086934.545038,Shrimp,collecting_data,true
+1698086961.505924,Cat,collecting_data,true
+1698086964.65609,Shrimp,sitting_on_bus,true
+1698086981.945693,Shrimp,seat_location,middle
+1698087076.398831,Shrimp,collecting_data,false
+1698095879.798567,Cat,collecting_data,true
+1698095888.720161,Cat,sitting_on_bus,true
+1698095905.551413,Cat,seat_location,front
+1698096022.897928,Cat,collecting_data,false
+1698096411.938201,Papyrus Plants,collecting_data,true
+1698096428.2821078,Papyrus Plants,sitting_on_bus,true
+1698096542.370438,Papyrus Plants,seat_location,front
+1698096708.509908,Papyrus Plants,collecting_data,false
+1698096715.940414,Papyrus Plants,collecting_data,true
+1698096804.829145,Papyrus Plants,sitting_on_bus,true
+1698096828.312166,Papyrus Plants,seat_location,front
+1698097210.413445,Papyrus Plants,collecting_data,false
+1698097237.937481,Papyrus Plants,collecting_data,true
+1698105135.451555,Papyrus Plants,collecting_data,true
+1698105900.845612,Papyrus Plants,sitting_on_bus,true
+1698105917.4005752,Papyrus Plants,seat_location,front
+1698106158.734653,Squid,collecting_data,true
+1698106179.8196921,Squid,sitting_on_bus,true
+1698106195.452214,Squid,seat_location,middle
+1698106440.508068,Cat,collecting_data,true
+1698106488.72862,Cat,collecting_data,true
+1698106523.069203,Cat,sitting_on_bus,true
+1698106539.6192598,Cat,seat_location,middle
+1698106588.8815498,Cat,collecting_data,false
+1698106589.073676,Squid,collecting_data,false
+1698107497.4014149,Papyrus Plants,collecting_data,false
+1698159113.461395,Gold Mops,collecting_data,true
+1698159146.4698691,Gold Mops,sitting_on_bus,true
+1698159186.428214,Gold Mops,seat_location,middle
+1698159268.20245,Gold Mops,collecting_data,false
+1698159281.461901,Gold Mops,collecting_data,true
+1698159284.822383,Gold Mops,sitting_on_bus,true
+1698159302.0127192,Gold Mops,seat_location,middle
+1698159424.709852,Gold Mops,collecting_data,false
+1698164830.143266,Papyrus Plants,collecting_data,true
+1698164835.0071158,Papyrus Plants,sitting_on_bus,true
+1698164853.9033961,Papyrus Plants,seat_location,front
+1698166074.042839,Zebra,collecting_data,true
+1698166165.3227692,Zebra,sitting_on_bus,true
+1698166198.6060581,Zebra,seat_location,middle
+1698177530.1387649,Papyrus Plants,collecting_data,true
+1698177538.0394921,Papyrus Plants,sitting_on_bus,true
+1698177566.02254,Papyrus Plants,seat_location,front
+1698178506.138504,Papyrus Plants,collecting_data,false
+1698184922.511745,Cat,collecting_data,true
+1698184933.197703,Cat,sitting_on_bus,true
+1698184949.953902,Cat,seat_location,front
+1698185093.387344,Cat,collecting_data,false
+1698192199.592613,Gold Mops,collecting_data,true
+1698250157.000804,Shrimp,collecting_data,true
+1698250175.333067,Shrimp,sitting_on_bus,true
+1698250192.831201,Shrimp,seat_location,back
+1698250337.227604,Shrimp,collecting_data,false
+1698250351.001227,Shrimp,collecting_data,true
+1698260908.978084,Cat,collecting_data,true
+1698260955.961628,Cat,sitting_on_bus,true
+1698260972.979083,Cat,seat_location,back
+1698261084.9747791,Cat,collecting_data,true
+1698263376.7364578,Squid,collecting_data,true
+1698275980.810607,Shrimp,collecting_data,true
+1698275984.973623,Shrimp,sitting_on_bus,true
+1698276002.828384,Shrimp,seat_location,middle
+1698276033.5617828,Shrimp,collecting_data,false
+1698279528.35111,Cat,collecting_data,true
+1698342807.500426,Zebra,collecting_data,true
+1698342829.8381891,Zebra,sitting_on_bus,true
+1698342847.802562,Zebra,seat_location,middle
+1698343041.0327349,Zebra,collecting_data,false
+1698343313.242179,Papyrus Plants,collecting_data,true
+1698345637.893178,Squid,collecting_data,true
+1698345672.349585,Squid,sitting_on_bus,true
+1698351178.9287739,Creeping,collecting_data,true
+1698351187.271878,Creeping,sitting_on_bus,true
+1698351222.831893,Creeping,seat_location,back
+1698351405.873507,Creeping,collecting_data,answered no
+1698351429.613803,Creeping,seat_location,back
+1698351471.83916,Northern Blue,collecting_data,true
+1698351608.348916,Creeping,collecting_data,false
+1698360899.816237,Papyrus Plants,collecting_data,true
+1698360940.03722,Papyrus Plants,sitting_on_bus,true
+1698360957.238357,Papyrus Plants,seat_location,back
+1698361751.403985,Northern Blue,collecting_data,true
+1698361781.49645,Northern Blue,sitting_on_bus,true
+1698361798.270897,Northern Blue,seat_location,front
+1698362090.582011,Papyrus Plants,collecting_data,true
+1698362643.56427,Papyrus Plants,sitting_on_bus,true
+1698362660.858275,Papyrus Plants,seat_location,front
+1698364737.158139,Papyrus Plants,collecting_data,false
+1698417501.644419,Shrimp,collecting_data,true
+1698417518.152447,Shrimp,sitting_on_bus,true
+1698417537.469943,Shrimp,seat_location,back
+1698417670.2357202,Shrimp,collecting_data,false
+1698443706.6360621,Papyrus Plants,collecting_data,true
+1698443740.1729999,Papyrus Plants,sitting_on_bus,true
+1698443756.474574,Papyrus Plants,seat_location,front
+1698444158.512366,Papyrus Plants,collecting_data,false
+1698676644.092682,Shrimp,collecting_data,true
+1698676671.674576,Shrimp,sitting_on_bus,true
+1698676689.749261,Shrimp,seat_location,middle
+1698676801.356647,Shrimp,collecting_data,false
+1698676910.468116,Gold Mops,collecting_data,true
+1698677056.8922238,Gold Mops,sitting_on_bus,true
+1698677071.833719,Gold Mops,seat_location,middle
+1698677103.139708,Gold Mops,collecting_data,false
+1698677116.4671211,Gold Mops,collecting_data,true
+1698677122.1810122,Gold Mops,sitting_on_bus,true
+1698677139.351478,Gold Mops,seat_location,middle
+1698677291.833799,Gold Mops,collecting_data,false
+1698677305.471548,Gold Mops,collecting_data,true
+1698677309.360671,Gold Mops,sitting_on_bus,true
+1698677325.108954,Gold Mops,seat_location,middle
+1698677354.766367,Gold Mops,collecting_data,false
+1698701620.8958879,Papyrus Plants,collecting_data,true
+1698701829.50379,Papyrus Plants,sitting_on_bus,true
+1698701850.6509,Papyrus Plants,seat_location,front
+1698702047.311681,Papyrus Plants,collecting_data,false
+1698706797.293329,Zebra,collecting_data,true
+1698706856.543305,Zebra,sitting_on_bus,true
+1698706875.193707,Zebra,seat_location,back
+1698707099.68999,Zebra,collecting_data,false
+1698707115.286406,Zebra,collecting_data,true
+1698797792.274652,Zebra,collecting_data,true
+1698797884.1153321,Zebra,sitting_on_bus,true
+1698797889.826412,Zebra,seat_location,middle
+1698798310.898001,Zebra,collecting_data,false
+1698849409.454907,Shrimp,collecting_data,true
+1698849421.769153,Shrimp,sitting_on_bus,true
+1698849438.144483,Shrimp,seat_location,middle
+1698849557.185633,Shrimp,collecting_data,false
+1698855033.154881,Shrimp,collecting_data,true
+1698855038.621546,Shrimp,sitting_on_bus,true
+1698855054.121263,Shrimp,seat_location,middle
+1698855230.211956,Shrimp,collecting_data,false
+1698863579.332034,Squid,collecting_data,true
+1698863716.3585238,Squid,sitting_on_bus,true
+1698863730.788194,Squid,seat_location,front
+1698871505.411623,Zebra,collecting_data,true
+1698871528.2258182,Zebra,sitting_on_bus,true
+1698871543.707084,Zebra,seat_location,middle
+1698871945.0438418,Zebra,collecting_data,true
+1698871966.3621368,Zebra,sitting_on_bus,true
+1698871983.3481932,Zebra,seat_location,middle
+1698872057.7741299,Zebra,collecting_data,false
+1698874812.979152,Northern Blue,collecting_data,true
+1698874824.012186,Northern Blue,sitting_on_bus,true
+1698874841.877777,Northern Blue,seat_location,back
+1698874924.266819,Cat,collecting_data,true
+1698875080.4965181,Cat,sitting_on_bus,true
+1698875097.074012,Cat,seat_location,back
+1698875149.6687732,Northern Blue,collecting_data,false
+1698875150.039535,Cat,collecting_data,false
+1698937445.017105,Gold Mops,collecting_data,true
+1698937649.836869,Gold Mops,sitting_on_bus,true
+1698937682.645814,Gold Mops,seat_location,middle
+1698937921.009808,Gold Mops,collecting_data,false
+1698940937.3917298,Octopus,collecting_data,true
+1698941087.929781,Octopus,collecting_data,true
+1698951904.500876,Papyrus Plants,collecting_data,true
+1698951912.56862,Papyrus Plants,sitting_on_bus,true
+1698951928.96751,Papyrus Plants,seat_location,middle
+1698952294.073267,Papyrus Plants,collecting_data,false
+1698960679.3927069,Papyrus Plants,collecting_data,true
+1698960897.0166159,Papyrus Plants,sitting_on_bus,true
+1698960906.251394,Papyrus Plants,seat_location,back
+1698960917.6590571,Papyrus Plants,collecting_data,false
+1698960930.391216,Papyrus Plants,collecting_data,true
+1698962364.734086,Papyrus Plants,sitting_on_bus,true
+1698962386.027378,Papyrus Plants,seat_location,back
+1698962748.827536,Papyrus Plants,collecting_data,false
+1698974244.16503,Guinea pig,collecting_data,true
+1698974247.543803,Guinea pig,sitting_on_bus,true
+1698974264.8674831,Guinea pig,seat_location,front
+1698974538.450249,Guinea pig,collecting_data,false
+1699022335.281522,Shrimp,collecting_data,true
+1699022345.8545752,Shrimp,sitting_on_bus,true
+1699022360.867735,Shrimp,seat_location,back
+1699022466.041501,Shrimp,collecting_data,false
+1699037459.286026,Shrimp,collecting_data,true
+1699037462.326699,Shrimp,sitting_on_bus,true
+1699037479.291825,Shrimp,seat_location,back
+1699037560.243882,Shrimp,collecting_data,false
+1699037779.248205,Squid,collecting_data,true
+1699042047.601447,Shrimp,collecting_data,true
+1699042091.623888,Shrimp,sitting_on_bus,true
+1699042319.503778,Shrimp,collecting_data,true
+1699285087.899075,Shrimp,collecting_data,true
+1699285133.753384,Shrimp,sitting_on_bus,true
+1699285151.210562,Shrimp,seat_location,back
+1699285209.498616,Shrimp,collecting_data,false
+1699302938.5702682,Zebra,collecting_data,true
+1699302970.69769,Zebra,sitting_on_bus,true
+1699302987.3651419,Zebra,seat_location,middle
+1699303187.861378,Zebra,collecting_data,true
+1699303207.276593,Zebra,sitting_on_bus,true
+1699303224.7510529,Zebra,seat_location,middle
+1699303844.168644,Zebra,collecting_data,false
+1699390931.875445,Liverleaf,collecting_data,true
+1699474757.643322,Northern Blue,collecting_data,true
+1699474776.76541,Northern Blue,sitting_on_bus,true
+1699474793.886176,Northern Blue,seat_location,middle
+1699475212.477526,Northern Blue,collecting_data,false
+1699551761.134454,Squid,collecting_data,true
+1699551770.689076,Squid,sitting_on_bus,true
+1699551786.65342,Squid,seat_location,back
+1699551866.786343,Squid,collecting_data,false
+1699564078.089929,Liverleaf,collecting_data,true
+1699850147.98052,Liverleaf,collecting_data,true
+1699850313.933717,Liverleaf,sitting_on_bus,true
+1699850347.9394999,Liverleaf,seat_location,back
+1699850381.408883,Liverleaf,collecting_data,false
+1699905944.7918591,Shrimp,collecting_data,true
+1699905976.1788921,Shrimp,sitting_on_bus,true
+1699905992.705178,Shrimp,seat_location,middle
+1699906141.068547,Shrimp,collecting_data,false
+1699926235.3307009,Northern Blue,collecting_data,true
+1699926271.789737,Northern Blue,sitting_on_bus,true
+1699926289.031235,Northern Blue,seat_location,front
+1699926346.003827,Northern Blue,collecting_data,false
+1699931125.386806,Liverleaf,collecting_data,true
+1699931149.655384,Liverleaf,sitting_on_bus,true
+1699931168.3525,Liverleaf,seat_location,back
+1699931541.21226,Liverleaf,collecting_data,false
+1700068056.9661431,Shrimp,collecting_data,true
+1700068065.763215,Shrimp,sitting_on_bus,true
+1700068081.695043,Shrimp,seat_location,middle
+1700068239.168676,Shrimp,collecting_data,false
+1700068263.9654589,Shrimp,collecting_data,true
+1700102734.681629,Liverleaf,collecting_data,true
+1700102745.586296,Liverleaf,sitting_on_bus,true
+1700102757.61146,Liverleaf,seat_location,middle
+1700102862.784099,Liverleaf,collecting_data,false
+1700170557.399823,Northern Blue,collecting_data,true
+1700170580.791636,Northern Blue,sitting_on_bus,true
+1700170597.1064649,Northern Blue,seat_location,middle
+1700182519.729363,Rhapsody Blue,collecting_data,true
+1700182580.0992641,Rhapsody Blue,sitting_on_bus,true
+1700182597.1690822,Rhapsody Blue,seat_location,back
+1700182932.1987529,Rhapsody Blue,collecting_data,false
+1700235518.257297,Shrimp,collecting_data,true
+1700235521.890892,Shrimp,sitting_on_bus,true
+1700235538.6079879,Shrimp,seat_location,back
+1700235649.959498,Shrimp,collecting_data,false
+1700240857.872618,Shrimp,collecting_data,true
+1700240869.433002,Shrimp,sitting_on_bus,true
+1700240885.707357,Shrimp,seat_location,back
+1700241017.73765,Shrimp,collecting_data,false
+1700241031.873472,Shrimp,collecting_data,true
+1700250790.255268,Shrimp,collecting_data,true
+1700250829.045789,Shrimp,sitting_on_bus,true
+1700250845.678671,Shrimp,seat_location,front
+1700250912.718044,Shrimp,collecting_data,false
+1700266366.8856258,Rhapsody Blue,collecting_data,true
+1700266382.7814589,Rhapsody Blue,sitting_on_bus,true
+1700266398.362977,Rhapsody Blue,seat_location,middle
+1700269584.148561,Rhapsody Blue,collecting_data,true
+1700494841.1264129,Shrimp,collecting_data,true
+1700494855.978304,Shrimp,sitting_on_bus,true
+1700494873.8699899,Shrimp,seat_location,middle
+1700495004.855774,Shrimp,collecting_data,false
+1700500162.6565619,Shrimp,collecting_data,true
+1700500186.23301,Shrimp,collecting_data,true
+1700500189.207767,Shrimp,sitting_on_bus,true
+1700500205.5075889,Shrimp,seat_location,back
+1700500332.5108628,Shrimp,collecting_data,false
+1700509730.084811,Shrimp,collecting_data,true
+1700509739.421489,Shrimp,sitting_on_bus,true
+1700509754.596952,Shrimp,seat_location,back
+1700509994.947324,Shrimp,collecting_data,false
+1700519649.0147681,Papyrus Plants,collecting_data,true
+1700519653.243235,Papyrus Plants,sitting_on_bus,true
+1700519669.417403,Papyrus Plants,seat_location,back
+1700520274.677114,Papyrus Plants,collecting_data,false
+1700520312.0100021,Papyrus Plants,collecting_data,true
+1700520360.7136831,Papyrus Plants,collecting_data,true
+1700520391.8348022,Papyrus Plants,sitting_on_bus,true
+1700520408.3590531,Papyrus Plants,seat_location,front
+1700520524.3648329,Papyrus Plants,seat_location,front
+1700520552.000335,Papyrus Plants,collecting_data,false
+1700521264.91995,Papyrus Plants,collecting_data,true
+1700521411.778758,Papyrus Plants,sitting_on_bus,true
+1700521428.691691,Papyrus Plants,seat_location,middle
+1700521546.2855759,Papyrus Plants,collecting_data,false
+1700527838.72618,Liverleaf,collecting_data,true
+1700527953.949295,Liverleaf,sitting_on_bus,true
+1700527959.147318,Liverleaf,seat_location,front
+1700600758.301583,Gold Mops,collecting_data,true
+1700600771.59888,Gold Mops,sitting_on_bus,true
+1700600788.647342,Gold Mops,seat_location,middle
+1700601163.8704128,Gold Mops,collecting_data,false
+1700601584.762974,Shrimp,collecting_data,true
+1700601641.774116,Shrimp,sitting_on_bus,true
+1700601658.060993,Shrimp,seat_location,front
+1700601822.799727,Shrimp,collecting_data,false
+1700607340.674823,Shrimp,collecting_data,true
+1700607370.402069,Shrimp,sitting_on_bus,true
+1700607387.701967,Shrimp,seat_location,back
+1700607530.2723079,Shrimp,collecting_data,false
+1701122719.9721441,Papyrus Plants,collecting_data,true
+1701123598.281365,Papyrus Plants,sitting_on_bus,true
+1701123615.074271,Papyrus Plants,seat_location,front
+1701123818.8860831,Papyrus Plants,collecting_data,false
+1701135736.0258079,Papyrus Plants,sitting_on_bus,true
+1701216382.131791,Zebra,collecting_data,true
+1701216418.520413,Zebra,sitting_on_bus,true
+1701216436.603477,Zebra,seat_location,back
+1701216545.1311002,Zebra,collecting_data,false
+1701272414.334547,Shrimp,collecting_data,true
+1701272429.080429,Shrimp,sitting_on_bus,true
+1701272448.4930592,Shrimp,seat_location,back
+1701272582.977334,Shrimp,collecting_data,false
+1701277780.190062,Shrimp,collecting_data,true
+1701277787.215886,Shrimp,sitting_on_bus,true
+1701277802.238136,Shrimp,seat_location,back
+1701277973.589165,Shrimp,collecting_data,false
+1701286396.134794,Rhododendrons,collecting_data,true
+1701286433.202596,Rhododendrons,sitting_on_bus,true
+1701286452.683244,Rhododendrons,seat_location,middle
+1701286603.663988,Rhododendrons,collecting_data,false
+1701306205.070232,Liverleaf,collecting_data,true
+1701306287.7413101,Liverleaf,sitting_on_bus,true
+1701306384.8339,Liverleaf,seat_location,middle
+1701306703.353298,Liverleaf,collecting_data,false
+1701311303.00286,Zebra,collecting_data,true
+1701313422.495304,Liverleaf,collecting_data,true
+1701313454.859236,Liverleaf,sitting_on_bus,true
+1701313473.23916,Liverleaf,seat_location,middle
+1701313685.724276,Liverleaf,collecting_data,false
+1701313695.499465,Liverleaf,collecting_data,true
+1701381516.1560988,Gold Mops,collecting_data,true
+1701381519.7286,Gold Mops,sitting_on_bus,true
+1701381535.9998,Gold Mops,seat_location,middle
+1701381626.0525022,Gold Mops,collecting_data,true
+1701381629.408719,Gold Mops,sitting_on_bus,true
+1701381646.0814571,Gold Mops,seat_location,middle
+1701381704.569015,Gold Mops,collecting_data,false
+1701381717.052536,Gold Mops,collecting_data,true
+1701381720.664001,Gold Mops,sitting_on_bus,true
+1701381737.724395,Gold Mops,seat_location,middle
+1701381767.794081,Gold Mops,collecting_data,false
+1701391421.759028,Liverleaf,collecting_data,true
+1701391430.963398,Liverleaf,sitting_on_bus,true
+1701391673.410101,Liverleaf,seat_location,middle
+1701391689.407611,Liverleaf,collecting_data,false
+1701409746.898804,Liverleaf,collecting_data,true
+1701409811.9331899,Liverleaf,sitting_on_bus,true
+1701409851.699603,Liverleaf,seat_location,front
+1701410286.173615,Liverleaf,collecting_data,false
+1701444995.72681,Shrimp,collecting_data,true
+1701445009.5102181,Shrimp,sitting_on_bus,true
+1701445025.2171621,Shrimp,seat_location,back
+1701445125.23659,Shrimp,collecting_data,false
+1701450533.469863,Shrimp,collecting_data,true
+1701450611.768883,Shrimp,sitting_on_bus,true
+1701450629.4888182,Shrimp,seat_location,front
+1701451004.1157131,Shrimp,collecting_data,false
+1701485502.5371752,Liverleaf,collecting_data,true
+1701704382.344154,Shrimp,collecting_data,true
+1701704402.241148,Shrimp,collecting_data,true
+1701704405.481639,Shrimp,sitting_on_bus,true
+1701704422.000037,Shrimp,seat_location,front
+1701704552.39552,Shrimp,collecting_data,false
+1701709948.990098,Shrimp,collecting_data,true
+1701709959.2166162,Shrimp,sitting_on_bus,true
+1701709975.505676,Shrimp,seat_location,back
+1701710912.21283,Shrimp,collecting_data,false
+1701719210.902509,Squid,collecting_data,true
+1701719215.5861778,Squid,sitting_on_bus,true
+1701719230.639775,Squid,seat_location,back
+1701719532.548877,Squid,collecting_data,false
+1701729505.853166,Northern Blue,collecting_data,true
+1701729525.927048,Northern Blue,sitting_on_bus,true
+1701729542.7627258,Northern Blue,seat_location,middle
+1701729873.5946898,Northern Blue,collecting_data,false
+1701729886.676686,Papyrus Plants,collecting_data,true
+1701730031.602931,Papyrus Plants,collecting_data,true
+1701730034.574091,Papyrus Plants,sitting_on_bus,true
+1701730068.7770262,Papyrus Plants,seat_location,front
+1701730098.662784,Papyrus Plants,collecting_data,false
+1701799002.8514771,Zebra,collecting_data,true
+1701810339.932252,Liverleaf,collecting_data,true
+1701810399.5837522,Liverleaf,collecting_data,true
+1701810467.3340712,Liverleaf,collecting_data,true
+1701810634.036409,Liverleaf,collecting_data,true
+1701892767.492282,Liverleaf,collecting_data,true
+1701905983.715324,Squid,collecting_data,true
+1701905986.56936,Squid,sitting_on_bus,true
+1701906003.849526,Squid,seat_location,back
+1701906308.358159,Squid,collecting_data,false
+1701973573.291625,Papyrus Plants,collecting_data,true
+1701973583.106811,Papyrus Plants,sitting_on_bus,true
+1701973615.1285071,Papyrus Plants,seat_location,middle
+1701974203.019697,Papyrus Plants,collecting_data,false
+1701974811.533829,Papyrus Plants,collecting_data,true
+1701974861.7296128,Papyrus Plants,sitting_on_bus,true
+1701974878.465392,Papyrus Plants,seat_location,front
+1701975110.853458,Papyrus Plants,collecting_data,false
+1701975785.8476,Papyrus Plants,collecting_data,true
+1701975800.3326468,Papyrus Plants,sitting_on_bus,true
+1701975818.589194,Papyrus Plants,seat_location,front
+1701976213.507657,Papyrus Plants,collecting_data,false
+1701978199.623128,Papyrus Plants,collecting_data,true
+1701978297.707066,Papyrus Plants,sitting_on_bus,true
+1701978329.3398561,Papyrus Plants,seat_location,front
+1701979294.017045,Papyrus Plants,collecting_data,false
+1701982970.24864,Liverleaf,collecting_data,true
+1701983005.0283651,Liverleaf,collecting_data,true
+1701990663.080826,Gold Mops,collecting_data,true
+1701990667.579596,Gold Mops,sitting_on_bus,true
+1701990683.8851871,Gold Mops,seat_location,front
+1702050036.1485128,Shrimp,collecting_data,true
+1702050039.7066789,Shrimp,sitting_on_bus,true
+1702050055.8391619,Shrimp,seat_location,back
+1702050177.9366431,Shrimp,collecting_data,false
+1702053986.447217,Squid,collecting_data,true
+1702054201.611133,Squid,sitting_on_bus,true
+1702054217.247501,Squid,seat_location,back
+1702074367.0274081,Zebra,collecting_data,true
+1702074387.034791,Zebra,sitting_on_bus,true
+1702074405.232263,Zebra,seat_location,middle
+1702075052.975922,Zebra,collecting_data,false
+1702081863.105953,Zebra,collecting_data,true
+1702081903.352028,Zebra,sitting_on_bus,true
+1702081921.6102471,Zebra,seat_location,middle
+1702082303.271357,Zebra,collecting_data,false
+1702106052.652257,Shrimp,collecting_data,true
+1702106055.695912,Shrimp,sitting_on_bus,true
+1702106073.305729,Shrimp,seat_location,back
+1702106629.856317,Shrimp,collecting_data,false
+1702325950.44612,Papyrus Plants,collecting_data,true
+1702325954.608962,Papyrus Plants,sitting_on_bus,true
+1702325970.728785,Papyrus Plants,seat_location,middle
+1702326237.8669019,Papyrus Plants,collecting_data,false
+1702326248.444089,Papyrus Plants,collecting_data,true
+1702327232.344084,Papyrus Plants,sitting_on_bus,true
+1702327247.652976,Papyrus Plants,seat_location,front
+1702402204.626546,Zebra,collecting_data,true
+1702402224.872848,Zebra,sitting_on_bus,true
+1702402275.475449,Zebra,seat_location,middle
+1702402614.969376,Zebra,collecting_data,false
+1702414032.5995831,Papyrus Plants,collecting_data,true
+1702414199.3986359,Papyrus Plants,sitting_on_bus,true
+1702414216.2890658,Papyrus Plants,seat_location,middle
+1702415446.7476869,Papyrus Plants,collecting_data,false
+1702436675.1863508,Guinea pig,collecting_data,true
+1702438683.780788,Liverleaf,collecting_data,true
+1702503275.741825,Papyrus Plants,collecting_data,true
+1702515917.403678,Liverleaf,collecting_data,true
+1702515937.700787,Liverleaf,sitting_on_bus,true
+1702515972.573163,Liverleaf,seat_location,back
+1702610462.668501,Liverleaf,collecting_data,true
+1702610583.3375192,Liverleaf,sitting_on_bus,true
+1702610610.1781,Liverleaf,seat_location,back
+1702611007.0391278,Liverleaf,collecting_data,false
+1705430097.021023,Papyrus Plants,collecting_data,true
+1705430121.3735108,Papyrus Plants,sitting_on_bus,true
+1705430163.4494061,Papyrus Plants,seat_location,middle
+1705430304.448678,Papyrus Plants,collecting_data,false
+1705430314.058367,Papyrus Plants,collecting_data,true
+1705521496.207848,Northern Blue,collecting_data,true
+1705521509.285996,Northern Blue,sitting_on_bus,true
+1705521527.315759,Northern Blue,seat_location,middle
+1705617716.447274,Northern Blue,collecting_data,true
+1705617720.5998259,Northern Blue,sitting_on_bus,true
+1705617737.544331,Northern Blue,seat_location,middle
+1705618217.555081,Northern Blue,collecting_data,false
+1706571903.817,Papyrus Plants,collecting_data,true
+1706571966.929381,Papyrus Plants,sitting_on_bus,true
+1706571983.879315,Papyrus Plants,seat_location,front
+1706572127.225924,Papyrus Plants,collecting_data,false
+1706733490.7745771,Llama,collecting_data,true
+1706733515.4999352,Llama,sitting_on_bus,true
+1706733549.591696,Llama,seat_location,middle
+1706736709.979311,Northern Blue,collecting_data,true
+1706736790.214917,Northern Blue,sitting_on_bus,true
+1706736807.49996,Northern Blue,seat_location,middle
+1706737107.959873,Northern Blue,collecting_data,false
+1706927769.1334949,Northern Blue,collecting_data,true
+1706927782.199249,Northern Blue,sitting_on_bus,true
+1706927799.020541,Northern Blue,seat_location,middle
+1706928046.841656,Northern Blue,collecting_data,false

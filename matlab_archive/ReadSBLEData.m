@@ -40,9 +40,12 @@ DISPLAY_SEATS = true;
 % end  
 %%
 currdir = pwd;
-theDir = '/Users/manduchi/UCSC/Projects/NSF\ S\&CC\ 21/Data';
-fn_data = dir('/Users/manduchi/UCSC/Projects/NSF S&CC 21/Data/*_data*');
-fn_not = dir('/Users/manduchi/UCSC/Projects/NSF S&CC 21/Data/*notification*');
+theDir = '/Users/Jake/Computer Science/SBLE_project/data';
+% fn_data = dir('/Users/manduchi/UCSC/Projects/NSF S&CC 21/Data/*_data*');
+% fn_not = dir('/Users/manduchi/UCSC/Projects/NSF S&CC 21/Data/*notification*');
+
+fn_data = dir('/Users/Jake/Computer Science/SBLE_project/data/*_data*');
+fn_not = dir('/Users/Jake/Computer Science/SBLE_project/data/*notification*');
 
 SBLE_d = []; SBLE_n = [];
 for i = 1:length(fn_data)
@@ -140,6 +143,7 @@ for n = 1 :length(names)
          else
             % False alarm - let's just close it for now.
             disp('sitting_on_bus FALSE - do something!')
+            isTrip = false;
         end      
          % now find the end time. Before that, there should be a
          % seat_location
@@ -147,8 +151,9 @@ for n = 1 :length(names)
         % Either case, the next 'collecting_data' event is what we are
         % looking for
          
-       n_replied_no(n).t{tripInd} = 0;
+        n_replied_no(n).t{tripInd} = 0;
         
+        if isTrip %RM 9-27-24
          while ~(isequal(SBLE_n.message_type{JJ(i)}, 'collecting_data') && ~isequal(SBLE_n.message{JJ(i)}, 'answered no'))
  
              % RM 7/27/24 had to put this but not clear why
@@ -194,7 +199,7 @@ for n = 1 :length(names)
             end
 
 
-            if isTrip
+  %          if isTrip
                 % Mark the end of a trip
                 % RM 11/17: at this JJ(i), a collecting_data is received,
                 % unless we are at the end of collection
@@ -946,7 +951,7 @@ for n=1:length(totSspur)
         end
     end
 end
-disp(['Total number of spurious samples: ', int2str(totSspur_tot),' - ratio: ',num2str(totSspur_tot/totS_tot)])
+%disp(['Total number of spurious samples: ', int2str(totSspur_tot),' - ratio: ',num2str(totSspur_tot/totS_tot)])
 disp(['Total trip duration: ', int2str(tot_dr),' - ratio: ',num2str(totNS_tot/tot_dr)])
 
 disp(['Ratio of samples with both beacon vs at least one (in busses with both beacons): ',num2str(totNS1and2_tot/totNS1or2_tot)])

@@ -23,6 +23,7 @@ def get_SBLE_data():
         df = pd.read_csv(file)
         dfs.append(df)
     data = pd.concat(dfs, ignore_index=True)
+    data = data.sort_values(by=['timestamp'], ascending=True)
     return data
 
 def get_notif_data():
@@ -33,6 +34,7 @@ def get_notif_data():
         df = pd.read_csv(file)
         dfs.append(df)
     data = pd.concat(dfs, ignore_index=True)
+    data = data.sort_values(by=['timestamp'], ascending=True)
     return data
 
 def get_users(data):
@@ -124,12 +126,12 @@ def get_trips(sble_data, notif_data):
                 trips.append(new_trip)
                 
             nidx += 1
-        print("Trips created For user")
+        # print("Trips created For user")
 
         #Given empty trip objects which hold only notification data assigned to them,
         #use this information to fill the trip object with the appropriate sble data.
         #Also assigns trip major data for major which it saw for the longest duration.
-        print("Filling in data for trips")
+        # print("Filling in data for trips")
         for t in trips:
             start_idx = 0
             end_idx = 0
@@ -154,8 +156,8 @@ def get_trips(sble_data, notif_data):
             end_idx = sble_idx
             t.data = user_sble.iloc[start_idx:end_idx+1, :].copy()
 
-            print(t.data.shape)
-            t.print()
+            # print(t.data.shape)
+            # t.print()
             if t.data.shape[0] > 0:
                 major_dur = [0]*(t.data["major"].max() + 1)
 
@@ -176,10 +178,10 @@ def get_trips(sble_data, notif_data):
                 major_dur[major] = max(major_dur[major], freq)
                 t.major = major_dur.index(max(major_dur))
 
-        print("Data filled in")
+        # print("Data filled in")
         trips = group_sort(trips)
 
-        print("Finding trips to merge")
+        # print("Finding trips to merge")
         #With all trips for the given user filled, merge trips which may have been separated
         #due to app malfunction or user error
         if len(trips) > 1:
@@ -210,8 +212,8 @@ def get_trips(sble_data, notif_data):
                         t += 1
             
             trips = new_trips
-        print("Finished merging trips")
-        print()
+        # print("Finished merging trips")
+        # print()
         all_trips.extend(trips)
 
     add_trip_numbers(all_trips)

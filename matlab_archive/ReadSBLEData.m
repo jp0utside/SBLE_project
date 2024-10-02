@@ -20,7 +20,7 @@
 % Set Recorded from Real-World Bus Travel Events", submitted to TRB 2024.
 
 %%
-DISPLAY_DATA = false; 
+DISPLAY_DATA = true; 
 DISPLAY_PLOT = false; % If true, DISPLAY_DATA must also be true
 DISPLAY_SEATS = true;
 
@@ -51,12 +51,18 @@ SBLE_d = []; SBLE_n = [];
 for i = 1:length(fn_data)
     SBLE_d = vertcat(SBLE_d,readtable(fullfile(fn_data(i).folder,fn_data(i).name)));
 end
+
+SBLE_d = sortrows(SBLE_d,"timestamp","ascend");
+
 for i = 1:length(fn_not)
     SBLE_n = vertcat(SBLE_n,readtable(fullfile(fn_not(i).folder,fn_not(i).name)));
 end
 
+SBLE_n = sortrows(SBLE_n,"timestamp","ascend")
+
+
 %%
-stopsGTFS = readtable('stops.csv');
+stopsGTFS = readtable('/Users/Jake/Computer Science/SBLE_project/data/stops.csv');
 %%
 if DISPLAY_PLOT
     figure(1),clf

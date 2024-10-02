@@ -128,7 +128,7 @@ Function to import matlab data structures into Python.
 Data structures need to be saved in Archive/data_structures/, takes file/structure name without extension as input
 """
 def load_struct(struct_name):
-    path = '../Archive/data_structures/'
+    path = '../matlab_archive/data_structures/'
     path = path + struct_name + '.mat'
     obj = scipy.io.loadmat(path)
     struct = obj[struct_name]
@@ -268,7 +268,7 @@ def idx_to_table(idxs):
 """
 Composite function to load LL and LLpt structs, and merge them to compare Python and Matlab data parsing
 """
-def get_trip_idxs(include_pretrip = True, clip_trips = True, flatten = True):
+def get_trip_idxs(include_pretrip = True, clip_trips = False, flatten = False):
     ll = unpack(load_struct('LL'))
 
     if include_pretrip:
@@ -304,6 +304,22 @@ Function to evaluate the equivalency between a table of SBLE data and a list of 
 def check_trip_eq(trip, idxs):
     trip_list = trip.data["index"].tolist()
     return trip_list == idxs
+
+"""
+Function to turn a trips object into a multi-tiered array similar to how it is stored in Matlab.
+"""
+def trips_to_idxs(trips):
+    names = get_users(get_SBLE_data())
+    names = sort(names)
+
+    arr = [[] for i in range(len(names))]
+
+    for i in trips:
+        data = i.data["index"].tolist()
+        arr[names.index(i.user)].append(data)
+    
+    return arr
+
 
 """
 Function to try and replicate the prediction procedure from the end of the Matlab code.

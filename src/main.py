@@ -6,9 +6,9 @@ from train import *
 import random
 
 def main():
-    stop_data = get_stop_data()
-    sble_data = get_sble_data()
-    notif_data = get_notif_data()
+    # stop_data = get_stop_data()
+    # sble_data = get_sble_data()
+    # notif_data = get_notif_data()
     bad_MM = [2, 8, 21]
     hex_colors = [
         "#FF5733",  # Bright Red

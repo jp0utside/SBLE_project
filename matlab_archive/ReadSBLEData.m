@@ -52,7 +52,7 @@ for i = 1:length(fn_data)
     SBLE_d = vertcat(SBLE_d,readtable(fullfile(fn_data(i).folder,fn_data(i).name)));
 end
 
-SBLE_d = sortrows(SBLE_d,"timestamp","ascend");
+SBLE_d = sortrows(SBLE_d,["timestamp", "rssi"],"ascend");
 
 for i = 1:length(fn_not)
     SBLE_n = vertcat(SBLE_n,readtable(fullfile(fn_not(i).folder,fn_not(i).name)));

@@ -15,7 +15,7 @@ def get_stop_data():
     stop_data = pd.read_csv("/Users/Jake/Computer Science/SBLE_project/data/stops.csv")
     return stop_data
 
-def get_SBLE_data():
+def get_sble_data():
     dir_path = "/Users/Jake/Computer Science/SBLE_project/data"
     files = glob.glob(dir_path + "/*_data*")
     dfs = []
@@ -23,7 +23,8 @@ def get_SBLE_data():
         df = pd.read_csv(file)
         dfs.append(df)
     data = pd.concat(dfs, ignore_index=True)
-    data = data.sort_values(by=['timestamp'], ascending=True)
+    data = data.sort_values(by=['timestamp', 'rssi'], ascending=True)
+    data = data.reset_index(drop=True)
     return data
 
 def get_notif_data():
@@ -361,9 +362,9 @@ Single function to generate trip objects, including other parsing options
 """
 def get_trips_quick(clean_majors = True, clean_minors = False, merge = True, include_pretrips = True):
     if merge:
-        trips = group_sort(get_trips(get_SBLE_data(), get_notif_data()))
+        trips = group_sort(get_trips(get_sble_data(), get_notif_data()))
     else:
-        trips = group_sort(get_trips_unmerged(get_SBLE_data(), get_notif_data()))
+        trips = group_sort(get_trips_unmerged(get_sble_data(), get_notif_data()))
     for i in trips:
         if clean_majors:
             i.clean_majors()

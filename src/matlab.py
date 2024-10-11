@@ -161,6 +161,14 @@ NEW DATA ANALYSIS
         - Python logs: Merging Trips 0 and 1
                 Merging Trips 8 and 9
         - NEED TO FIX: my helper function to merge trips sets the new_trip.didNotMarkExit = False. Should be new_trip.didNotMarkExit = t2.didNotMarkExit
+        - NEED TO FIX: merging process only allows for the merging of TWO trips, and doesn't consider any additional. Need to make it better
+        - Now the trips merge for the python data, but still are unmerged for the matlab data. Not sure why
+    - THESE FIXES ALMOST FIXED EVERYTHING
+    - Current stats
+        - len(trips) = 490
+        - num matched: python - 467, matlab - 463 (have to figure out why uneven)
+        - num unmatched: python - matlab - 14
+        - num close: python - matlab - 9
 
 """
 

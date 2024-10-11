@@ -241,6 +241,7 @@ def get_trips(sble_data, notif_data, debug = False):
         #due to app malfunction or user error
         if len(trips) > 1:
             new_trips = []
+            new_trips.append(trips[0])
 
 
             #Merging trips based on the following criteria:
@@ -249,24 +250,17 @@ def get_trips(sble_data, notif_data, debug = False):
             #   3. Trip start times are within 20 minutes of each other
             #   4. Trips do not have conflicting seat reports
 
-            t = 0
-            while t < (len(trips)):
-                if t == (len(trips) - 1):
-                    new_trips.append(trips[-1])
-                    break
-                else:
-                    if (trips[t].didNotMarkExit == True) and (trips[t].major == trips[t+1].major) and (abs(trips[t].start - trips[t+1].start) <= 1200):
-                        if (trips[t].seat == trips[t+1].seat) | (not ((trips[t].seat != "none") and (trips[t+1].seat != "none"))):
-                            if debug:
-                                print("Merging Trips " + str(t) + " and " + str(t+1))
-                            new_trips.append(merge_trips(trips[t], trips[t+1]))
-                            t += 2
-                        else:
-                            new_trips.append(trips[t])
-                            t += 1
+            for t in range(1, len(trips)):
+                if (new_trips[-1].didNotMarkExit == True) and (new_trips[-1].major == trips[t].major) and (abs(trips[t].start - new_trips[-1].start) <= 1200):
+                    if (new_trips[-1].seat == trips[t].seat) | (not ((new_trips[-1].seat != "none") and (trips[t].seat != "none"))):
+                        if debug:
+                            print("Merging Trips " + str(len(new_trips)-1) + " and " + str(t))
+                        old_trip = new_trips.pop(-1)
+                        new_trips.append(merge_trips(old_trip, trips[t]))
                     else:
                         new_trips.append(trips[t])
-                        t += 1
+                else:
+                    new_trips.append(trips[t])
             
             trips = new_trips
         # print("Finished merging trips")
@@ -418,7 +412,7 @@ Single function to generate trip objects, including other parsing options
 """
 def get_trips_quick(clean_majors = True, clean_minors = False, merge = True, include_pretrips = True, debug = False):
     if merge:
-        trips = group_sort(get_trips(get_sble_data(), get_notif_data()))
+        trips = group_sort(get_trips(get_sble_data(), get_notif_data(), debug = debug))
     else:
         trips = group_sort(get_trips_unmerged(get_sble_data(), get_notif_data()))
     for i in trips:

@@ -123,6 +123,16 @@ KEY TAKEAWAYS:
     - Clipping inconsistencies
 """
 
+"""
+NEW DATA ANALYSIS
+- Still many inconsistencies, even after proper clipping
+- Many "off by 1" or 2-10 errors, now need to look for those and figure out why it is happening.
+- Already sorting by 2 columns, but might need another one just to make certain both matlab and python are aligned
+- QUESTION: Is LLM the only structure that only includes relevant majors? Could LL also be filtering out incorrect majors?
+    - Could double minors be in play for error?
+    - Furthermore, do my trips by default clean majors?
+"""
+
 problem_trips = [7, 15, 18, 21, 43, 44]
 
 
@@ -267,10 +277,75 @@ First tries to find perfect matches for trips between datasets.
 Second tries to find matlab data that may be clipped to match python data.
 Then reports un-resolved data.
 """
-def compare_data():
-    trips = get_trips_quick()
+def compare_data(trips = [], matlab_idxs = [], clip_trips = True, trim_zeros = True):
+    if trips == []:
+        trips = get_trips_quick()
+    
     python_idxs = trips_to_idxs(trips)
-    matlab_idxs = get_matlab_idxs()
+    if matlab_idxs == []:
+        matlab_idxs = get_matlab_idxs(clip_trips = clip_trips, trim_zeros = trim_zeros)
+
+    python_unmatched, matlab_unmatched = find_unmatched(python_idxs, matlab_idxs)
+
+    python_matched = [[] for i in range(len(python_unmatched))]
+    matlab_matched = [[] for i in range(len(matlab_unmatched))]
+
+    for i in range(len(python_idxs)):
+        temp = [x for x in python_idxs[i] if x not in python_unmatched[i]]
+        python_matched[i] = temp
+    
+    for i in range(len(matlab_idxs)):
+        temp = [x for x in matlab_idxs[i] if x not in matlab_unmatched[i]]
+        matlab_matched[i] = temp
+    
+    print("Unmatched pre-find_close: ")
+    py_temp = [len(x) for x in python_unmatched]
+    mat_temp = [len(x) for x in matlab_unmatched]
+    print("     python: " + str(sum(py_temp)))
+    print(py_temp)
+    print("     matlab: " + str(sum(mat_temp)))
+    print(mat_temp)
+    print()
+    python_close, matlab_close = find_close(python_unmatched.copy(), matlab_unmatched.copy())
+
+
+    print("Num Total: ")
+    py_temp = [len(x) for x in python_idxs]
+    mat_temp = [len(x) for x in matlab_idxs]
+    print("     python: " + str(sum(py_temp)))
+    print(py_temp)
+    print("     matlab: " + str(sum(mat_temp)))
+    print(mat_temp)
+    print()
+    print("Num Matched: ")
+    py_temp = [len(x) for x in python_matched]
+    mat_temp = [len(x) for x in matlab_matched]
+    print("     python: " + str(sum(py_temp)))
+    print(py_temp)
+    print("     matlab: " + str(sum(mat_temp)))
+    print(mat_temp)
+    print()
+    print("Num Unmatched: ")
+    py_temp = [len(x) for x in python_unmatched]
+    mat_temp = [len(x) for x in matlab_unmatched]
+    print("     python: " + str(sum(py_temp)))
+    print(py_temp)
+    print("     matlab: " + str(sum(mat_temp)))
+    print(mat_temp)
+    print()
+    print("Num Close: ")
+    py_temp = [len(x) for x in python_close]
+    mat_temp = [len(x) for x in matlab_close]
+    print("     python: " + str(sum(py_temp)))
+    print(py_temp)
+    print("     matlab: " + str(sum(mat_temp)))
+    print(mat_temp)
+    print()
+
+    return python_unmatched, matlab_unmatched, python_close, matlab_close
+
+
+def find_unmatched(python_idxs, matlab_idxs):
     python_unmatched = []
     matlab_unmatched = []
     
@@ -297,6 +372,42 @@ def compare_data():
     
     return python_unmatched, matlab_unmatched
 
+"""
+Function taking in unmatched python and matlab data and finding close matches, defined by two comperable trips with less than 20 different data points.
+"""
+def find_close(python_unmatched, matlab_unmatched):
+    python_close = [[] for i in range(len(python_unmatched))]
+    matlab_close = [[] for i in range(len(matlab_unmatched))]
+    for i in range(len(python_unmatched)):
+        py_idx = 0
+        while py_idx < len(python_unmatched[i]):
+            br = False
+            for j in range(len(matlab_unmatched[i])):
+                py_diff = list(set(python_unmatched[i][py_idx]) - set(matlab_unmatched[i][j]))
+                mat_diff = list(set(matlab_unmatched[i][j]) - set(python_unmatched[i][py_idx]))
+                if len(py_diff) < 10 and len(mat_diff) < 10:
+                    python_close[i].append(python_unmatched[i][py_idx])
+                    matlab_close[i].append(matlab_unmatched[i][j])
+                    python_unmatched[i].remove(python_unmatched[i][py_idx])
+                    matlab_unmatched[i].remove(matlab_unmatched[i][j])
+                    br = True
+                    break
+            if not br:
+                py_idx += 1
+    return python_close, matlab_close
+
+
+"""
+Function to compare lengths of sets of trips, displaying unique points on each side and differences in length
+"""
+def compare_trips(py_trips, mat_trips):
+    print("py_length -- py_unique, mat_unique -- mat_length")
+    for i in range(min(len(py_trips), len(mat_trips))):
+        left = list(set(py_trips[i]) - set(mat_trips[i]))
+        right = list(set(mat_trips[i]) - set(py_trips[i]))
+
+        print(str(len(py_trips[i])) + " -- " + str(len(left)) + ", " + str(len(right)) + " -- " + str(len(mat_trips[i])))
+
 
 
 """
@@ -312,7 +423,7 @@ def idx_to_table(idxs):
 """
 Composite function to load LL and LLpt structs, and merge them to compare Python and Matlab data parsing
 """
-def get_matlab_idxs(include_pretrip = True, clip_trips = True, flatten = False):
+def get_matlab_idxs(include_pretrip = True, clip_trips = True, trim_zeros = True, flatten = False):
     ll = unpack(load_struct('LL'))
 
     if include_pretrip:
@@ -352,6 +463,17 @@ def get_matlab_idxs(include_pretrip = True, clip_trips = True, flatten = False):
             ll_new.append(temp)
         ll = ll_new
 
+    if trim_zeros:
+        i = 0
+        while i < len(ll):
+            j = 0
+            while j < len(ll[i]):
+                if len(ll[i][j]) == 0:
+                    ll[i].pop(j)
+                else:
+                    j += 1
+            i += 1
+
 
     if flatten:
         aux = []
@@ -379,8 +501,11 @@ def trips_to_idxs(trips):
     arr = [[] for i in range(len(names))]
 
     for i in trips:
-        data = i.data["index"].tolist()
-        arr[names.index(i.user)].append(data)
+        if i.data.shape[0] > 0:
+            data = i.data["index"].tolist()
+            arr[names.index(i.user)].append(data)
+        else:
+            arr[names.index(i.user)].append([])
     
     return arr
 

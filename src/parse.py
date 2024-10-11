@@ -99,9 +99,12 @@ def get_trips(sble_data, notif_data):
                     case "sitting_on_bus":
                         if user_notif.iloc[nidx]["message"] == "true":
                             new_trip.on_bus = user_notif.iloc[nidx]["timestamp"]
+                            if not (user_notif.iloc[nidx-1]["message_type"] == "collecting_data" and user_notif.iloc[nidx-1]["message"] == "true"):
+                                new_trip.start = user_notif.iloc[nidx]["timestamp"]
                         else:
                             #If user responded no to "sitting_on_bus" prompt, no trip happened, and this instance should be discarded
                             no_trip = True
+                            nidx += 1
                             break
                     case "seat_location":
                         new_trip.seat = user_notif.iloc[nidx]["message"]
@@ -142,23 +145,47 @@ def get_trips(sble_data, notif_data):
                     sble_idx += 1
                 else:
                     break
-            
+
             start_idx = sble_idx
+
+            #If sitting_on_bus notification is not preceeded by a collecting_data = true notification,
+            #we set the pre-trip to be one data point, just before the start of the sitting_on_bus notification
+            if t.start == t.on_bus:
+                start_idx -= 1
 
             if t.noFinalCollectingData:
                 sble_idx = user_sble.shape[0] - 1
             else:
                 while (sble_idx < user_sble.shape[0] - 1):
-                    if (user_sble.iloc[sble_idx + 1]["timestamp"] < t.end):
+                    if (user_sble.iloc[sble_idx]["timestamp"] < t.end):
                         sble_idx += 1
                     else:
                         break
         
             end_idx = sble_idx
-            t.data = user_sble.iloc[start_idx:end_idx+1, :].copy()
 
-            # print(t.data.shape)
-            # t.print()
+            #Omitting the last data point, as it can sometimes be erroneous
+            t.data = user_sble.iloc[start_idx:end_idx, :].copy()
+
+            #If no mid-trip data exists for the trip, then the pre-trip should be wiped as well
+            if t.data.loc[t.data["timestamp"] >= t.on_bus].shape[0] == 0:
+                t.data = pd.DataFrame()
+
+            #Checking to see if the pre-trip should be discarded based on the following criteria:
+            #1. Both pre-trip and trip data are not zero
+            #2. One of the following is true:
+            #   a. The distance between the end of the pre-trip and beginning of the trip is > 300 seconds
+            #   b. The duration of the pre-trip is > 300 seconds
+            #   c. The distance between the start of the pre-trip and the end of the trip is > 3000 seconds
+            if t.data.shape[0] > 0:
+                if (t.data.loc[t.data["timestamp"] < t.on_bus].shape[0] > 0) and (t.data.loc[t.data["timestamp"] >= t.on_bus].shape[0] > 0):
+                    pt_data = t.data.loc[t.data["timestamp"] < t.on_bus]
+                    t_data = t.data.loc[t.data["timestamp"] >= t.on_bus]
+
+                    if (min(t_data["timestamp"]) - max(pt_data["timestamp"]) > 300) or (max(pt_data["timestamp"]) - min(pt_data["timestamp"]) > 300) or (max(t_data["timestamp"]) - min(pt_data["timestamp"]) > 3000):
+                        t.data = t.data.loc[t.data["timestamp"] >= t.on_bus]
+
+            
             if t.data.shape[0] > 0:
                 major_dur = [0]*(t.data["major"].max() + 1)
 

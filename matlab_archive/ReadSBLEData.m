@@ -167,7 +167,7 @@ for n = 1 :length(names)
              
              if isequal(SBLE_n.message_type{JJ(i)}, 'seat_location') 
                  % Note that this may be missing if the user never replied to the
-                 % seat_location notification. In this case, the
+                 % seat_location notification. In this case, the 
                  % notification would be repeated until the user closes the
                  % app.
                  trips(n).t{tripInd}.seat_location = SBLE_n.message{JJ(i)};

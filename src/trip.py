@@ -52,10 +52,11 @@ class trip:
     Function to clean all unwanted majors from the dataset, then update the rest of the trip data accordingly
     """
     def clean_majors(self):
-        new_data = self.data.loc[self.data["major"] == self.major]
-        self.data = new_data
-        if self.didNotMarkExit:
-            self.end = new_data.iloc[-1]["timestamp"]
+        if(self.data.shape[0] > 0):
+            new_data = self.data.loc[self.data["major"] == self.major]
+            self.data = new_data
+            if self.didNotMarkExit:
+                self.end = new_data.iloc[-1]["timestamp"]
 
     """
     Function to clean all data points for which only one minor was recorded

@@ -50,7 +50,7 @@ def add_datetimes(data):
 Function to generate array of trip objects using SBLE and notification data
 Parsing process follows procedure used in matlab code
 """
-def get_trips(sble_data, notif_data):
+def get_trips(sble_data, notif_data, debug = False):
     all_trips = []
     users = get_users(sble_data)
     for user in users:
@@ -84,6 +84,9 @@ def get_trips(sble_data, notif_data):
             if eof:
                 break
             
+            if debug:
+                print("Starting new trip at nidx = " + str(nidx))
+            
             #Saving start time of collecting_data notification in new trip
             new_trip = trip(user, user_notif.iloc[nidx]["timestamp"])
 
@@ -94,7 +97,7 @@ def get_trips(sble_data, notif_data):
             no_trip = False
 
             #Iterating through notifications to find and handle the next event
-            while user_notif.iloc[nidx]["message_type"] != "collecting_data":
+            while not (user_notif.iloc[nidx]["message_type"] == "collecting_data" and user_notif.iloc[nidx]["message"] != "answered no"):
                 match user_notif.iloc[nidx]["message_type"]:
                     case "sitting_on_bus":
                         if user_notif.iloc[nidx]["message"] == "true":
@@ -103,6 +106,8 @@ def get_trips(sble_data, notif_data):
                                 new_trip.start = user_notif.iloc[nidx]["timestamp"]
                         else:
                             #If user responded no to "sitting_on_bus" prompt, no trip happened, and this instance should be discarded
+                            if debug:
+                                print("No trip = True")
                             no_trip = True
                             nidx += 1
                             break
@@ -128,14 +133,16 @@ def get_trips(sble_data, notif_data):
                     new_trip.noFinalCollectingData = True
 
                 trips.append(new_trip)
-                
-            nidx += 1
-        # print("Trips created For user")
+            if user_notif.iloc[nidx]["message_type"] == "collecting_data" and user_notif.iloc[nidx]["message"] == "false":
+                nidx += 1
+        if debug:
+            print("Trips created For user")
 
         #Given empty trip objects which hold only notification data assigned to them,
         #use this information to fill the trip object with the appropriate sble data.
         #Also assigns trip major data for major which it saw for the longest duration.
-        # print("Filling in data for trips")
+        if debug:
+            print("Filling in data for trips")
         for t in trips:
             start_idx = 0
             end_idx = 0
@@ -170,6 +177,8 @@ def get_trips(sble_data, notif_data):
             #If no mid-trip data exists for the trip, then the pre-trip should be wiped as well
             if t.data.loc[t.data["timestamp"] >= t.on_bus].shape[0] == 0:
                 t.data = pd.DataFrame()
+                if debug:
+                    print("Mid-trip data is empty, wiping pre-trip data")
 
             #Checking to see if the pre-trip should be discarded based on the following criteria:
             #1. Both pre-trip and trip data are not zero
@@ -184,6 +193,8 @@ def get_trips(sble_data, notif_data):
 
                     if (min(t_data["timestamp"]) - max(pt_data["timestamp"]) > 300) or (max(pt_data["timestamp"]) - min(pt_data["timestamp"]) > 300) or (max(t_data["timestamp"]) - min(pt_data["timestamp"]) > 3000):
                         t.data = t.data.loc[t.data["timestamp"] >= t.on_bus]
+                        if debug:
+                            print("Wiping pre-trip data due to meeting criteria")
 
             
             if t.data.shape[0] > 0:
@@ -205,6 +216,22 @@ def get_trips(sble_data, notif_data):
                         freq += 1
                 major_dur[major] = max(major_dur[major], freq)
                 t.major = major_dur.index(max(major_dur))
+
+        #Checking to see if majority major is seen in just the pre-trip
+        #If so, trip should be discarded
+        tidx = 0
+        while tidx < len(trips):
+            t = trips[tidx]
+            if t.data.shape[0] > 0:
+                if t.major not in list(t.data.loc[t.data["timestamp"] > t.on_bus]["major"].unique()):
+                    trips.pop(tidx)
+                    if debug:
+                        print("Removing trip due to lack of majority major in mid-trip data")
+                        t.print()
+                else:
+                    tidx += 1
+            else:
+                tidx += 1
 
         # print("Data filled in")
         trips = group_sort(trips)
@@ -230,6 +257,8 @@ def get_trips(sble_data, notif_data):
                 else:
                     if (trips[t].didNotMarkExit == True) and (trips[t].major == trips[t+1].major) and (abs(trips[t].start - trips[t+1].start) <= 1200):
                         if (trips[t].seat == trips[t+1].seat) | (not ((trips[t].seat != "none") and (trips[t+1].seat != "none"))):
+                            if debug:
+                                print("Merging Trips " + str(t) + " and " + str(t+1))
                             new_trips.append(merge_trips(trips[t], trips[t+1]))
                             t += 2
                         else:
@@ -387,7 +416,7 @@ def get_trips_unmerged(sble_data, notif_data):
 """
 Single function to generate trip objects, including other parsing options
 """
-def get_trips_quick(clean_majors = True, clean_minors = False, merge = True, include_pretrips = True):
+def get_trips_quick(clean_majors = True, clean_minors = False, merge = True, include_pretrips = True, debug = False):
     if merge:
         trips = group_sort(get_trips(get_sble_data(), get_notif_data()))
     else:
@@ -416,7 +445,7 @@ def merge_trips(t1, t2):
 
     new_trip.on_bus = t1.on_bus
     new_trip.end = t2.end
-    new_trip.didNotMarkExit = False
+    new_trip.didNotMarkExit = t2.didNotMarkExit
     new_trip.major = t1.major
     new_trip.data = pd.concat([t1.data, t2.data])
 

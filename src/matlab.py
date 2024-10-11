@@ -131,6 +131,37 @@ NEW DATA ANALYSIS
 - QUESTION: Is LLM the only structure that only includes relevant majors? Could LL also be filtering out incorrect majors?
     - Could double minors be in play for error?
     - Furthermore, do my trips by default clean majors?
+- FIXED PARSING FUNCTION
+- Much closer matches the matlab trips
+- Picking through specific inconsistancies:
+    - Trips[30], Cat 31, issue here is a confusing notification sequence
+        - collecting_data = True, sitting_on_bus = True, collecting_data = True, sitting_on_bus = True, seat_location = front, collecting_data = False
+        - Matlab data starts just after first collecting_data = True, stops right before second collecting_data = True
+        - Python data starts just after first collecting_data = True (same spot), stops somewhere between second collecting_data = True and sitting_on_bus = True
+        - End time for trip is set to the final collecting_data = False, so must be that there are no data points recorded 
+        - THIS IS NOT TRUE, there are several more data points recorded
+        - Questions:
+            - Why is the python trip not filling with all the data?
+        - IN MATLAB
+            - notification sequence breaks up into two separate trips and pretrips, one with both occuring between the first two collecting_datas, one occuring after the collecting_data = True and before collecting_data = False
+            - But the data isn't kept, seems to be zeroed out for some reason
+        - Could this be a majors issue?
+            - YES. Most of the data from the second half of the python trip is a different major from the first half.
+        - Current Guess:
+            - Python processes this sequence as two trips
+            - The trips become merged, but a lot of the data is trimmed because it is from a different trip
+        - NEED TO ADD: If majority major is only seen in the pre-trip, then cancel the trip
+        - FIXED
+    - Trips[51, 52, 53], Creeping 1, 2, and 3, Matlab trips merge all of these into one, python has them
+        - NEED TO FIX: parsing loop condition was incorrect for looping as long as notification isn't collecting_data AND message ISN'T "answered no"
+        - This made trips[52] and trips[53] get parsed as one trip
+        - trips[51] is only 2 data points, so matlab and python were only 2 off and it was moved into close
+        - Call this good enough for now
+    - Trips[78,79], Elk 1 and 2, Matlab has these as two trips of other sizes (the first is very small and the second is very large), python has them with almost even number of points
+        - Python logs: Merging Trips 0 and 1
+                Merging Trips 8 and 9
+        - NEED TO FIX: my helper function to merge trips sets the new_trip.didNotMarkExit = False. Should be new_trip.didNotMarkExit = t2.didNotMarkExit
+
 """
 
 problem_trips = [7, 15, 18, 21, 43, 44]
@@ -277,7 +308,7 @@ First tries to find perfect matches for trips between datasets.
 Second tries to find matlab data that may be clipped to match python data.
 Then reports un-resolved data.
 """
-def compare_data(trips = [], matlab_idxs = [], clip_trips = True, trim_zeros = True):
+def compare_data(trips = [], matlab_idxs = [], clip_trips = True, trim_zeros = False):
     if trips == []:
         trips = get_trips_quick()
     

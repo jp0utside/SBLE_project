@@ -169,6 +169,77 @@ NEW DATA ANALYSIS
         - num matched: python - 467, matlab - 463 (have to figure out why uneven)
         - num unmatched: python - matlab - 14
         - num close: python - matlab - 9
+    - Uneven Matched Numbers:
+        - Seems like some matlab trips were dropped
+        - But also, for one user matlab has 3 extra trips and another python has 3 extra trips
+        - Matlab has 3 extra for user 20, python has 3 extra for user 30
+        - Matlab Extras
+            - All 0 content trips
+            - Seems like it is a result of matlab keeping empty trips for the merged trips, while I am deleting them
+        - Python Extras
+            - seems like there are a few that aren't being accounted for in matlab
+            - some are just unmerged 2 datapoint trips that for some reason matlab merges
+            - but there are a couple that have significant content that don't seem to have corresponding trips in matlab
+                - python[30][13], python[30][-11]
+            - last python trip is almost twice as long as last matlab trip
+                - python[30][47], matlab[30][44], user = Squid
+                - 347 more points in python trip
+                - matlab trip is entriely contained in python trip
+                - notif data shows that last notification is a seat_location = "back" notification
+                - last matlab data point comes just before this notification, seems like python data continues until end
+                - DISCOVERY: If matlab notification idx runs off of end, end time of that trip is set to timestamp of last trip
+    - Changing parsing function so if notification data runs off end, end time is set to time of last notification
+        - This should be the behavior as is, unclear why it isn't
+        - Seems like the filling in data portion of the python code fills in with the rest of the data if the user didn't mark exit
+        - Trying removing it
+    - Stats after removing it
+        - len(trips) = 490 = len(matlab)
+        - num matched: python - 471, matlab - 467
+        - num unmatched: python - matlab - 10
+        - num close: python - matlab - 9
+        - So seems like 4 of the unmatched trips got moved to matched
+    - Uneven Matched Numbers:
+        - Process of finding matched trips is flawed, it is likely this is causing matlab matched numbers to be low
+    - Outstanding unmatched trips: python - 19, matlab - 19
+        - python[0][11], python[0][12], python[0][35], python[2][0], python[2][1], python[7][0], python[8][0], python[16][8], python[20][8], python[20][25], python[24][0], python[30][11], python[30][12], python[30][13], python[30][15], python[30][16], python[30][37], python[30][42], python[30][43]
+        - matlab[0][11], matlab[0][30], matlab[0][35], matlab[2][0], matlab[7][0], matlab[7][1], matlab[8][0], matlab[16][8], matlab[20][8], matlab[20][26], matlab[20][30], matlab[20][35], matlab[20][38], matlab[24][0], matlab[30][11], matlab[30][12], matlab[30][14], matlab[30][35], matlab[30][40]
+        - Minor Disputes
+            - python[0][11] + python[0][12] == matlab[0][11]
+            - len(matlab[0][30]) == 0
+            - set(matlab[0][35]) - set(python[0][35]) = {184328, 184329}
+            - python[2][0] + python[2][1] == matlab[2][0]
+            - matlab[7][0] + matlab[7][1] == python[7][0]
+            - matlab[20][30] == matlab[20][35] == matlab[20][38] == [] (empty)
+            - python[30][11] + python[30][12] == matlab[30][11]
+            - matlab[30][12] == 0
+            - python[30][15] + python[30][16] = matlab[30][14]
+            - matlab[30][35] = 0
+            - python[30][42] + python[30][43] == matlab[30][40]
+        - Major Disputes
+            - len(set(python[8][0]) - set(matlab[8][0])) == 35
+            - len(python[16][8]) == 345, len(matlab[16][8]) == 0
+            - python[20][8] has no points in common with matlab[20][8]
+            - python[20][25] has no points in common with matlab[20][26]
+            - len(python[24][0]) == 0, len(matlab[24][0]) == 21
+            - python[30][13] not found in any matlab trips
+            - python[30][37] not found in any matlab trips
+        - python[30][13], python[30][-11]
+        - python[30][13]
+            - Does not appear in any matlab trip
+            - Have NO IDEA why matlab would exclude this trip
+            - Has majority major of 16, is seen mid-trip
+            - Starts with a collecting_data = True, ends with collecting_data = True, 3 notifications later
+            - has even minor distribution
+        - python[30][37]
+            - trips[387]
+            - Does not appear in any matlab trip
+            - Has majority major of 16, is seen mid-trip
+            - Starts with a collecting_data = True, ends with collecting_data = True, 3 notifications later
+            - has even minor distribution
+
+
+    
+
 
 """
 

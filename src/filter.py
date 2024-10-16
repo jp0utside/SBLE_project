@@ -1,6 +1,7 @@
 import pandas as pd
 import math
 from trip import trip
+from parse import *
 
 """
 Function to handle initial filtering of data to be later passed into major and minor processing functions
@@ -89,6 +90,49 @@ def get_avg_rssi_diff(data):
                 elif seat == "back":
                     new_data.append([avg, 'back'])
     return pd.DataFrame(new_data, columns=["rssi", "seat"])
+
+"""
+Function to get RSSI difference metrics in a 2d array format rather than through a dataframe
+Primarily used to compare to matlab data
+"""
+def get_rssi_diff(trips):
+    final = []
+
+    new = deepen_trips(trips)
+
+    for user in new:
+        temp = []
+        if len(user) == 0:
+            final.append([])
+        else:
+            for trip in user:
+                data = get_joint_rssi(trip)
+                data.loc[:, "rssi_diff"] = data.loc[:, "rssi_2"] - data.loc[:, "rssi_1"] #Trying rssi_2 - rssi_1
+                temp.append(data["rssi_diff"].tolist())
+        final.append(temp)
+    return final
+
+"""
+Function to get all data generated for a given user over the given trip, regardless of major or minor.
+"""
+def get_raw_data(trips, sble = []):
+    if not sble:
+        sble = get_sble_data()
+    
+    if isinstance(trip, list):
+        frames = []
+        for trip in trips:
+            user_data = sble.loc[sble["username"] == trip.user]
+            temp = user_data.loc[user_data["timestamp"] >= trip.start]
+            temp = temp.loc[temp["timestamp"] <= trip.end]
+            frames.append(temp)
+        data = pd.concat(frames, ignore_index=True)
+        return data
+    else:
+        user_data = sble.loc[sble["username"] == trip.user]
+        temp = user_data.loc[user_data["timestamp"] >= trip.start]
+        temp = temp.loc[temp["timestamp"] <= trip.end]
+        return(temp)
 
 
 """

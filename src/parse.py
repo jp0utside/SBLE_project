@@ -3,7 +3,7 @@ import math
 import os
 import glob
 from trip import trip
-from filter import *
+# from filter import *
 
 def pandas_format():
     pd.options.display.float_format = '{:.10f}'.format
@@ -54,6 +54,7 @@ def get_trips(sble_data, notif_data, debug = False):
     all_trips = []
     users = get_users(sble_data)
     for user in users:
+        print()
         print("Parsing for user: " + user)
         trips = []
         user_sble = sble_data.loc[sble_data["username"] == user]
@@ -160,14 +161,14 @@ def get_trips(sble_data, notif_data, debug = False):
             if t.start == t.on_bus:
                 start_idx -= 1
 
-            if t.noFinalCollectingData:
-                sble_idx = user_sble.shape[0] - 1
-            else:
-                while (sble_idx < user_sble.shape[0] - 1):
-                    if (user_sble.iloc[sble_idx]["timestamp"] < t.end):
-                        sble_idx += 1
-                    else:
-                        break
+            # if t.noFinalCollectingData:
+            #     sble_idx = user_sble.shape[0] - 1
+            # else:
+            while (sble_idx < user_sble.shape[0] - 1):
+                if (user_sble.iloc[sble_idx]["timestamp"] < t.end):
+                    sble_idx += 1
+                else:
+                    break
         
             end_idx = sble_idx
 
@@ -506,27 +507,6 @@ def add_trip_numbers(trips):
         else:
             trip_idx += 1
         i.trip_idx = trip_idx
-
-"""
-Function to get RSSI difference metrics in a 2d array format rather than through a dataframe
-Primarily used to compare to matlab data
-"""
-def get_rssi_diff(trips):
-    final = []
-
-    new = deepen_trips(trips)
-
-    for user in new:
-        temp = []
-        if len(user) == 0:
-            final.append([])
-        else:
-            for trip in user:
-                data = get_joint_rssi(trip)
-                data.loc[:, "rssi_diff"] = data.loc[:, "rssi_2"] - data.loc[:, "rssi_1"] #Trying rssi_2 - rssi_1
-                temp.append(data["rssi_diff"].tolist())
-        final.append(temp)
-    return final
     
 """
 Functions to take trip arrays and make them 2D based on user, and vice-versa.

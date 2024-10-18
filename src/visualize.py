@@ -7,6 +7,8 @@ from parse import *
 from filter import *
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
+from matplotlib.patches import Ellipse
+import matplotlib.transforms as transforms
 
 hex_colors = [
         "#FF5733",  # Bright Red
@@ -50,6 +52,24 @@ hex_colors = [
 def pandas_format():
     pd.options.display.float_format = '{:.0f}'.format
 
+def quick_plot(x, y, color = "blue", x_label = "", y_label = "", title = ""):
+    fig, ax = plt.subplots()
+
+    ax.plot(x, y, color=color)
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+    plt.title(title)
+    plt.show()
+
+def quick_scatter(x, y, color = "blue", x_label = "", y_label = "", title = ""):
+    fig, ax = plt.subplots()
+
+    ax.scatter(x, y, color=color)
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+    plt.title(title)
+    plt.show()
+
 """
 Function to plot latitude and longitude data for a given trip.
 Pre-trip data plotted in red, mid-trip data plotted in blue.
@@ -68,6 +88,29 @@ def graph_trip(trip):
 
     plt.scatter(pre_trip["longitude"], pre_trip["latitude"], color="red", s = 2)
     plt.scatter(mid_trip["longitude"], mid_trip["latitude"], color="blue", s = 2)
+
+    plt.show()
+
+"""
+Function to plot latitude and longitude data for a given trip.
+Pre-trip data plotted in red, mid-trip data plotted in blue.
+"""
+def graph_trip_rssi_diff(data):
+    stop_data = get_stop_data()
+
+    plt.xlim(min(stop_data["stop_lon"]) - 0.005, max(stop_data["stop_lon"]) + 0.005)
+    plt.ylim(min(stop_data["stop_lat"]) - 0.005, max(stop_data["stop_lat"]) + 0.005)
+
+    plt.scatter(stop_data["stop_lon"], stop_data["stop_lat"], color = hex_colors[:stop_data.shape[0]], marker = "^", s = 50)
+
+    norm = plt.Normalize(data["rssi_diff"].min(), data["rssi_diff"].max())
+
+    sc = plt.scatter(data["longitude_1"], data["latitude_1"], c=data["rssi_diff"], cmap="viridis", norm=norm, s=100)
+
+    cbar = plt.colorbar(sc)
+    cbar.set_label('Value')
+
+    # plt.figure(figsize=(10,10))
 
     plt.show()
 
@@ -316,6 +359,57 @@ def get_cdf(arr):
     cdf[-1] = 1
 
     return rng, cdf
+
+def confidence_ellipse(mean, cov, ax, n_std=1.0, facecolor='none', edgecolor='none', linewidth=2, alpha=0.5, **kwargs):
+    """
+    Create a plot of the covariance confidence ellipse of a 2D Gaussian.
+    
+    Parameters
+    ----------
+    mean : array-like, shape (2, )
+        Mean of the Gaussian
+    cov : array-like, shape (2, 2)
+        Covariance matrix of the Gaussian
+    ax : matplotlib.axes.Axes
+        The axes object to draw the ellipse into
+    n_std : float
+        The number of standard deviations to determine the ellipse's radius
+    **kwargs : dict
+        Forwarded to matplotlib.patches.Ellipse
+    """
+    pearson = cov[0, 1]/np.sqrt(cov[0, 0] * cov[1, 1])
+    # Using a special case to obtain the eigenvalues of this two-dimensional dataset.
+    ell_radius_x = np.sqrt(1 + pearson)
+    ell_radius_y = np.sqrt(1 - pearson)
+    ellipse = Ellipse((0, 0), width=ell_radius_x * 2, height=ell_radius_y * 2,
+                      facecolor=facecolor, edgecolor=edgecolor, linewidth=linewidth, alpha=alpha, **kwargs)
+    
+    # Calculating the standard deviation of x from the square root of the covariance
+    scale_x = np.sqrt(cov[0, 0]) * n_std
+    scale_y = np.sqrt(cov[1, 1]) * n_std
+    
+    transf = transforms.Affine2D() \
+        .rotate_deg(45 if pearson > 0 else -45) \
+        .scale(scale_x, scale_y) \
+        .translate(mean[0], mean[1])
+    
+    ellipse.set_transform(transf + ax.transData)
+    return ellipse
+
+def graph_gaussian(X, gmm, fig, ax, color):
+    # fig, ax = plt.subplots()
+
+    mean = gmm.means_[0]
+    cov = gmm.covariances_[0]
+
+    ax.scatter(mean[0], mean[1], marker='x', color=color, s = 150, linewidths=2)
+
+    for std in range(1,4):
+        el = confidence_ellipse(mean, cov, ax, n_std=std, edgecolor=color)
+        ax.add_patch(el)
+    
+    ax.scatter(X["rssi_1"].to_list(), X["rssi_2"].to_list(), color = color, marker = "o", s = 25)
+    # plt.show()
 
 """
 Function to remove outliers from dataset.

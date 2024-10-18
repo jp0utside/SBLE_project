@@ -52,21 +52,21 @@ hex_colors = [
 def pandas_format():
     pd.options.display.float_format = '{:.0f}'.format
 
-def quick_plot(x, y, color = "blue", x_label = "", y_label = "", title = ""):
+def quick_plot(x, y, color = "blue", xlabel = "", ylabel = "", title = ""):
     fig, ax = plt.subplots()
 
     ax.plot(x, y, color=color)
-    plt.xlabel(x_label)
-    plt.ylabel(y_label)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
     plt.title(title)
     plt.show()
 
-def quick_scatter(x, y, color = "blue", x_label = "", y_label = "", title = ""):
+def quick_scatter(x, y, color = "blue", xlabel = "", ylabel = "", title = ""):
     fig, ax = plt.subplots()
 
     ax.scatter(x, y, color=color)
-    plt.xlabel(x_label)
-    plt.ylabel(y_label)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
     plt.title(title)
     plt.show()
 

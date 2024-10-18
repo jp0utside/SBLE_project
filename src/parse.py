@@ -411,17 +411,25 @@ def get_trips_unmerged(sble_data, notif_data):
 """
 Single function to generate trip objects, including other parsing options
 """
-def get_trips_quick(clean_majors = True, clean_minors = False, merge = True, include_pretrips = True, debug = False):
+def get_trips_quick(clean_majors = True, clean_minors = False, merge = True, include_pretrips = True, debug = False, user = ""):
+    sble = get_sble_data()
+    notif = get_notif_data()
+
+    if user != "":
+        sble = sble.loc[sble["username"] == user]
+        notif = notif.loc[notif["username"] == user]
+
     if merge:
-        trips = group_sort(get_trips(get_sble_data(), get_notif_data(), debug = debug))
+        trips = group_sort(get_trips(sble, notif, debug = debug))
     else:
-        trips = group_sort(get_trips_unmerged(get_sble_data(), get_notif_data()))
+        trips = group_sort(get_trips_unmerged(sble, notif))
     for i in trips:
         if clean_majors:
             i.clean_majors()
         if clean_minors:
             i.clean_minors()
     return trips
+
 
 """
 Helper function to merge two trip objects that fit the critera

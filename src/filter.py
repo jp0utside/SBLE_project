@@ -29,7 +29,7 @@ def prelim_filter(trip, include_pretrip, only_dominant_major, normalize_zero, ze
 Function to get rssi associated with each minor, using only data collected at the same time.
 """
 def get_joint_rssi(trip, exclude_unmatched = True, include_pretrip = True, only_dominant_major = True, 
-                   normalize_zero = True, zero_val = -100):
+                   normalize_zero = True, zero_val = -100, exclude_zeros = False):
     data = prelim_filter(trip, include_pretrip, only_dominant_major, normalize_zero, zero_val)
 
     m1 = data.loc[data["minor"] == 1].copy()
@@ -45,6 +45,10 @@ def get_joint_rssi(trip, exclude_unmatched = True, include_pretrip = True, only_
     
     if exclude_unmatched:
         join = join.dropna(subset=["rssi_1", "rssi_2"])
+    
+    if exclude_zeros:
+        join = join.loc[join["rssi_1"] != -100]
+        join = join.loc[join["rssi_2"] != -100]
 
     return join
 
@@ -53,18 +57,33 @@ Function to get master dataset for use.
 Compiles the relevant SBLE data points for each trip and adds additional columns to store relevant trip information.
 All trips are then put into a single dataframe for use.
 """
-def get_tagged_dataset(trips, exclude_unmatched = True, include_pretrip = True, only_dominant_major = True, 
-                   normalize_zero = True, zero_val = -100):
-    df = pd.DataFrame()
+def get_tagged_dataset(trips, n = 1, exclude_unmatched = True, include_pretrip = False, only_dominant_major = True, 
+                   normalize_zero = True, zero_val = -100, exclude_zeros = False, trim_end_zeros = False):
+    df = []
 
     for trip in trips:
-        if trip.seat != "none":
-            join = get_joint_rssi(trip, exclude_unmatched, include_pretrip, only_dominant_major, normalize_zero, zero_val)
+        if trip.seat != "none" and trip.data.shape[0] > 0:
+            join = get_joint_rssi(trip, exclude_unmatched, include_pretrip, only_dominant_major, normalize_zero, zero_val, exclude_zeros)
             join["seat"] = trip.seat
             join.loc[:, "rssi_diff"] = join.loc[:, "rssi_2"] - join.loc[:, "rssi_1"] #Trying rssi_2 - rssi_1
             join["trip_idx"] = trip.trip_idx 
-            df = pd.concat([df, join])
+            df.append(join)
     
+    if trim_end_zeros:
+        for frame in df:
+            while frame.shape[0] > 0:
+                if frame.iloc[-1]["rssi_1"] == -100 and frame.iloc[-1]["rssi_2"] == [-100]:
+                    frame = frame.iloc[:-1]
+                else:
+                    break
+    if n != 1:
+        for i in range(len(df)):
+            frame = df.pop(0)
+            frame["rssi_1"] = frame["rssi_1"].rolling(window=n).mean()
+            frame["rssi_2"] = frame["rssi_2"].rolling(window=n).mean()
+            frame["rssi_diff"] = frame["rssi_diff"].rolling(window=n).mean()
+            df.append(frame.iloc[(n-1):])
+
     return df
 
 """
@@ -134,6 +153,29 @@ def get_raw_data(trips, sble = []):
         temp = temp.loc[temp["timestamp"] <= trip.end]
         return(temp)
 
+"""
+Function to get rssi data as an average of values across some number of readings.
+"""
+def get_average_dataset(trips, n, exclude_unmatched = True, include_pretrip = True, only_dominant_major = True, 
+                   normalize_zero = True, zero_val = -100, exclude_zeros = False):
+    df = []
+
+    for trip in trips:
+        if trip.seat != "none" and trip.data.shape[0] > 0:
+            join = get_joint_rssi(trip, exclude_unmatched, include_pretrip, only_dominant_major, normalize_zero, zero_val, exclude_zeros)
+            join["seat"] = trip.seat
+            join.loc[:, "rssi_diff"] = join.loc[:, "rssi_2"] - join.loc[:, "rssi_1"] #Trying rssi_2 - rssi_1
+            join["trip_idx"] = trip.trip_idx 
+            df.append(join)
+    
+    for frame in df:
+        frame["rssi_1"] = frame["rssi_1"].rolling(window=n).mean()
+        frame["rssi_2"] = frame["rssi_2"].rolling(window=n).mean()
+        frame["rssi_diff"] = frame["rssi_diff"].rolling(window=n).mean()
+        frame = frame.iloc[(n-1):]
+
+    data = pd.concat(df)
+    return data
 
 """
 This is old code which tries to generate aggregate metrics for training (i.e. weighted avg of rssi from each beacon).

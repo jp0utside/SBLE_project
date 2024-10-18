@@ -5,6 +5,7 @@ import trip
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import SGDClassifier
+from sklearn.mixture import GaussianMixture
 from sklearn.metrics import accuracy_score, confusion_matrix
 
 """
@@ -118,6 +119,18 @@ def linear_classifier_averages(data, random_state = 42):
 
     evaluate_clf(clf, X_test, y_test)
 
+def gaussian_mixture_model(data, features = ["rssi_1", "rssi_2"], n_comp = 1):
+    X = data[features]
+    y = data[["seat"]]
+
+    gmm = GaussianMixture(n_components = n_comp)
+    gmm.fit(X)
+
+    print("Means:\n", gmm.means_)
+    print("Covariances:\n", gmm.covariances_)
+    print("Weights:\n", gmm.weights_)
+
+    return gmm
 
 
     

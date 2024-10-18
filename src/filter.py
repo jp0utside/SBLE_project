@@ -58,24 +58,42 @@ Compiles the relevant SBLE data points for each trip and adds additional columns
 All trips are then put into a single dataframe for use.
 """
 def get_tagged_dataset(trips, n = 1, exclude_unmatched = True, include_pretrip = False, only_dominant_major = True, 
-                   normalize_zero = True, zero_val = -100, exclude_zeros = False, trim_end_zeros = False):
+                   normalize_zero = True, zero_val = -100, exclude_zeros = False, trim_end_zeros = False, trim_all_zeros = False, trim_double_zeros = False):
     df = []
 
     for trip in trips:
         if trip.seat != "none" and trip.data.shape[0] > 0:
             join = get_joint_rssi(trip, exclude_unmatched, include_pretrip, only_dominant_major, normalize_zero, zero_val, exclude_zeros)
             join["seat"] = trip.seat
-            join.loc[:, "rssi_diff"] = join.loc[:, "rssi_2"] - join.loc[:, "rssi_1"] #Trying rssi_2 - rssi_1
-            join["trip_idx"] = trip.trip_idx 
+            join["rssi_diff"] = join["rssi_2"] - join["rssi_1"] #Trying rssi_2 - rssi_1
+            join["rssi_1_adj"] = join["rssi_1"]*join["rssi_accuracy_1"]
+            join["rssi_2_adj"] = join["rssi_2"]*join["rssi_accuracy_2"]
+            join.loc[join["rssi_1_adj"] == 100, "rssi_1_adj"] = -100
+            join.loc[join["rssi_2_adj"] == 100, "rssi_2_adj"] = -100
+            join["rssi_diff_adj"] = join["rssi_2_adj"] - join["rssi_1_adj"]
+            join["trip_idx"] = trip.trip_idx
             df.append(join)
     
-    if trim_end_zeros:
-        for frame in df:
+    if trim_all_zeros:
+        for i in range(len(df)):
+            frame = df.pop(0)
+            frame = frame.loc[(frame["rssi_accuracy_1"] > 0) & (frame["rssi_accuracy_2"] > 0)]
+            df.append(frame)
+    elif trim_double_zeros:
+        for i in range(len(df)):
+            frame = df.pop(0)
+            frame = frame.loc[(frame["rssi_accuracy_1"] > 0) | (frame["rssi_accuracy_2"] > 0)]
+            df.append(frame)
+    elif trim_end_zeros:
+        for i in range(len(df)):
+            frame = df.pop(0)
             while frame.shape[0] > 0:
                 if frame.iloc[-1]["rssi_1"] == -100 and frame.iloc[-1]["rssi_2"] == [-100]:
                     frame = frame.iloc[:-1]
                 else:
                     break
+            df.append(frame)
+
     if n != 1:
         for i in range(len(df)):
             frame = df.pop(0)
@@ -145,8 +163,7 @@ def get_raw_data(trips, sble = []):
             temp = user_data.loc[user_data["timestamp"] >= trip.start]
             temp = temp.loc[temp["timestamp"] <= trip.end]
             frames.append(temp)
-        data = pd.concat(frames, ignore_index=True)
-        return data
+        return frames
     else:
         user_data = sble.loc[sble["username"] == trip.user]
         temp = user_data.loc[user_data["timestamp"] >= trip.start]

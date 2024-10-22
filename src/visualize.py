@@ -11,6 +11,8 @@ from matplotlib.patches import Ellipse
 import matplotlib.transforms as transforms
 from scipy.stats import norm, expon
 
+seat_color = {0 : "blue", 1 : "green", 2 : "red"}
+
 hex_colors = [
         "#FF5733",  # Bright Red
         "#33FF57",  # Bright Green
@@ -163,7 +165,39 @@ def graph_pdf_exp(data):
         bidx += 1
     ax.plot(bin_vals, bins, color = "blue")
     plt.show()
+
+def graph_decision_boundaries(X, y, clf, feature_names=None):
+
+    #Plotting data along with decision boundaries
+    # plt.subplot(121)
+
+    x_min, x_max = X[:, 0].min() - 0.5, X[:, 0].max() + 0.5
+    y_min, y_max = X[:, 1].min() - 0.5, X[:, 1].max() + 0.5
+
+    x_grid, y_grid = np.meshgrid(np.arange(x_min, x_max, 0.02), np.arange(y_min, y_max, 0.02))
+
+    # print("Mesh shapes:", x_grid.shape, y_grid.shape)
+    # print("Mesh types:", x_grid.dtype, y_grid.dtype)
+
+    Z = clf.predict(np.c_[x_grid.ravel(), y_grid.ravel()])
+    Z = Z.astype(np.float64)
+    Z = Z.reshape(x_grid.shape)
+
+    # print("Predictions shape:", Z.shape)
+    # print("Predictions type:", Z.dtype)
+
+    #Plotting Decision Regions
+    plt.contourf(x_grid, y_grid, Z, alpha=0.5, cmap="viridis")
+    scatter = plt.scatter(X[:, 0], X[:, 1], c = [seat_color[i] for i in y])
+    plt.colorbar(scatter)
+
+    if feature_names:
+        plt.xlabel(feature_names[0])
+        plt.ylabel(feature_names[1])
+    plt.title("Decision boundaries")
     
+    plt.show()
+
 
 """
 Function to plot latitude and longitude data for a given trip.
@@ -289,9 +323,9 @@ Takes in a dataframe, which should contain a seat location and an rssi for minor
 """
 
 def graph_minor_rssi(data):
-    front = data.loc[data["seat"] == "front"]
-    middle = data.loc[data["seat"] == "middle"]
-    back = data.loc[data["seat"] == "back"]
+    front = data.loc[data["seat"] == 0]
+    middle = data.loc[data["seat"] == 1]
+    back = data.loc[data["seat"] == 2]
 
     axis_max = max(max(front["rssi_1"].tolist()), max(front["rssi_2"].tolist()))
     axis_max = max(axis_max, max(max(middle["rssi_1"].tolist()), max(middle["rssi_2"].tolist())))
@@ -318,9 +352,9 @@ Function to graph CDF of each seat using the RSSI difference
 """
 
 def graph_rssi_cdf(data):
-    front = data.loc[data["seat"] == "front", "rssi_diff"].tolist()
-    middle = data.loc[data["seat"] == "middle", "rssi_diff"].tolist()
-    back = data.loc[data["seat"] == "back", "rssi_diff"].tolist()
+    front = data.loc[data["seat"] == 0, "rssi_diff"].tolist()
+    middle = data.loc[data["seat"] == 1, "rssi_diff"].tolist()
+    back = data.loc[data["seat"] == 2, "rssi_diff"].tolist()
 
     min_val = min([min(front), min(middle), min(back)])
     max_val = max([max(front), max(middle), max(back)])
@@ -342,9 +376,9 @@ Function to graph CDF of each seat using the RSSI difference, while removing out
 """
 
 def graph_rssi_cdf_no_outliers(data):
-    front = data.loc[data["seat"] == "front", "rssi_diff"].tolist()
-    middle = data.loc[data["seat"] == "middle", "rssi_diff"].tolist()
-    back = data.loc[data["seat"] == "back", "rssi_diff"].tolist()
+    front = data.loc[data["seat"] == 0, "rssi_diff"].tolist()
+    middle = data.loc[data["seat"] == 1, "rssi_diff"].tolist()
+    back = data.loc[data["seat"] == 2, "rssi_diff"].tolist()
 
     front = remove_outliers(front)
     middle = remove_outliers(middle)
@@ -373,9 +407,9 @@ Excluding zero values and taking the mean of each trip.
 def graph_rssi_cdf_means_no_zero(data):
     data = get_avg_rssi_diff(data)
 
-    front = data.loc[data["seat"] == "front", "rssi"].tolist()
-    middle = data.loc[data["seat"] == "middle", "rssi"].tolist()
-    back = data.loc[data["seat"] == "back", "rssi"].tolist()
+    front = data.loc[data["seat"] == 0, "rssi"].tolist()
+    middle = data.loc[data["seat"] == 1, "rssi"].tolist()
+    back = data.loc[data["seat"] == 2, "rssi"].tolist()
     
 
     min_val = min([min(front), min(middle), min(back)]) - 3

@@ -58,7 +58,8 @@ Compiles the relevant SBLE data points for each trip and adds additional columns
 All trips are then put into a single dataframe for use.
 """
 def get_tagged_dataset(trips, n = 1, exclude_unmatched = True, include_pretrip = False, only_dominant_major = True, 
-                   normalize_zero = True, zero_val = -100, exclude_zeros = False, trim_end_zeros = False, trim_all_zeros = False, trim_double_zeros = False):
+                   normalize_zero = True, zero_val = -100, exclude_zeros = False, trim_end_zeros = False, trim_all_zeros = False, trim_double_zeros = False,
+                   normalize_acc = False, acc_val = 1):
     df = []
 
     for trip in trips:
@@ -66,10 +67,20 @@ def get_tagged_dataset(trips, n = 1, exclude_unmatched = True, include_pretrip =
             join = get_joint_rssi(trip, exclude_unmatched, include_pretrip, only_dominant_major, normalize_zero, zero_val, exclude_zeros)
             join["seat"] = trip.seat
             join["rssi_diff"] = join["rssi_2"] - join["rssi_1"] #Trying rssi_2 - rssi_1
-            join["rssi_1_adj"] = join["rssi_1"]*join["rssi_accuracy_1"]
-            join["rssi_2_adj"] = join["rssi_2"]*join["rssi_accuracy_2"]
-            join.loc[join["rssi_1_adj"] == 100, "rssi_1_adj"] = -100
-            join.loc[join["rssi_2_adj"] == 100, "rssi_2_adj"] = -100
+            if normalize_acc and join.shape[0] > 0:
+                if acc_val == 1:
+                    max_acc = max([max(join["rssi_accuracy_1"]), max(join["rssi_accuracy_2"])])
+                else:
+                    max_acc = acc_val
+                join["rssi_accuracy_1"] = join["rssi_accuracy_1"]/max_acc
+                join["rssi_accuracy_2"] = join["rssi_accuracy_2"]/max_acc
+                join["rssi_1_adj"] = join["rssi_1"]/join["rssi_accuracy_1"]
+                join["rssi_2_adj"] = join["rssi_2"]/join["rssi_accuracy_2"]
+            else:
+                join["rssi_1_adj"] = join["rssi_1"]*join["rssi_accuracy_1"]
+                join["rssi_2_adj"] = join["rssi_2"]*join["rssi_accuracy_2"]
+            join.loc[join["rssi_accuracy_1"] < 0, "rssi_1_adj"] = zero_val
+            join.loc[join["rssi_accuracy_2"] < 0, "rssi_2_adj"] = zero_val
             join["rssi_diff_adj"] = join["rssi_2_adj"] - join["rssi_1_adj"]
             join["trip_idx"] = trip.trip_idx
             df.append(join)

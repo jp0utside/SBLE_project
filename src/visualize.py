@@ -9,6 +9,7 @@ import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 from matplotlib.patches import Ellipse
 import matplotlib.transforms as transforms
+from scipy.stats import norm, expon
 
 hex_colors = [
         "#FF5733",  # Bright Red
@@ -69,6 +70,100 @@ def quick_scatter(x, y, color = "blue", xlabel = "", ylabel = "", title = ""):
     plt.ylabel(ylabel)
     plt.title(title)
     plt.show()
+
+def graph_pdf(data, bin_count = 10, label = ""):
+    fig, ax = plt.subplots()
+
+    sorted = data.sort_values().to_list()
+
+    bins = [0 for x in range(bin_count)]
+    bin_vals = [x for x in np.linspace(math.floor(sorted[0]), math.ceil(sorted[-1]), bin_count)]
+
+    idx = 0
+    bidx = 0
+    while idx < len(sorted):
+        bin = [bin_vals[bidx], bin_vals[bidx+1]]
+        print("idx: {}".format(idx))
+        print("bidx: {}".format(bidx))
+        print("bin: {}".format(bin))
+        print()
+        try:
+            while sorted[idx] <= bin[1]:
+                bins[bidx] += 1
+                idx += 1
+        except:
+            break
+        bidx += 1
+
+    ax.plot(bin_vals, bins, color="blue")
+    plt.show()
+
+def graph_pdf_norm(data):
+    fig, ax = plt.subplots()
+
+    sorted = data.sort_values().to_list()
+
+    mu, std = norm.fit(sorted)
+
+    x = np.linspace(mu - 3*std, mu + 3*std, 100)
+    y = norm.pdf(x, mu, std)*len(sorted)
+
+    ax.plot(x, y, color = "red")
+
+    bins = [0 for x in range(100)]
+    bin_vals = [x for x in np.linspace(math.floor(sorted[0]), math.ceil(sorted[-1]), 100)]
+
+    idx = 0
+    bidx = 0
+    while idx < len(sorted):
+        bin = [bin_vals[bidx], bin_vals[bidx+1]]
+        print("idx: {}".format(idx))
+        print("bidx: {}".format(bidx))
+        print("bin: {}".format(bin))
+        print()
+        try:
+            while sorted[idx] <= bin[1]:
+                bins[bidx] += 1
+                idx += 1
+        except:
+            break
+        bidx += 1
+    ax.plot(bin_vals, bins, color = "blue")
+    plt.show()
+
+def graph_pdf_exp(data):
+    fig, ax = plt.subplots()
+
+    sorted = data.sort_values().to_list()
+
+    loc, scale = expon.fit(sorted)
+
+    x = np.linspace(min(sorted), max(sorted), 100)
+    y = expon.pdf(x, loc, scale)*len(sorted)
+
+    ax.plot(x, y, color = "red")
+
+    bins = [0 for x in range(100)]
+    bin_vals = [x for x in np.linspace(math.floor(sorted[0]), math.ceil(sorted[-1]), 100)]
+
+    idx = 0
+    bidx = 0
+    while idx < len(sorted):
+        bin = [bin_vals[bidx], bin_vals[bidx+1]]
+        print("idx: {}".format(idx))
+        print("bidx: {}".format(bidx))
+        print("bin: {}".format(bin))
+        print()
+        try:
+            while sorted[idx] <= bin[1]:
+                bins[bidx] += 1
+                idx += 1
+        except:
+            break
+        bidx += 1
+    ax.plot(bin_vals, bins, color = "blue")
+    plt.show()
+    
 
 """
 Function to plot latitude and longitude data for a given trip.

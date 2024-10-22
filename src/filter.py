@@ -61,11 +61,12 @@ def get_tagged_dataset(trips, n = 1, exclude_unmatched = True, include_pretrip =
                    normalize_zero = True, zero_val = -100, exclude_zeros = False, trim_end_zeros = False, trim_all_zeros = False, trim_double_zeros = False,
                    normalize_acc = False, acc_val = 1):
     df = []
+    seat_to_num = {"front" : 0, "middle" : 1, "back" : 2}
 
     for trip in trips:
         if trip.seat != "none" and trip.data.shape[0] > 0:
             join = get_joint_rssi(trip, exclude_unmatched, include_pretrip, only_dominant_major, normalize_zero, zero_val, exclude_zeros)
-            join["seat"] = trip.seat
+            join["seat"] = seat_to_num[trip.seat]
             join["rssi_diff"] = join["rssi_2"] - join["rssi_1"] #Trying rssi_2 - rssi_1
             if normalize_acc and join.shape[0] > 0:
                 if acc_val == 1:
@@ -131,11 +132,11 @@ def get_avg_rssi_diff(data):
                 avg = sum(vals)/len(vals)
 
                 seat = data.loc[(data["username_1"] == user) & (data["trip_idx"] == trip_idx), "seat"].unique()[0]
-                if seat == "front":
+                if seat == 0:
                     new_data.append([avg, 'front'])
-                elif seat == "middle":
+                elif seat == 1:
                     new_data.append([avg, 'middle'])
-                elif seat == "back":
+                elif seat == 2:
                     new_data.append([avg, 'back'])
     return pd.DataFrame(new_data, columns=["rssi", "seat"])
 

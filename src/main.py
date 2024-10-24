@@ -5,6 +5,7 @@ import trip
 from train_basic import *
 import random
 from random_forest import *
+import time
 
 bad_MM = [2, 8, 21]
 cmap = {"front" : "blue", "middle" : "green", "back" : "red"}
@@ -79,24 +80,29 @@ def plot_various_data():
         prog_mean = [sum(x.iloc[:idx+1]["rssi_diff_adj"])/(idx+1) for idx in range(x.shape[0])]
         quick_plot(x["timestamp"], prog_mean, xlabel="timestamp", ylabel="rssi_diff_adj", title = "{} trip {}, seat: {}".format(trips[i].user, trips[i].trip_idx, trips[i].seat), color = cmap[trips[i].seat])
 
-def test_random_forest(trips = None, split_seed=3, tree_seed=3):
+def test_random_forest(trips = None, features = [], split_seed=3, tree_seed=3, use_scaler = True, use_pca = True, n_components = 2):
+    print("Split Seed: {}, Tree Seed: {}".format(split_seed, tree_seed))
     if not trips:
         trips = get_trips_quick()
+    if not features:
+        features = ["rssi_1", "rssi_2"]
     data = get_tagged_dataset(trips)
     data = pd.concat(data)
-    features = ["rssi_1", "rssi_2", "rssi_accuracy_1", "rssi_accuracy_2", "speed_1", "speed_2", "speedAcc_1", "speedAcc_2"]
     X_train, X_test, y_train, y_test = train_test_split(data[features], data["seat"].tolist(), test_size = 0.2, random_state=split_seed)
-    random_forest = RandomForest(random_state=tree_seed)
+    random_forest = RandomForest(random_state=tree_seed, use_pca=use_pca, use_scaler=use_scaler, n_components=n_components)
     random_forest.train(X_train, y_train)
     random_forest.test(X_test, y_test)
-    random_forest.visualize_decision_bounds()
+    random_forest.get_gini_importances()
+    # random_forest.visualize_decision_bounds()
+    print()
 
 def main():
     pass
-    trips = get_trips_quick()
-    for i in range(3):
-        for j in range(3):
-            test_random_forest(trips, i, j)
+    # trips = get_trips_quick()
+    # all_features = ['timestamp', 'latitude_1', 'longitude_1', 'speed_1', 'speedAcc_1', 'vertical_acc_1', 'altitude_1', 'course_1', 'courseAcc_1', 'heading_1', 'horizontal_acc_1', 'major_1', 'rssi_1', 'rssi_accuracy_1', 'attitude_pitch_1', 'attitude_roll_1', 'attitude_yaw_1', 'rotation_rate_x_1', 'rotation_rate_y_1', 'rotation_rate_z_1', 'gravity_accel_x_1', 'gravity_accel_y_1', 'gravity_accel_z_1', 'user_accel_x_1', 'user_accel_y_1', 'user_accel_z_1', 'latitude_2', 'longitude_2', 'speed_2', 'speedAcc_2', 'vertical_acc_2', 'altitude_2', 'course_2', 'courseAcc_2', 'heading_2', 'horizontal_acc_2', 'rssi_2', 'rssi_accuracy_2', 'attitude_pitch_2', 'attitude_roll_2', 'attitude_yaw_2', 'rotation_rate_x_2', 'rotation_rate_y_2', 'rotation_rate_z_2', 'gravity_accel_x_2', 'gravity_accel_y_2', 'gravity_accel_z_2', 'user_accel_x_2', 'user_accel_y_2', 'user_accel_z_2', 'rssi_diff']
+    # features = all_features
+    # test_random_forest(trips, features, use_scaler=True, use_pca=False)
+    
 
 
 

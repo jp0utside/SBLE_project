@@ -25,6 +25,11 @@ def get_sble_data():
     data = pd.concat(dfs, ignore_index=True)
     data = data.sort_values(by=['timestamp', 'rssi'], ascending=True)
     data = data.reset_index(drop=True)
+
+    #Removing whitespace from column names
+    col_map = {i:i.strip() for i in data.columns}
+    data = data.rename(columns=col_map)
+    
     return data
 
 def get_notif_data():

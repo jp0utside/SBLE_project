@@ -166,6 +166,22 @@ def graph_pdf_exp(data):
     ax.plot(bin_vals, bins, color = "blue")
     plt.show()
 
+def graph_correlation(x, y, corr_coef, xlabel = "", ylabel = ""):
+    vars = np.polyfit(x, y, 1)
+    line = np.poly1d(vars)
+
+    plt.figure(figsize = (10, 10))
+
+    plt.scatter(x, y, color="blue")
+    plt.plot(x, line(x), color="red", alpha=0.4)
+    plt.text(0.05, 0.95, "Correlation: {}".format(corr_coef), transform=plt.gca().transAxes)
+
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.title("Correlation plot for {} and {}".format(xlabel, ylabel))
+    plt.show()
+
+
 def graph_decision_boundaries(X, y, clf, feature_names=None):
 
     #Plotting data along with decision boundaries

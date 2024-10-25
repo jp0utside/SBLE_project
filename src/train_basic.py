@@ -1,6 +1,7 @@
 import numpy as np
 from parse import *
 from filter import *
+from visualize import *
 import trip
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
@@ -148,6 +149,30 @@ def gaussian_mixture_model(data, features = ["rssi_1", "rssi_2"], n_comp = 1):
     print("Weights:\n", gmm.weights_)
 
     return gmm
+
+"""
+Function to measure correlation coefficients between features using pearson coefficient.
+Can visualize if desired.
+"""
+
+def measure_correlation(X, features, visualize = False, top_x = 10):
+    correlations = {}
+    for i in range(len(features)):
+        for j in range(i+1, len(features)):
+            coef = np.corrcoef(X[features[i]].to_list(), X[features[j]].to_list())[0,1]
+            correlations[(features[i], features[j])] = coef
+    
+    correlations = dict(sorted(correlations.items(), key = lambda item: abs(item[1]), reverse = True))
+
+    if visualize:
+        for i in range(top_x):
+            key = list(correlations.keys())[i]
+            x = X[key[0]]
+            y = X[key[1]]
+
+            graph_correlation(x, y, correlations[key], xlabel=key[0], ylabel=key[1])
+
+    return correlations
 
 
 

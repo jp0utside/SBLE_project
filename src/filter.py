@@ -58,7 +58,7 @@ Compiles the relevant SBLE data points for each trip and adds additional columns
 All trips are then put into a single dataframe for use.
 """
 def get_tagged_dataset(trips, n = 1, exclude_unmatched = True, include_pretrip = False, only_dominant_major = True, 
-                   normalize_zero = True, zero_val = -100, exclude_zeros = False, trim_end_zeros = False, trim_all_zeros = False, trim_double_zeros = False,
+                   normalize_zero = True, zero_val = -100, aggregate_feats = True, exclude_zeros = False, trim_end_zeros = False, trim_all_zeros = False, trim_double_zeros = False,
                    normalize_acc = False, acc_val = 1):
     df = []
     seat_to_num = {"front" : 0, "middle" : 1, "back" : 2}
@@ -106,6 +106,12 @@ def get_tagged_dataset(trips, n = 1, exclude_unmatched = True, include_pretrip =
                     break
             df.append(frame)
 
+    if aggregate_feats:
+        for i in range(len(df)):
+            frame = df.pop(0)
+            frame = aggregate_columns(frame)
+            df.append(frame)
+
     if n != 1:
         for i in range(len(df)):
             frame = df.pop(0)
@@ -115,6 +121,19 @@ def get_tagged_dataset(trips, n = 1, exclude_unmatched = True, include_pretrip =
             df.append(frame.iloc[(n-1):])
 
     return df
+
+def aggregate_columns(data):
+    unique = ["level_0", "index", "username", "major", "minor", "rssi", "rssi_accuracy"]
+    cols = [x[:-2] for x in list(data.columns)]
+    new_data = data.copy()
+    while cols:
+        col = cols.pop(0)
+        if col not in unique and col in cols:
+            new_data[col] = (new_data[col+"_1"] + new_data[col+"_2"])/2
+            new_data = new_data.drop(columns = [col+"_1", col+"_2"])
+            cols.remove(col)
+    return new_data
+
 
 """
 Function to calculate average RSSI difference for each trip.

@@ -2,6 +2,7 @@ import pandas as pd
 import math
 from trip import trip
 from parse import *
+from datetime import datetime
 
 """
 Function to handle initial filtering of data to be later passed into major and minor processing functions
@@ -86,6 +87,21 @@ def get_tagged_dataset(trips, n = 1, exclude_unmatched = True, include_pretrip =
             join["trip_idx"] = trip.trip_idx
             df.append(join)
     
+    for i in range(len(df)):
+        frame = df.pop(0)
+        dts = [datetime.fromtimestamp(x) for x in frame["timestamp"]]
+        weekdays = [dt.weekday() for dt in dts]
+        hours = [dt.hour for dt in dts]
+        minutes = [dt.minute for dt in dts]
+        seconds = [dt.second for dt in dts]
+        frame["weekday"] = weekdays
+        frame["hour"] = hours
+        frame["minute"] = minutes
+        frame["second"] = seconds
+        frame["weektime"] = frame["weekday"]*10000 + frame["hour"]*100 + frame["minute"]
+        frame["weekminute"] = frame["weekday"]*1440 + frame["hour"]*60 + frame["minute"]
+        df.append(frame)
+
     if trim_all_zeros:
         for i in range(len(df)):
             frame = df.pop(0)

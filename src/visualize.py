@@ -55,23 +55,31 @@ hex_colors = [
 def pandas_format():
     pd.options.display.float_format = '{:.0f}'.format
 
-def quick_plot(x, y, color = "blue", xlabel = "", ylabel = "", title = ""):
-    fig, ax = plt.subplots()
+def quick_plot(x, y, color = "blue", xlabel = "", ylabel = "", title = "", fig = None, ax = None):
+    show = False
+    if ax is None:
+        fig, ax = plt.subplots()
+        show = True
 
     ax.plot(x, y, color=color)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     plt.title(title)
-    plt.show()
+    if show:
+        plt.show()
 
-def quick_scatter(x, y, color = "blue", xlabel = "", ylabel = "", title = ""):
-    fig, ax = plt.subplots()
+def quick_scatter(x, y, color = "blue", xlabel = "", ylabel = "", title = "", fig = None, ax = None):
+    show = False
+    if ax is None:
+        fig, ax = plt.subplots()
+        show = True
 
     ax.scatter(x, y, color=color)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     plt.title(title)
-    plt.show()
+    if show:
+        plt.show()
 
 def graph_pdf(data, bin_count = 10, label = ""):
     fig, ax = plt.subplots()

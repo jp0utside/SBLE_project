@@ -2,15 +2,16 @@ import numpy as np
 import pandas as pd
 from visualize import graph_decision_boundaries
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, KFold
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 from sklearn.linear_model import SGDClassifier
 from sklearn.mixture import GaussianMixture
 from sklearn.metrics import accuracy_score, confusion_matrix
+from sklearn.base import clone
 
 class RandomForest:
-    def __init__(self, n_estimators=100, random_state=3, use_scaler = True, use_pca = True, n_components=2):
+    def __init__(self, n_estimators=100, random_state=3, use_scaler = True, use_pca = True, n_components=2, criterion = "gini"):
         if use_scaler:
             self.scaler = StandardScaler()
         else:
@@ -22,7 +23,8 @@ class RandomForest:
             self.pca = None
         self.n_estimators = n_estimators
         self.random_state = random_state
-        self.clf = RandomForestClassifier(n_estimators=n_estimators, random_state=random_state)
+        self.criterion = criterion
+        self.clf = RandomForestClassifier(n_estimators=n_estimators, random_state=random_state, criterion=criterion)
         
     def train(self, X, y):
         X_train = X.copy()
@@ -63,6 +65,44 @@ class RandomForest:
         # print(cm)
         return acc, cm
     
+    def kfold(self, X, y, n_splits = 5):
+        kf = KFold(n_splits=n_splits, shuffle=True, random_state = 3)
+
+        scores = []
+        
+        for i, (train_index, test_index) in enumerate(kf.split(X)):
+            # print("i: {}, (train_index, test_index) = ({}, {})".format(i, train_index, test_index))
+            X_train = [X[i] for i in train_index].copy()
+            y_train = [y[i] for i in train_index].copy()
+            X_test = [X[i] for i in test_index].copy()
+            y_test = [y[i] for i in test_index].copy()
+
+            X_train = pd.concat(X_train)
+            y_train = pd.concat(y_train)
+            X_test = pd.concat(X_test)
+            y_test = pd.concat(y_test)
+
+            if self.scaler:
+                new_scaler = clone(self.scaler)
+                X_train = new_scaler.fit_transform(X_train)
+                X_test = new_scaler.transform(X_test)
+            if self.pca:
+                new_pca = clone(self.pca)
+                X_train = new_pca.fit_transform(X_train)
+                X_test = new_pca.transform(X_test)
+
+            clf = RandomForestClassifier(n_estimators=self.n_estimators, random_state=self.random_state, criterion=self.criterion)
+
+            clf.fit(X_train, y_train)
+
+            y_pred = clf.predict(X_test)
+
+            acc = accuracy_score(y_test, y_pred)
+            scores.append(acc)
+        
+        return scores
+
+
     def visualize_decision_bounds(self):
         for i in range(len(self.features)):
             for j in range(i+1, len(self.features)):

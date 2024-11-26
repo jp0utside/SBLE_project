@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import math
 from trip import trip
 from parse import *
@@ -33,6 +34,7 @@ def get_joint_rssi(trip, exclude_unmatched = True, include_pretrip = True, only_
                    normalize_zero = True, zero_val = -100, exclude_zeros = False):
     data = prelim_filter(trip, include_pretrip, only_dominant_major, normalize_zero, zero_val)
 
+
     m1 = data.loc[data["minor"] == 1].copy()
     m2 = data.loc[data["minor"] == 2].copy()
 
@@ -59,12 +61,12 @@ Compiles the relevant SBLE data points for each trip and adds additional columns
 All trips are then put into a single dataframe for use.
 """
 def get_tagged_dataset(trips, n = 1, exclude_unmatched = True, include_pretrip = False, only_dominant_major = True, 
-                   normalize_zero = True, zero_val = -100, aggregate_feats = True, exclude_zeros = False, trim_end_zeros = False, trim_all_zeros = False, trim_double_zeros = False,
+                   normalize_zero = True, zero_val = -100, aggregate_feats = True, exclude_null_trips = True, exclude_zeros = False, trim_end_zeros = False, trim_all_zeros = False, trim_double_zeros = False,
                    normalize_acc = False, acc_val = 1):
     df = []
     seat_to_num = {"front" : 0, "middle" : 1, "back" : 2}
 
-    for trip in trips:
+    for i, trip in enumerate(trips):
         if trip.seat != "none" and trip.data.shape[0] > 0:
             join = get_joint_rssi(trip, exclude_unmatched, include_pretrip, only_dominant_major, normalize_zero, zero_val, exclude_zeros)
             join["seat"] = seat_to_num[trip.seat]
@@ -85,7 +87,11 @@ def get_tagged_dataset(trips, n = 1, exclude_unmatched = True, include_pretrip =
             join.loc[join["rssi_accuracy_2"] < 0, "rssi_2_adj"] = zero_val
             join["rssi_diff_adj"] = join["rssi_2_adj"] - join["rssi_1_adj"]
             join["trip_idx"] = trip.trip_idx
+            join["group"] = i
+            join["on_bus"] = join["timestamp"] >= trip.on_bus
             df.append(join)
+
+            # print("i: {}, trip.data.shape: {}, join.shape: {}".format(i, trip.data.shape, join.shape))
     
     for i in range(len(df)):
         frame = df.pop(0)
@@ -127,6 +133,10 @@ def get_tagged_dataset(trips, n = 1, exclude_unmatched = True, include_pretrip =
             frame = df.pop(0)
             frame = aggregate_columns(frame)
             df.append(frame)
+    
+    if exclude_null_trips:
+        filtered_dfs = list(filter(lambda x: x.shape[0] > 0, df))
+        df = filtered_dfs
 
     if n != 1:
         for i in range(len(df)):
@@ -149,6 +159,49 @@ def aggregate_columns(data):
             new_data = new_data.drop(columns = [col+"_1", col+"_2"])
             cols.remove(col)
     return new_data
+
+def get_multilevel_frame(data):
+    new_data = pad_data(data)
+    return np.stack(new_data)
+
+def pad_data(data):
+    max_len = max([frame.shape[0] for frame in data])
+    new_data = []
+    for frame in data:
+        if frame.shape[0] < max_len and frame.shape[0] > 0:
+            padding = pd.DataFrame(0, index = range(max_len - frame.shape[0]), columns=frame.columns)
+            padding.loc[:, "rssi_1"] = -100
+            padding.loc[:, "rssi_accuracy_1"] = -1
+            padding.loc[:, "rssi_2"] = -100
+            padding.loc[:, "rssi_accuracy_2"] = -1
+            padding.loc[:, "seat"] = -1
+            new_frame = pd.concat([frame, padding], ignore_index=True)
+            new_data.append(new_frame)
+    return new_data
+
+def get_seat_loc_data(trips):
+    data = get_tagged_dataset(trips, trim_end_zeros=True)
+    return data
+
+def get_seat_loc_data_padded(trips, features):
+    data = get_tagged_dataset(trips, trim_end_zeros=True)
+    data = pad_data(data)
+    X_data = [frame[features] for frame in data]
+    y_data = [frame["seat"] for frame in data]
+    X_data = np.stack(X_data)
+    y_data = np.stack(y_data)
+    y_data = y_data.reshape(y_data.shape[0], y_data.shape[1], 1)
+    return X_data, y_data
+
+def get_on_bus_data(trips, features):
+    data = get_tagged_dataset(trips, exclude_unmatched = True, include_pretrip = True)
+    data = pad_data(data)
+    X_data = [frame[features] for frame in data]
+    y_data = [frame["on_bus"] for frame in data]
+    X_data = np.stack(X_data)
+    y_data = np.stack(y_data)
+    y_data = y_data.reshape(y_data.shape[0], y_data.shape[1], 1)
+    return X_data, y_data
 
 
 """
@@ -240,6 +293,7 @@ def get_average_dataset(trips, n, exclude_unmatched = True, include_pretrip = Tr
 
     data = pd.concat(df)
     return data
+
 
 """
 This is old code which tries to generate aggregate metrics for training (i.e. weighted avg of rssi from each beacon).

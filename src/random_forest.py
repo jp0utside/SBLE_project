@@ -2,68 +2,122 @@ import numpy as np
 import pandas as pd
 from visualize import graph_decision_boundaries
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split, KFold
+from sklearn.model_selection import train_test_split, KFold, StratifiedKFold
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
-from sklearn.linear_model import SGDClassifier
-from sklearn.mixture import GaussianMixture
 from sklearn.metrics import accuracy_score, confusion_matrix
-from sklearn.base import clone
+from sklearn.base import clone, BaseEstimator, ClassifierMixin
 
-class RandomForest:
-    def __init__(self, n_estimators=100, random_state=3, use_scaler = True, use_pca = True, n_components=2, criterion = "gini"):
-        if use_scaler:
-            self.scaler = StandardScaler()
-        else:
-            self.scaler = None
-        if use_pca:
-            self.pca = PCA(n_components=n_components)
-            self.n_components = n_components
-        else:
-            self.pca = None
-        self.n_estimators = n_estimators
-        self.random_state = random_state
-        self.criterion = criterion
-        self.clf = RandomForestClassifier(n_estimators=n_estimators, random_state=random_state, criterion=criterion)
+class RandomForest(BaseEstimator, ClassifierMixin):
+    _rf_params = {
+        'n_estimators', 'criterion', 'max_depth', 'min_samples_split',
+        'min_samples_leaf', 'min_weight_fraction_leaf', 'max_features',
+        'max_leaf_nodes', 'min_impurity_decrease', 'bootstrap',
+        'oob_score', 'n_jobs', 'random_state', 'verbose', 'warm_start',
+        'class_weight', 'ccp_alpha', 'max_samples'
+    }
+    def __init__(self, scaler = None, pca = None, features = [], pca_features = [], **rf_params):
+        self.scaler = scaler
+        self.pca = pca
+        self.features = features
+        self.pca_features = pca_features
         
-    def train(self, X, y):
-        X_train = X.copy()
-        self.X_train = X_train.copy()
-        self.y_train = y.copy()
+        for param, value in rf_params.items():
+            if param in self._rf_params:
+                setattr(self, param, value)
+            
+        self.rf = RandomForestClassifier(**rf_params)
 
-        if self.scaler:
-            X_train = self.scaler.fit_transform(X_train)
-        if self.pca:
-            X_train = self.pca.fit_transform(X_train)
-
-        self.clf.fit(X_train, y)
-
-        self.features = []
-        if self.pca:
-            for i in range(X_train.shape[1]):
-                self.features.append("Feature {}".format(i))
-        else:
-            for i in X.columns:
-                self.features.append(i)
-
+    def get_params(self, deep=True):
+        # Get parameters from parent class
+        params = super().get_params(deep=deep)
+        
+        # Add MLPClassifier parameters
+        if deep:
+            rf_params = self.rf.get_params(deep=deep)
+            for param in self._rf_params:
+                if param in rf_params:
+                    params[param] = rf_params[param]
+        
+        return params
     
-    def test(self, X, y):
-        X_test = X.copy()
-        if self.scaler:
-            X_test = self.scaler.transform(X_test)
-        if self.pca:
-            X_test = self.pca.transform(X_test)
+    def set_params(self, **params):
+        valid_params = self.get_params(deep=True)
+        rf_params = {}
+        
+        for param, value in params.items():
+            if param in valid_params:
+                if param in self._rf_params:
+                    rf_params[param] = value
+                else:
+                    setattr(self, param, value)
+        
+        if rf_params:
+            self.rf.set_params(**rf_params)
+        
+        return self
+    
+    def prep_training_data(self, X_train):
+        all_feats = list(set(self.features + self.pca_features))
+        X_train_new = X_train.copy()[all_feats]
 
-        y_pred = self.clf.predict(X_test)
+        pca_idxs = [list(X_train_new.columns).index(feat) for feat in self.pca_features]
+        feat_idxs = [list(X_train_new.columns).index(feat) for feat in self.features]
 
-        acc = accuracy_score(y, y_pred)
+        X_train_new = X_train_new.to_numpy()
 
-        conf_matrix = confusion_matrix(y, y_pred)
-        cm = pd.DataFrame(conf_matrix, ["front", "middle", "back"], columns = ["Predicted front", "Predicted middle", "Predicted back"])
+        if self.scaler is not None:
+            X_train_new = self.scaler.fit_transform(X_train_new)
+        
+        if self.pca is not None:
+            X_train_pca = X_train_new[:, pca_idxs].copy()
+            X_train_new = X_train_new[:, feat_idxs]
 
-        # print("Accuracy score: " + str(acc))
-        # print(cm)
-        return acc, cm
+            X_train_pca = self.pca.fit_transform(X_train_pca)
+
+            X_train_new = np.append(X_train_new, X_train_pca, 1)
+        
+        return X_train_new
+    
+    def prep_testing_data(self, X_test):
+        all_feats = list(set(self.features + self.pca_features))
+        X_test_new = X_test.copy()[all_feats]
+
+        pca_idxs = [list(X_test_new.columns).index(feat) for feat in self.pca_features]
+        feat_idxs = [list(X_test_new.columns).index(feat) for feat in self.features]
+
+        X_test_new = X_test_new.to_numpy()
+
+        if self.scaler is not None:
+            X_test_new = self.scaler.transform(X_test_new)
+        
+        if self.pca is not None:
+            X_test_pca = X_test_new[:, pca_idxs].copy()
+            X_test_new = X_test_new[:, feat_idxs]
+
+            X_test_pca = self.pca.transform(X_test_pca)
+
+            X_test_new = np.append(X_test_new, X_test_pca, 1)
+        
+        return X_test_new
+        
+    """
+    X: pd.DataFrame of shape = (n_samples, n_columns)
+    y: pd.DataFrame of shape = (n_samples,)
+    """
+    def fit(self, X, y):
+        X_train = self.prep_training_data(X)
+        self.rf.fit(X_train, y)
+        return self
+    
+    """
+    X: pd.DataFrame of shape = (n_samples, n_columns)
+    y: pd.DataFrame of shape = (n_samples,)
+    """
+    def predict(self, X):
+        X_test = self.prep_testing_data(X)
+
+        return self.rf.predict(X_test)
     
     def kfold(self, X, y, n_splits = 5):
         kf = KFold(n_splits=n_splits, shuffle=True, random_state = 3)
@@ -91,7 +145,44 @@ class RandomForest:
                 X_train = new_pca.fit_transform(X_train)
                 X_test = new_pca.transform(X_test)
 
-            clf = RandomForestClassifier(n_estimators=self.n_estimators, random_state=self.random_state, criterion=self.criterion)
+            clf = clone(self.clf)
+
+            clf.fit(X_train, y_train)
+
+            y_pred = clf.predict(X_test)
+
+            acc = accuracy_score(y_test, y_pred)
+            scores.append(acc)
+        
+        return scores
+
+    def strat_kfold(self, X, y, n_splits = 5):
+        kf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state = 3)
+
+        scores = []
+        
+        for i, (train_index, test_index) in enumerate(kf.split(X, y)):
+            # print("i: {}, (train_index, test_index) = ({}, {})".format(i, train_index, test_index))
+            X_train = [X[i] for i in train_index].copy()
+            y_train = [y[i] for i in train_index].copy()
+            X_test = [X[i] for i in test_index].copy()
+            y_test = [y[i] for i in test_index].copy()
+
+            X_train = pd.concat(X_train)
+            y_train = pd.concat(y_train)
+            X_test = pd.concat(X_test)
+            y_test = pd.concat(y_test)
+
+            if self.scaler:
+                new_scaler = clone(self.scaler)
+                X_train = new_scaler.fit_transform(X_train)
+                X_test = new_scaler.transform(X_test)
+            if self.pca:
+                new_pca = clone(self.pca)
+                X_train = new_pca.fit_transform(X_train)
+                X_test = new_pca.transform(X_test)
+
+            clf = clone(self.clf)
 
             clf.fit(X_train, y_train)
 
@@ -161,7 +252,7 @@ class RandomForest:
                     X_train_drop = pca.fit_transform(X_train_drop)
                     X_test_drop = pca.transform(X_test_drop)
 
-                drop_clf = RandomForestClassifier(n_estimators=self.n_estimators, random_state=self.random_state)
+                drop_clf = clone(self.clf)
                 drop_clf.fit(X_train_drop, y_train_drop)
 
                 y_pred = drop_clf.predict(X_test_drop)

@@ -14,22 +14,31 @@ import sys
 from datetime import datetime
 
 class LSTM(nn.Module):
-    def __init__(self, input_size, hidden_size, output_size):
+    def __init__(self, input_size, hidden_size, output_size, num_layers = 1, dropout = 0.0, bidirectional = False):
         super().__init__()
         self.hidden_size = hidden_size
-        self.lstm = nn.LSTM(input_size, hidden_size, batch_first = True)
-        self.clf = nn.Linear(hidden_size, output_size)
+        self.num_layers = num_layers
+        self.lstm = nn.LSTM(input_size, hidden_size, num_layers = num_layers, batch_first = True, dropout = dropout if num_layers > 1 else 0, bidirectional = bidirectional)
+        self.coef = 2 if bidirectional else 1
+        self.clf = nn.Linear(hidden_size * self.coef, output_size)
     
     def forward(self, x):
-        h0 = torch.zeros(1, x.size(0), self.hidden_size).to(x.device)
-        c0 = torch.zeros(1, x.size(0), self.hidden_size).to(x.device)
+        h0 = torch.zeros(self.num_layers * self.coef, x.size(0), self.hidden_size).to(x.device)
+        c0 = torch.zeros(self.num_layers * self.coef, x.size(0), self.hidden_size).to(x.device)
 
         lstm_output, _ = self.lstm(x, (h0, c0))
         output = self.clf(lstm_output[:, -1, :])
         return output
-    
+
+"""
+Wrapper for pytorch LSTM model
+Accommodates choosing different featuresets and pca features
+Includes functions for generating sub_sequences with length sub_sequence_length from datasets
+Follows sklearn classifier standards in order to work with Gridsearch
+Takes in array of data, with elements (n_samples, n_features)
+"""
 class SklearnLSTMWrapper(BaseEstimator, ClassifierMixin):
-    def __init__(self, features = [], scaler = None, pca_features = [], pca = None, hidden_size = 50, sub_sequence_length = 5, batch_size = 1, lr = 0.001, num_epochs = 10):
+    def __init__(self, features = [], scaler = None, pca_features = [], pca = None, hidden_size = 50, sub_sequence_length = 5, batch_size = 1, lr = 0.001, num_epochs = 10, num_layers = 1, dropout = 0, bidirectional = False, optimizer = 'adam', momentum = 0.9, weight_init = 'xavier'):
         self.input_size = (len(features) + pca.n_components) if pca is not None else len(features)
         self.hidden_size = hidden_size
         self.sub_sequence_length = sub_sequence_length
@@ -40,6 +49,12 @@ class SklearnLSTMWrapper(BaseEstimator, ClassifierMixin):
         self.pca_features = pca_features
         self.scaler = clone(scaler) if scaler else None
         self.pca = clone(pca) if pca else None
+        self.num_layers = num_layers
+        self.dropout = dropout
+        self.bidirectional = bidirectional
+        self.optimizer = optimizer
+        self.momentum = momentum
+        self.weight_init = weight_init
     
     def create_train_sequences(self, X):
         sub_sequences = []
@@ -108,13 +123,17 @@ class SklearnLSTMWrapper(BaseEstimator, ClassifierMixin):
                 sub_sequence_labels.append(seq_idx)
         return np.array(sub_sequences), np.array(sub_sequence_labels)
 
+    """
+    X: arr = [pd.DataFrame.shape = (n_samples, n_features)]
+    y: arr = [pd.DataFrame.shape = (n_samples, seat)]
+    """
     def fit(self, X, y):
         self.classes_ = np.unique(y)
         X_sub, seq_idxs = self.create_train_sequences(X)
         y_sub = [y[idx] for idx in seq_idxs]
 
         self.input_size = X_sub.shape[2]
-        
+
         X_tensor = torch.FloatTensor(X_sub)
         y_tensor = torch.LongTensor(y_sub)
 
@@ -122,10 +141,19 @@ class SklearnLSTMWrapper(BaseEstimator, ClassifierMixin):
         train_loader = DataLoader(dataset, batch_size = self.batch_size, shuffle = True)
 
         num_classes = len(np.unique(y_sub))
-        self.model = LSTM(self.input_size, self.hidden_size, num_classes)
+        self.model = LSTM(self.input_size, self.hidden_size, num_classes, self.num_layers, self.dropout, self.bidirectional)
+
+        if self.weight_init == 'xavier':
+            torch.nn.init.xavier_uniform_(self.model.lstm.weight_ih_l0)
+
+        if self.optimizer == 'adam':
+            optimizer = torch.optim.Adam(self.model.parameters(), lr = self.lr)
+        elif self.optimizer == 'sgd':
+            optimizer = torch.optim.SGD(self.mode.parameters(), lf = self.lr, momentum = self.momentum)
+
 
         criterion = nn.CrossEntropyLoss()
-        optimizer = torch.optim.Adam(self.model.parameters(), lr = self.lr)
+        
 
         self.model.train()
         for epoch in range(self.num_epochs):
@@ -181,6 +209,13 @@ class SklearnLSTMWrapper(BaseEstimator, ClassifierMixin):
         
         return scores
 
+"""
+Scoring function to be used in Gridsearch
+Generates tags for sequences based on original index of sequence, uses those for accuracy
+model: trained LSTM model used to predict labels
+X: array of test data of shape (n_samples, n_features)
+y: array of test data of shape (n_samples,)
+"""
 def sequence_prediction_scorer(model, X, y):
     y_pred, test_idx = model.predict(X)
     y_true = [y[idx] for idx in test_idx]

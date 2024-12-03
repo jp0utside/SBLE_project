@@ -9,6 +9,12 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.base import clone
 
+"""
+Wrapper for sklearn MLPClassifier
+Accommodates choosing different featuresets and pca features
+Follows sklearn classifier standards in order to work with Gridsearch
+Takes in data of shape (n_samples, n_features)
+"""
 class MLP(BaseEstimator, ClassifierMixin):
     _mlp_params = {
         'hidden_layer_sizes', 'activation', 'solver', 'alpha', 'batch_size',
@@ -30,15 +36,13 @@ class MLP(BaseEstimator, ClassifierMixin):
 
         self.mlp = MLPClassifier(**mlp_params)
     
+    """
+    Getter and Setter functions to override parent functions for MLPClassifier
+    """
+    
     def get_params(self, deep=True):
-        """Get parameters for this estimator.
-        
-        Override BaseEstimator.get_params to declare valid parameters.
-        """
-        # Get parameters from parent class
         params = super().get_params(deep=deep)
         
-        # Add MLPClassifier parameters
         if deep:
             mlp_params = self.mlp.get_params(deep=deep)
             for param in self._mlp_params:
@@ -48,7 +52,6 @@ class MLP(BaseEstimator, ClassifierMixin):
         return params
     
     def set_params(self, **params):
-        """Set the parameters of this estimator."""
         valid_params = self.get_params(deep=True)
         mlp_params = {}
         

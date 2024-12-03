@@ -8,6 +8,12 @@ from sklearn.decomposition import PCA
 from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.base import clone, BaseEstimator, ClassifierMixin
 
+"""
+Wrapper for sklearn RandomForestClassifier
+Accommodates choosing different featuresets and pca features
+Follows sklearn classifier standards in order to work with Gridsearch
+Takes in data of shape (n_samples, n_features)
+"""
 class RandomForest(BaseEstimator, ClassifierMixin):
     _rf_params = {
         'n_estimators', 'criterion', 'max_depth', 'min_samples_split',
@@ -28,11 +34,12 @@ class RandomForest(BaseEstimator, ClassifierMixin):
             
         self.rf = RandomForestClassifier(**rf_params)
 
+    """
+    Getter and Setter functions to override parent functions for RandomForestClassifier
+    """
     def get_params(self, deep=True):
-        # Get parameters from parent class
         params = super().get_params(deep=deep)
         
-        # Add MLPClassifier parameters
         if deep:
             rf_params = self.rf.get_params(deep=deep)
             for param in self._rf_params:

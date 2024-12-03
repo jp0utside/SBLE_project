@@ -30,6 +30,14 @@ position_features = ['latitude',
        'gravity_accel_z', 'user_accel_x', 'user_accel_y', 'user_accel_z',
        'magnetic_field_x', 'magnetic_field_y', 'magnetic_field_z']
 
+"""
+-------------------------------------------------------------------------------------
+TESTING FUNCTIONS
+Functions to test each model using appropriate train-test splitting methods
+Takes in trips object for efficiency, model with desired hyperparameters
+Returns accuracy score and confusion matrix
+-------------------------------------------------------------------------------------
+"""
 def test_random_forest(data = [], features = [], split_seed=3, tree_seed=3, use_scaler = True, use_pca = True, n_components = 2, n_estimators = 100, criterion = "gini"):
     if len(data) == 0:
         trips = get_trips_quick()
@@ -72,7 +80,7 @@ def test_random_forest_new(trips = None, model = None):
     data = get_tagged_dataset(trips)
     data = pd.concat(data)
     
-    X_data = data[model.features]
+    X_data = data[all_features]
     y_data = data["seat"]
     groups = data["group"]
 
@@ -97,7 +105,116 @@ def test_random_forest_new(trips = None, model = None):
     
     return acc, cm
 
+def test_mlp_new(trips = None, model = None):
+    if trips is None:
+        trips = get_trips_quick()
+    if model is None:
+        model = MLP(scaler = RobustScaler(), pca = PCA(n_components = 4), features = rssi_features, pca_features = pca_features)
+    
+    data = get_tagged_dataset(trips, include_pretrip = False, trim_end_zeros = True)
+    data = pd.concat(data)
+    
+    all_features = ['rssi_1', 'rssi_accuracy_1', 'rssi_2', 'rssi_accuracy_2', 'weekminute', 'latitude',
+       'longitude', 'speed', 'speedAcc', 'vertical_acc', 'altitude', 'course',
+       'courseAcc', 'heading', 'horizontal_acc', 'attitude_pitch',
+       'attitude_roll', 'attitude_yaw', 'rotation_rate_x', 'rotation_rate_y',
+       'rotation_rate_z', 'gravity_accel_x', 'gravity_accel_y',
+       'gravity_accel_z', 'user_accel_x', 'user_accel_y', 'user_accel_z',
+       'magnetic_field_x', 'magnetic_field_y', 'magnetic_field_z']
+    pca_features = ['latitude',
+       'longitude', 'speed', 'speedAcc', 'vertical_acc', 'altitude', 'course',
+       'courseAcc', 'heading', 'horizontal_acc', 'attitude_pitch',
+       'attitude_roll', 'attitude_yaw', 'rotation_rate_x', 'rotation_rate_y',
+       'rotation_rate_z', 'gravity_accel_x', 'gravity_accel_y',
+       'gravity_accel_z', 'user_accel_x', 'user_accel_y', 'user_accel_z',
+       'magnetic_field_x', 'magnetic_field_y', 'magnetic_field_z']
+    rssi_features = ['rssi_1', 'rssi_accuracy_1', 'rssi_2', 'rssi_accuracy_2']
 
+    X_data = data[all_features]
+    y_data = data["seat"]
+    groups = data["group"]
+
+    kf = StratifiedGroupKFold(n_splits=2)
+
+    split_gen = kf.split(X_data, y_data, groups)
+
+    train_idx, test_idx = next(split_gen)
+
+    X_train = X_data.iloc[train_idx]
+    y_train = y_data.iloc[train_idx]
+    X_test = X_data.iloc[test_idx]
+    y_test = y_data.iloc[test_idx]
+
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+
+    acc, cm = accuracy_score(y_test, y_pred)
+
+    print("acc: ", acc)
+    print(cm)
+    
+    return acc, cm
+
+def test_lstm(trips = None, model = None):
+    if trips is None:
+        trips = get_trips_quick()
+
+    if model is None:
+        model = SklearnLSTMWrapper(all_features, scaler = StandardScaler(), pca_features=all_features, pca = PCA(n_components=3), hidden_size=50, batch_size=10)
+
+    data = get_tagged_dataset(trips, include_pretrip=False, trim_end_zeros=True)
+
+    all_features = ['rssi_1', 'rssi_accuracy_1', 'rssi_2', 'rssi_accuracy_2', 'weekminute', 'latitude',
+       'longitude', 'speed', 'speedAcc', 'vertical_acc', 'altitude', 'course',
+       'courseAcc', 'heading', 'horizontal_acc', 'attitude_pitch',
+       'attitude_roll', 'attitude_yaw', 'rotation_rate_x', 'rotation_rate_y',
+       'rotation_rate_z', 'gravity_accel_x', 'gravity_accel_y',
+       'gravity_accel_z', 'user_accel_x', 'user_accel_y', 'user_accel_z',
+       'magnetic_field_x', 'magnetic_field_y', 'magnetic_field_z']
+    
+    rssi_features = ['rssi_1', 'rssi_accuracy_1', 'rssi_2', 'rssi_accuracy_2']
+    position_features = ['latitude',
+       'longitude', 'speed', 'speedAcc', 'vertical_acc', 'altitude', 'course',
+       'courseAcc', 'heading', 'horizontal_acc', 'attitude_pitch',
+       'attitude_roll', 'attitude_yaw', 'rotation_rate_x', 'rotation_rate_y',
+       'rotation_rate_z', 'gravity_accel_x', 'gravity_accel_y',
+       'gravity_accel_z', 'user_accel_x', 'user_accel_y', 'user_accel_z',
+       'magnetic_field_x', 'magnetic_field_y', 'magnetic_field_z']
+    
+    X_data = [frame[all_features] for frame in data]
+    y_data = [frame.iloc[0]["seat"] if frame.shape[0] > 0 else -1 for frame in data]
+
+    kf = StratifiedKFold(n_splits=2)
+
+    split_gen = kf.split(X_data, y_data)
+
+    train_index, test_index = next(split_gen)
+
+    X_train = [X_data[idx] for idx in train_index]
+    X_test = [X_data[idx] for idx in test_index]
+    y_train = [y_data[idx] for idx in train_index]
+    y_test = [y_data[idx] for idx in test_index]
+
+    model.fit(X_train, y_train)
+    y_pred, test_idx = model.predict(X_test)
+
+    y_true = [y_test[idx].iloc[0] for idx in test_idx]
+
+    acc, cm = accuracy_score(y_true, y_pred)
+    print("acc: ", acc)
+    print(cm)
+
+    return acc, cm
+    # return preds, y_test, seq_idxs
+
+"""
+-------------------------------------------------------------------------------------
+KFOLD FUNCTIONS
+Functions to perform KFold cross-validation tests for each kind of model
+Takes in trips object for efficiency, model with desired hyperparameters
+Returns accuracy scores for each of the 5 folds, confusion matrices for each
+-------------------------------------------------------------------------------------
+"""
 
 def kfold_random_forest(data = [], features = [], split_seed=3, tree_seed=3, use_scaler = True, use_pca = True, n_components = 2, n_estimators = 100, criterion = "gini", class_weight = None):
     if len(data) == 0:
@@ -130,7 +247,7 @@ def kfold_random_forest_new(trips = None, model = None):
     data = get_tagged_dataset(trips, trim_end_zeros = True)
     data = pd.concat(data)
 
-    X_data = data[model.features]
+    X_data = data[all_features]
     y_data = data["seat"]
     groups = data["group"]
 
@@ -169,13 +286,14 @@ def kfold_mlp_new(trips = None, model = None):
     data = get_tagged_dataset(trips, trim_end_zeros = True)
     data = pd.concat(data)
 
-    X_data = data[model.features]
+    X_data = data[all_features]
     y_data = data["seat"]
     groups = data["group"]
 
     kf = StratifiedGroupKFold(n_splits=5)
 
     scores = []
+    cms = []
 
     for i, (train_index, test_index) in enumerate(kf.split(X_data, y_data, groups)):
         split_model = clone(model)
@@ -187,56 +305,23 @@ def kfold_mlp_new(trips = None, model = None):
         split_model.fit(X_train, y_train)
         y_pred = split_model.predict(X_test)
 
-        acc = accuracy_score(y_test, y_pred)
+        acc, cm = accuracy_score(y_test, y_pred)
         scores.append(acc)
+        cms.append(cm)
     
     print("Scores: ", scores)
     print("Avg: ", sum(scores)/len(scores))
-    return(scores)
+    return scores, cms
 
-
-
-def random_forest_gridsearch(data, pipeline_options, param_options, features):
-    groups = np.repeat(range(len(data)), [len(df) for df in data])
-
-    all_data = pd.concat(data)
-    X_data = all_data[features]
-    y_data = all_data["seat"]
-
-    kf = GroupKFold(n_splits=5)
-
-    for pipeline, params in zip(pipeline_options, param_options):
-        grid_search = GridSearchCV(pipeline, params, cv = kf, scoring="accuracy", n_jobs = -1, verbose = 5)
-        grid_search.fit(X_data, y_data, groups=groups)
-
-        results = pd.DataFrame(grid_search.cv_results_)
-        now = datetime.now()
-        results.to_csv("gridsearch_results/random_forest_gridsearch_results_{}.csv".format(now), index = False)
-
-def mlp_gridsearch(data, pipelines, param_options, features):
-    groups = np.repeat(range(len(data)), [len(df) for df in data])
-
-    all_data = pd.concat(data)
-    X_data = all_data[features]
-    y_data = all_data["seat"]
-
-    kf = GroupKFold(n_splits=5)
-
-    for pipeline, params in zip(pipelines, param_options):
-        grid_search = GridSearchCV(pipeline, params, cv = kf, scoring = "accuracy", n_jobs = -1, verbose = 5)
-        grid_search.fit(X_data, y_data, groups=groups)
-
-        results = pd.DataFrame(grid_search.cv_results_)
-        now = datetime.now()
-        results.to_csv("gridsearch_results/mlp_gridsearch_results_{}.csv".format(now), index = False)
-
-def pca_test(trips = None):
+def kfold_lstm(trips = None, model = None):
     if trips is None:
         trips = get_trips_quick()
     
-    data = get_tagged_dataset(trips, include_pretrip = False, trim_end_zeros = True)
-    data = pd.concat(data)
-    
+    if model is None:
+        model = SklearnLSTMWrapper(features=rssi_features, scaler=StandardScaler(), pca=PCA(n_components = 3), pca_features=position_features, hidden_size=50)
+
+    data = get_tagged_dataset(trips, include_pretrip=False, trim_end_zeros=True)
+
     all_features = ['rssi_1', 'rssi_accuracy_1', 'rssi_2', 'rssi_accuracy_2', 'weekminute', 'latitude',
        'longitude', 'speed', 'speedAcc', 'vertical_acc', 'altitude', 'course',
        'courseAcc', 'heading', 'horizontal_acc', 'attitude_pitch',
@@ -244,27 +329,70 @@ def pca_test(trips = None):
        'rotation_rate_z', 'gravity_accel_x', 'gravity_accel_y',
        'gravity_accel_z', 'user_accel_x', 'user_accel_y', 'user_accel_z',
        'magnetic_field_x', 'magnetic_field_y', 'magnetic_field_z']
-    pca_features = ['latitude',
+    
+    rssi_features = ['rssi_1', 'rssi_accuracy_1', 'rssi_2', 'rssi_accuracy_2']
+    position_features = ['latitude',
        'longitude', 'speed', 'speedAcc', 'vertical_acc', 'altitude', 'course',
        'courseAcc', 'heading', 'horizontal_acc', 'attitude_pitch',
        'attitude_roll', 'attitude_yaw', 'rotation_rate_x', 'rotation_rate_y',
        'rotation_rate_z', 'gravity_accel_x', 'gravity_accel_y',
        'gravity_accel_z', 'user_accel_x', 'user_accel_y', 'user_accel_z',
        'magnetic_field_x', 'magnetic_field_y', 'magnetic_field_z']
-    rssi_features = ['rssi_1', 'rssi_accuracy_1', 'rssi_2', 'rssi_accuracy_2']
-    
-    clf = MLP(scaler = RobustScaler(), pca = PCA(n_components = 4), features = rssi_features, pca_features = pca_features)
 
-    seats = data["seat"].copy()
-    groups = data["group"].copy()
+    X_data = [frame[all_features] for frame in data]
+    y_data = [frame["seat"] for frame in data]
 
-    scores = clf.GroupKFold(data, seats, groups)
+    kf = StratifiedKFold(n_splits=5)
 
-    return scores
+    scores = []
+    cms = []
 
-def mlp_pca_gridsearch(trips = None):
+    for i, (train_index, test_index) in enumerate(kf.split(X_data, y_data)):
+        split_model = clone(model)
+        X_train = [X_data[idx] for idx in train_index]
+        y_train = [y_data[idx] for idx in train_index]
+        X_test = [X_data[idx] for idx in test_index]
+        y_test = [y_data[idx] for idx in test_index]
+
+        split_model.fit(X_train, y_train)
+
+        y_pred, test_idx = split_model.predict(X_test)
+
+        y_true = [y_test[idx].iloc[0] for idx in test_idx]
+
+        acc, cm = accuracy_score(y_true, y_pred)
+        scores.append(acc)
+        cms.append(cm)
+
+    return scores, cm
+
+"""
+-------------------------------------------------------------------------------------
+GRIDSEARCH FUNCTIONS
+Functions to help perform gridsearches to find optimal hyperparameters for each model
+Takes in trips object for efficiency, and desired parameters
+-------------------------------------------------------------------------------------
+"""
+
+"""
+Function to perform gridsearch for random forest model using inputted parameter options
+trips: array of trip objects holding the data. trips will be called for all users if no object is used.
+params: dictionary of parameter options to be used in gridsearch.
+"""
+def random_forest_gridsearch(trips = None, params = None):
     if trips is None:
         trips = get_trips_quick()
+    
+    if params is None:
+        params = {
+        'features': [rssi_features],
+        'scaler': [RobustScaler()],
+        'n_estimators': [50, 100, 200],
+        'max_depth' : [20],
+        'min_samples_split' : [2,5,10],
+        'min_samples_leaf' : [1,2,4],
+        'max_features' : ['sqrt', 'log'],
+    }
 
     data = get_tagged_dataset(trips, trim_end_zeros=True)
     data = pd.concat(data)
@@ -293,8 +421,41 @@ def mlp_pca_gridsearch(trips = None):
     y_data = data["seat"]
     groups = data["group"]
 
+    grid_search = GridSearchCV(RandomForest(), params, cv = kf, scoring = "accuracy", n_jobs = -1, verbose = 5)
+    grid_search.fit(X_data, y_data, groups=groups)
+    results = pd.DataFrame(grid_search.cv_results_)
+    now = datetime.now()
+    results.to_csv("gridsearch_results/rf_gridsearch_results_{}.csv".format(now), index = False)
 
-    params = {
+def mlp_gridsearch_old(data, pipelines, param_options, features):
+    groups = np.repeat(range(len(data)), [len(df) for df in data])
+
+    all_data = pd.concat(data)
+    X_data = all_data[features]
+    y_data = all_data["seat"]
+
+    kf = GroupKFold(n_splits=5)
+
+    for pipeline, params in zip(pipelines, param_options):
+        grid_search = GridSearchCV(pipeline, params, cv = kf, scoring = "accuracy", n_jobs = -1, verbose = 5)
+        grid_search.fit(X_data, y_data, groups=groups)
+
+        results = pd.DataFrame(grid_search.cv_results_)
+        now = datetime.now()
+        results.to_csv("gridsearch_results/mlp_gridsearch_results_{}.csv".format(now), index = False)
+
+
+"""
+Function to perform gridsearch for mlp model using inputted parameter options
+trips: array of trip objects holding the data. trips will be called for all users if no object is used.
+params: dictionary of parameter options to be used in gridsearch.
+"""
+def mlp_gridsearch(trips = None, params = None):
+    if trips is None:
+        trips = get_trips_quick()
+    
+    if params is None:
+        params = {
         'features': [rssi_features],
         'pca_features': [(rssi_features + position_features), position_features],
         'scaler': [RobustScaler()],
@@ -311,83 +472,44 @@ def mlp_pca_gridsearch(trips = None):
         'n_iter_no_change': [10, 20, 50]
     }
 
+    data = get_tagged_dataset(trips, trim_end_zeros=True)
+    data = pd.concat(data)
+
+    all_features = ['rssi_1', 'rssi_accuracy_1', 'rssi_2', 'rssi_accuracy_2', 'weekminute', 'latitude',
+       'longitude', 'speed', 'speedAcc', 'vertical_acc', 'altitude', 'course',
+       'courseAcc', 'heading', 'horizontal_acc', 'attitude_pitch',
+       'attitude_roll', 'attitude_yaw', 'rotation_rate_x', 'rotation_rate_y',
+       'rotation_rate_z', 'gravity_accel_x', 'gravity_accel_y',
+       'gravity_accel_z', 'user_accel_x', 'user_accel_y', 'user_accel_z',
+       'magnetic_field_x', 'magnetic_field_y', 'magnetic_field_z']
+    
+    rssi_features = ['rssi_1', 'rssi_accuracy_1', 'rssi_2', 'rssi_accuracy_2']
+    position_features = ['latitude',
+       'longitude', 'speed', 'speedAcc', 'vertical_acc', 'altitude', 'course',
+       'courseAcc', 'heading', 'horizontal_acc', 'attitude_pitch',
+       'attitude_roll', 'attitude_yaw', 'rotation_rate_x', 'rotation_rate_y',
+       'rotation_rate_z', 'gravity_accel_x', 'gravity_accel_y',
+       'gravity_accel_z', 'user_accel_x', 'user_accel_y', 'user_accel_z',
+       'magnetic_field_x', 'magnetic_field_y', 'magnetic_field_z']
+
+    kf = StratifiedGroupKFold(n_splits=5)
+    # kf = GroupKFold(n_splits = 5)
+
+    X_data = data[all_features]
+    y_data = data["seat"]
+    groups = data["group"]
+
     grid_search = GridSearchCV(MLP(), params, cv = kf, scoring = "accuracy", n_jobs = -1, verbose = 5)
     grid_search.fit(X_data, y_data, groups=groups)
     results = pd.DataFrame(grid_search.cv_results_)
     now = datetime.now()
-    results.to_csv("gridsearch_results/mlp_pca_gridsearch_results_{}.csv".format(now), index = False)
+    results.to_csv("gridsearch_results/mlp_gridsearch_results_{}.csv".format(now), index = False)
 
-def test_lstm(trips = None):
-    if trips is None:
-        trips = get_trips_quick()
-
-    data = get_tagged_dataset(trips, include_pretrip=False, trim_end_zeros=True)
-
-    all_features = ['rssi_1', 'rssi_accuracy_1', 'rssi_2', 'rssi_accuracy_2', 'weekminute', 'latitude',
-       'longitude', 'speed', 'speedAcc', 'vertical_acc', 'altitude', 'course',
-       'courseAcc', 'heading', 'horizontal_acc', 'attitude_pitch',
-       'attitude_roll', 'attitude_yaw', 'rotation_rate_x', 'rotation_rate_y',
-       'rotation_rate_z', 'gravity_accel_x', 'gravity_accel_y',
-       'gravity_accel_z', 'user_accel_x', 'user_accel_y', 'user_accel_z',
-       'magnetic_field_x', 'magnetic_field_y', 'magnetic_field_z']
-    
-    rssi_features = ['rssi_1', 'rssi_accuracy_1', 'rssi_2', 'rssi_accuracy_2']
-    position_features = ['latitude',
-       'longitude', 'speed', 'speedAcc', 'vertical_acc', 'altitude', 'course',
-       'courseAcc', 'heading', 'horizontal_acc', 'attitude_pitch',
-       'attitude_roll', 'attitude_yaw', 'rotation_rate_x', 'rotation_rate_y',
-       'rotation_rate_z', 'gravity_accel_x', 'gravity_accel_y',
-       'gravity_accel_z', 'user_accel_x', 'user_accel_y', 'user_accel_z',
-       'magnetic_field_x', 'magnetic_field_y', 'magnetic_field_z']
-    
-    X = [frame[all_features] for frame in data]
-    y = [frame.iloc[0]["seat"] if frame.shape[0] > 0 else -1 for frame in data]
-
-    X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=3)
-
-    model = SklearnLSTMWrapper(all_features, scaler = StandardScaler(), pca_features=all_features, pca = PCA(n_components=3), hidden_size=50, batch_size=10)
-
-    model.fit(X_train, y_train)
-    acc = sequence_prediction_scorer(model, X_test, y_test)
-    # preds, seq_idxs = model.predict(X_test)
-
-    # y_true = [y_test[idx].iloc[0] for idx in seq_idxs]
-
-    # acc = accuracy_score(y_true, preds)
-    print("acc: ", acc)
-    # return preds, y_test, seq_idxs
-
-def lstm_kfold(trips = None):
-    if trips is None:
-        trips = get_trips_quick()
-
-    data = get_tagged_dataset(trips, include_pretrip=False, trim_end_zeros=True)
-    all_features = ['rssi_1', 'rssi_accuracy_1', 'rssi_2', 'rssi_accuracy_2', 'weekminute', 'latitude',
-       'longitude', 'speed', 'speedAcc', 'vertical_acc', 'altitude', 'course',
-       'courseAcc', 'heading', 'horizontal_acc', 'attitude_pitch',
-       'attitude_roll', 'attitude_yaw', 'rotation_rate_x', 'rotation_rate_y',
-       'rotation_rate_z', 'gravity_accel_x', 'gravity_accel_y',
-       'gravity_accel_z', 'user_accel_x', 'user_accel_y', 'user_accel_z',
-       'magnetic_field_x', 'magnetic_field_y', 'magnetic_field_z']
-    
-    rssi_features = ['rssi_1', 'rssi_accuracy_1', 'rssi_2', 'rssi_accuracy_2']
-    position_features = ['latitude',
-       'longitude', 'speed', 'speedAcc', 'vertical_acc', 'altitude', 'course',
-       'courseAcc', 'heading', 'horizontal_acc', 'attitude_pitch',
-       'attitude_roll', 'attitude_yaw', 'rotation_rate_x', 'rotation_rate_y',
-       'rotation_rate_z', 'gravity_accel_x', 'gravity_accel_y',
-       'gravity_accel_z', 'user_accel_x', 'user_accel_y', 'user_accel_z',
-       'magnetic_field_x', 'magnetic_field_y', 'magnetic_field_z']
-    
-    model = SklearnLSTMWrapper(len(rssi_features), hidden_size=50)
-
-    X = [frame[rssi_features] for frame in data]
-    y = [frame["seat"] for frame in data]
-
-    scores = model.KFold(X, y)
-
-    return scores
-
+"""
+Function to perform gridsearch for lstm model using inputted parameter options
+trips: array of trip objects holding the data. trips will be called for all users if no object is used.
+params: dictionary of parameter options to be used in gridsearch.
+"""
 def lstm_gridsearch(trips = None, params = None):
     if trips is None:
         trips = get_trips_quick()
@@ -433,6 +555,38 @@ def lstm_gridsearch(trips = None, params = None):
     now = datetime.now()
     results.to_csv("gridsearch_results/lstm_gridsearch_results_{}.csv".format(now), index = False)
 
+"""
+Function to get average performance metrics for each param option saved from gridsearch
+Returns a dictionary conversion of a pandas dataframe
+file: a filepath string pointing to gridsearch results
+"""
+def get_gridsearch_splits(file):
+    df = pd.read_csv(file)
+    sum_cols = ['mean_fit_time', 'std_fit_time', 'mean_score_time', 'std_score_time', 'split0_test_score', 'split1_test_score', 'split2_test_score', 'split3_test_score', 'split4_test_score', 'mean_test_score', 'std_test_score','rank_test_score']
+    ignore_cols = ['params']
+    summary_dict = {}
+
+    for col in df.columns:
+        if col not in (sum_cols + ignore_cols):
+            for val in df[col].unique():
+                filtered = df.loc[df[col] == val]
+                label = '{} = {}'.format(col, val)
+                temp_dict = {}
+                for c in sum_cols:
+                    temp_dict[c] = filtered[c].mean()
+                summary_dict[label] = temp_dict
+    
+    split_frame = pd.DataFrame(summary_dict)
+    split_frame = split_frame.transpose()
+    
+    return summary_dict
+
+
+"""
+-------------------------------------------------------------------------------------
+ARCHIVE
+-------------------------------------------------------------------------------------
+"""
 def run_gridsearch():
     trips = get_trips_quick()
     data = get_tagged_dataset(trips, trim_end_zeros=True)
@@ -573,24 +727,3 @@ def test_joint_model(trips = None):
     test_results = model.test_model(test_loader)
 
     return test_results
-
-def get_gridsearch_splits(file):
-    df = pd.read_csv(file)
-    sum_cols = ['mean_fit_time', 'std_fit_time', 'mean_score_time', 'std_score_time', 'split0_test_score', 'split1_test_score', 'split2_test_score', 'split3_test_score', 'split4_test_score', 'mean_test_score', 'std_test_score','rank_test_score']
-    ignore_cols = ['params']
-    summary_dict = {}
-
-    for col in df.columns:
-        if col not in (sum_cols + ignore_cols):
-            for val in df[col].unique():
-                filtered = df.loc[df[col] == val]
-                label = '{} = {}'.format(col, val)
-                temp_dict = {}
-                for c in sum_cols:
-                    temp_dict[c] = filtered[c].mean()
-                summary_dict[label] = temp_dict
-    
-    split_frame = pd.DataFrame(summary_dict)
-    split_frame = split_frame.transpose()
-    
-    return summary_dict

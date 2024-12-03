@@ -156,7 +156,7 @@ def kfold_random_forest_new(trips = None, model = None):
     print("Scores: ", scores)
     print("Avg: ", sum(scores)/len(scores))
     print("CMs: ", confs)
-    
+
     return scores, confs
 
 def kfold_mlp_new(trips = None, model = None):
@@ -573,3 +573,24 @@ def test_joint_model(trips = None):
     test_results = model.test_model(test_loader)
 
     return test_results
+
+def get_gridsearch_splits(file):
+    df = pd.read_csv(file)
+    sum_cols = ['mean_fit_time', 'std_fit_time', 'mean_score_time', 'std_score_time', 'split0_test_score', 'split1_test_score', 'split2_test_score', 'split3_test_score', 'split4_test_score', 'mean_test_score', 'std_test_score','rank_test_score']
+    ignore_cols = ['params']
+    summary_dict = {}
+
+    for col in df.columns:
+        if col not in (sum_cols + ignore_cols):
+            for val in df[col].unique():
+                filtered = df.loc[df[col] == val]
+                label = '{} = {}'.format(col, val)
+                temp_dict = {}
+                for c in sum_cols:
+                    temp_dict[c] = filtered[c].mean()
+                summary_dict[label] = temp_dict
+    
+    split_frame = pd.DataFrame(summary_dict)
+    split_frame = split_frame.transpose()
+    
+    return summary_dict

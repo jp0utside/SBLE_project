@@ -518,7 +518,7 @@ def lstm_gridsearch(trips = None, params = None, method = 'grid', n_iter = 128):
         now = datetime.now()
         results.to_csv("gridsearch_results/lstm_randomsearch_results_{}.csv".format(now), index = False)
     elif method == 'halving':
-        grid_search = HalvingGridSearchCV(SklearnLSTMWrapper(), params, cv = kf, scoring = sequence_prediction_scorer, n_jobs = -1, verbose = 5, factor = 2)
+        grid_search = HalvingGridSearchCV(SklearnLSTMWrapper(), params, cv = kf, scoring = sequence_prediction_scorer, n_jobs = -1, verbose = 5, factor = 2, min_resources = 46)
         grid_search.fit(X_data, y_data)
         results = pd.DataFrame(grid_search.cv_results_)
         now = datetime.now()
@@ -537,23 +537,41 @@ Returns a dictionary conversion of a pandas dataframe
 Args:
     file: a filepath string pointing to gridsearch results
 """
-def get_gridsearch_splits(file):
-    df = pd.read_csv(file)
-    sum_cols = ['mean_fit_time', 'std_fit_time', 'mean_score_time', 'std_score_time', 'split0_test_score', 'split1_test_score', 'split2_test_score', 'split3_test_score', 'split4_test_score', 'mean_test_score', 'std_test_score','rank_test_score']
-    ignore_cols = ['params']
+def get_gridsearch_splits(df):
+    sum_cols = ['mean_fit_time', 'std_fit_time', 'mean_score_time', 'std_score_time', 'split0_test_score', 'split1_test_score', 'split2_test_score', 'split3_test_score', 'split4_test_score', 'mean_test_score', 'std_test_score','rank_test_score',
+                'split0_train_score', 'split1_train_score', 'split2_train_score', 'split3_train_score', 'split4_train_score', 'mean_train_score', 'std_train_score']
+    ignore_cols = ['params', 'iter']
     summary_dict = {}
 
     for col in df.columns:
         if col not in (sum_cols + ignore_cols):
-            for val in df[col].unique():
-                filtered = df.loc[df[col] == val]
-                label = '{} = {}'.format(col, val)
-                temp_dict = {}
-                for c in sum_cols:
-                    temp_dict[c] = filtered[c].mean()
-                summary_dict[label] = temp_dict
+            if len(df[col].unique()) > 1:
+                for val in df[col].unique():
+                    filtered = df.loc[df[col] == val]
+                    label = '{} = {}'.format(col, val)
+                    temp_dict = {}
+                    for c in sum_cols:
+                        if c in filtered.columns:
+                            temp_dict[c] = filtered[c].mean()
+                    summary_dict[label] = temp_dict
     
     split_frame = pd.DataFrame(summary_dict)
     split_frame = split_frame.transpose()
+
+    index_dict = {}
+    for i, col in enumerate(split_frame.columns):
+        index_dict[col] = i
     
-    return summary_dict
+    new_order = []
+    first_cols = ['rank_test_score', 'mean_test_score', 'std_test_score', 'mean_train_score', 'std_train_score', 'mean_fit_time', 'std_fit_time', 'mean_score_time', 'std_score_time']
+
+    for col in first_cols:
+        if col in index_dict.keys():
+            new_order.append(index_dict[col])
+            del index_dict[col]
+    
+    new_order.extend(index_dict.values())
+    
+    split_frame = split_frame.iloc[:, new_order]
+    
+    return split_frame

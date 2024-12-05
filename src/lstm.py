@@ -14,10 +14,11 @@ import sys
 from datetime import datetime
 
 class LSTM(nn.Module):
-    def __init__(self, input_size, hidden_size, output_size, num_layers = 1, dropout = 0.0, bidirectional = False):
+    def __init__(self, input_size, hidden_size, output_size, num_layers = 1, dropout = 0.0, recurrent_dropout = 0.0, bidirectional = False):
         super().__init__()
         self.hidden_size = hidden_size
         self.num_layers = num_layers
+        self.recurrent_dropout = nn.Dropout(recurrent_dropout)
         self.lstm = nn.LSTM(input_size, hidden_size, num_layers = num_layers, batch_first = True, dropout = dropout if num_layers > 1 else 0, bidirectional = bidirectional)
         self.coef = 2 if bidirectional else 1
         self.clf = nn.Linear(hidden_size * self.coef, output_size)
@@ -26,8 +27,19 @@ class LSTM(nn.Module):
         h0 = torch.zeros(self.num_layers * self.coef, x.size(0), self.hidden_size).to(x.device)
         c0 = torch.zeros(self.num_layers * self.coef, x.size(0), self.hidden_size).to(x.device)
 
-        lstm_output, _ = self.lstm(x, (h0, c0))
-        output = self.clf(lstm_output[:, -1, :])
+        outputs = []
+        h_t = h0[0]
+        c_t = c0[0]
+
+        for t in range(x.size(1)):
+            h_dropped = self.recurrent_dropout(h_t)
+            _, (h_t, c_t) = self.lstm(x[:, t:t+1, :], (h_dropped.unsqueeze(0), c_t.unsqueeze(0)))
+            h_t = h_t.squeeze(0)
+            c_t = c_t.squeeze(0)
+            outputs.append(h_t)
+
+        outputs = torch.stack(outputs, dim = 1)
+        output = self.clf(outputs[:, -1, :])
         return output
 
 """
@@ -38,7 +50,7 @@ Follows sklearn classifier standards in order to work with Gridsearch
 Takes in array of data, with elements (n_samples, n_features)
 """
 class SklearnLSTMWrapper(BaseEstimator, ClassifierMixin):
-    def __init__(self, features = [], scaler = None, pca_features = [], pca = None, hidden_size = 50, sub_sequence_length = 5, batch_size = 1, lr = 0.001, num_epochs = 10, num_layers = 1, dropout = 0, bidirectional = False, optimizer = 'adam', momentum = 0.9, weight_init = 'xavier'):
+    def __init__(self, features = [], scaler = None, pca_features = [], pca = None, hidden_size = 50, sub_sequence_length = 5, batch_size = 1, lr = 0.001, num_epochs = 10, num_layers = 1, dropout = 0, recurrent_dropout = 0, bidirectional = False, optimizer = 'adam', momentum = 0.9, weight_init = 'xavier', l2_lambda = 0):
         self.input_size = (len(features) + pca.n_components) if pca is not None else len(features)
         self.hidden_size = hidden_size
         self.sub_sequence_length = sub_sequence_length
@@ -53,10 +65,12 @@ class SklearnLSTMWrapper(BaseEstimator, ClassifierMixin):
         self.pca = pca
         self.num_layers = num_layers
         self.dropout = dropout
+        self.recurrent_dropout = recurrent_dropout
         self.bidirectional = bidirectional
         self.optimizer = optimizer
         self.momentum = momentum
         self.weight_init = weight_init
+        self.l2_lambda = l2_lambda
     
     def create_train_sequences(self, X):
         sub_sequences = []
@@ -143,15 +157,15 @@ class SklearnLSTMWrapper(BaseEstimator, ClassifierMixin):
         train_loader = DataLoader(dataset, batch_size = self.batch_size, shuffle = True)
 
         num_classes = len(np.unique(y_sub))
-        self.model = LSTM(self.input_size, self.hidden_size, num_classes, self.num_layers, self.dropout, self.bidirectional)
+        self.model = LSTM(self.input_size, self.hidden_size, num_classes, self.num_layers, self.dropout, self.recurrent_dropout, self.bidirectional)
 
         if self.weight_init == 'xavier':
             torch.nn.init.xavier_uniform_(self.model.lstm.weight_ih_l0)
 
         if self.optimizer == 'adam':
-            optimizer = torch.optim.Adam(self.model.parameters(), lr = self.lr)
+            optimizer = torch.optim.Adam(self.model.parameters(), lr = self.lr, weight_decay = self.l2_lambda)
         elif self.optimizer == 'sgd':
-            optimizer = torch.optim.SGD(self.model.parameters(), lr = self.lr, momentum = self.momentum)
+            optimizer = torch.optim.SGD(self.model.parameters(), lr = self.lr, momentum = self.momentum, weight_decay = self.l2_lambda)
 
 
         criterion = nn.CrossEntropyLoss()

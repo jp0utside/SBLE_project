@@ -46,25 +46,27 @@ def test_random_forest(trips = None, model = None):
         model = RandomForest(scaler = StandardScaler(), features=rssi_features, pca = None)
     
     data = get_tagged_dataset(trips)
-    data = pd.concat(data)
     
-    X_data = data[all_features]
-    y_data = data["seat"]
-    groups = data["group"]
+    X_data = [frame[all_features] for frame in data]
+    y_data = [frame["seat"] for frame in data]
 
-    kf = StratifiedGroupKFold(n_splits=2)
+    y_targets = [frame.iloc[0] for frame in y_data]
 
-    split_gen = kf.split(X_data, y_data, groups)
+    kf = StratifiedKFold(n_splits=2)
 
-    train_idx, test_idx = next(split_gen)
+    split_gen = kf.split(X_data, y_targets)
 
-    X_train = X_data.iloc[train_idx]
-    y_train = y_data.iloc[train_idx]
-    X_test = X_data.iloc[test_idx]
-    y_test = y_data.iloc[test_idx]
+    train_index, test_index = next(split_gen)
+
+    X_train = [X_data[idx] for idx in train_index]
+    X_test = [X_data[idx] for idx in test_index]
+    y_train = [y_data[idx] for idx in train_index]
+    y_test = [y_data[idx] for idx in test_index]
 
     model.fit(X_train, y_train)
     y_pred = model.predict(X_test)
+
+    y_test = pd.concat(y_test)
 
     acc, cm = accuracy_score(y_test, y_pred), confusion_matrix(y_test, y_pred)
 
@@ -80,7 +82,6 @@ def test_mlp(trips = None, model = None):
         model = MLP(scaler = RobustScaler(), pca = PCA(n_components = 4), features = rssi_features, pca_features = pca_features)
     
     data = get_tagged_dataset(trips, include_pretrip = False, trim_end_zeros = True)
-    data = pd.concat(data)
     
     all_features = ['rssi_1', 'rssi_accuracy_1', 'rssi_2', 'rssi_accuracy_2', 'weekminute', 'latitude',
        'longitude', 'speed', 'speedAcc', 'vertical_acc', 'altitude', 'course',
@@ -98,23 +99,26 @@ def test_mlp(trips = None, model = None):
        'magnetic_field_x', 'magnetic_field_y', 'magnetic_field_z']
     rssi_features = ['rssi_1', 'rssi_accuracy_1', 'rssi_2', 'rssi_accuracy_2']
 
-    X_data = data[all_features]
-    y_data = data["seat"]
-    groups = data["group"]
+    X_data = [frame[all_features] for frame in data]
+    y_data = [frame["seat"] for frame in data]
 
-    kf = StratifiedGroupKFold(n_splits=2)
+    y_targets = [frame.iloc[0] for frame in y_data]
 
-    split_gen = kf.split(X_data, y_data, groups)
+    kf = StratifiedKFold(n_splits=2)
 
-    train_idx, test_idx = next(split_gen)
+    split_gen = kf.split(X_data, y_targets)
 
-    X_train = X_data.iloc[train_idx]
-    y_train = y_data.iloc[train_idx]
-    X_test = X_data.iloc[test_idx]
-    y_test = y_data.iloc[test_idx]
+    train_index, test_index = next(split_gen)
+
+    X_train = [X_data[idx] for idx in train_index]
+    X_test = [X_data[idx] for idx in test_index]
+    y_train = [y_data[idx] for idx in train_index]
+    y_test = [y_data[idx] for idx in test_index]
 
     model.fit(X_train, y_train)
     y_pred = model.predict(X_test)
+
+    y_test = pd.concat(y_test)
 
     acc, cm = accuracy_score(y_test, y_pred), confusion_matrix(y_test, y_pred)
 
@@ -192,26 +196,28 @@ def kfold_random_forest(trips = None, model = None):
         model = RandomForest(scaler = StandardScaler(), features=rssi_features, pca = None)
     
     data = get_tagged_dataset(trips, trim_end_zeros = True)
-    data = pd.concat(data)
 
-    X_data = data[all_features]
-    y_data = data["seat"]
-    groups = data["group"]
+    X_data = [frame[all_features] for frame in data]
+    y_data = [frame["seat"] for frame in data]
 
-    kf = StratifiedGroupKFold(n_splits=5)
+    y_targets = [frame.iloc[0] for frame in y_data]
+
+    kf = StratifiedKFold(n_splits=5)
 
     scores = []
     confs = []
 
-    for i, (train_index, test_index) in enumerate(kf.split(X_data, y_data, groups)):
+    for i, (train_index, test_index) in enumerate(kf.split(X_data, y_targets)):
         split_model = clone(model)
-        X_train = X_data.iloc[train_index].copy()
-        X_test = X_data.iloc[test_index].copy()
-        y_train = y_data.iloc[train_index].copy()
-        y_test = y_data.iloc[test_index].copy()
+        X_train = [X_data[idx] for idx in train_index]
+        y_train = [y_data[idx] for idx in train_index]
+        X_test = [X_data[idx] for idx in test_index]
+        y_test = [y_data[idx] for idx in test_index]
 
         split_model.fit(X_train, y_train)
         y_pred = split_model.predict(X_test)
+
+        y_test = pd.concat(y_test)
 
         acc, cm = accuracy_score(y_test, y_pred), confusion_matrix(y_test, y_pred)
         scores.append(acc)
@@ -231,18 +237,18 @@ def kfold_mlp(trips = None, model = None):
         model = MLP(scaler = StandardScaler(), features=rssi_features, pca = None)
     
     data = get_tagged_dataset(trips, trim_end_zeros = True)
-    data = pd.concat(data)
 
-    X_data = data[all_features]
-    y_data = data["seat"]
-    groups = data["group"]
+    X_data = [frame[all_features] for frame in data]
+    y_data = [frame["seat"] for frame in data]
 
-    kf = StratifiedGroupKFold(n_splits=5)
+    y_targets = [frame.iloc[0] for frame in y_data]
+
+    kf = StratifiedKFold(n_splits=5)
 
     scores = []
     cms = []
 
-    for i, (train_index, test_index) in enumerate(kf.split(X_data, y_data, groups)):
+    for i, (train_index, test_index) in enumerate(kf.split(X_data, y_targets)):
         split_model = clone(model)
         X_train = X_data.iloc[train_index].copy()
         X_test = X_data.iloc[test_index].copy()
@@ -331,7 +337,6 @@ def random_forest_gridsearch(trips = None, params = None, method = 'grid', n_ite
         trips = get_trips_quick()
 
     data = get_tagged_dataset(trips, trim_end_zeros=True)
-    data = pd.concat(data)
 
     all_features = ['rssi_1', 'rssi_accuracy_1', 'rssi_2', 'rssi_accuracy_2', 'weekminute', 'latitude',
        'longitude', 'speed', 'speedAcc', 'vertical_acc', 'altitude', 'course',
@@ -361,34 +366,26 @@ def random_forest_gridsearch(trips = None, params = None, method = 'grid', n_ite
         'max_features' : ['sqrt'],
     }
 
-    kf = StratifiedGroupKFold(n_splits=5)
-    # kf = GroupKFold(n_splits = 5)
+    kf = StratifiedKFold(n_splits=5)
 
-    X_data = data[all_features]
-    y_data = data["seat"]
-    groups = data["group"]
-
-    grid_search = GridSearchCV(RandomForest(), params, cv = kf, scoring = "accuracy", n_jobs = -1, verbose = 5)
-    grid_search.fit(X_data, y_data, groups=groups)
-    results = pd.DataFrame(grid_search.cv_results_)
-    now = datetime.now()
-    results.to_csv("gridsearch_results/rf_gridsearch_results_{}.csv".format(now), index = False)
+    X_data = [frame[all_features] for frame in data]
+    y_data = [frame.iloc[0]["seat"] if frame.shape[0] > 0 else -1 for frame in data]
 
     if method == 'random':
-        grid_search = RandomizedSearchCV(RandomForest(), params, n_iter = n_iter, cv = kf, scoring = "accuracy", n_jobs = -1, verbose = 5)
-        grid_search.fit(X_data, y_data, groups=groups)
+        grid_search = RandomizedSearchCV(RandomForest(), params, n_iter = n_iter, cv = kf, scoring = rf_prediction_scorer, n_jobs = -1, verbose = 5)
+        grid_search.fit(X_data, y_data)
         results = pd.DataFrame(grid_search.cv_results_)
         now = datetime.now()
         results.to_csv("gridsearch_results/rf_randomsearch_results_{}.csv".format(now), index = False)
     elif method == 'halving':
-        grid_search = HalvingGridSearchCV(RandomForest(), params, cv = kf, scoring = "accuracy", n_jobs = -1, verbose = 5)
+        grid_search = HalvingGridSearchCV(RandomForest(), params, cv = kf, scoring = rf_prediction_scorer, n_jobs = -1, verbose = 5)
         grid_search.fit(X_data, y_data)
         results = pd.DataFrame(grid_search.cv_results_)
         now = datetime.now()
         results.to_csv("gridsearch_results/rf_halvingsearch_results_{}.csv".format(now), index = False)
     else:
-        grid_search = GridSearchCV(RandomForest(), params, cv = kf, scoring = "accuracy", n_jobs = -1, verbose = 5)
-        grid_search.fit(X_data, y_data, groups=groups)
+        grid_search = GridSearchCV(RandomForest(), params, cv = kf, scoring = rf_prediction_scorer, n_jobs = -1, verbose = 5)
+        grid_search.fit(X_data, y_data)
         results = pd.DataFrame(grid_search.cv_results_)
         now = datetime.now()
         results.to_csv("gridsearch_results/rf_gridsearch_results_{}.csv".format(now), index = False)
@@ -404,7 +401,6 @@ def mlp_gridsearch(trips = None, params = None, method = 'grid', n_iter = 128):
         trips = get_trips_quick()
 
     data = get_tagged_dataset(trips, trim_end_zeros=True)
-    data = pd.concat(data)
 
     all_features = ['rssi_1', 'rssi_accuracy_1', 'rssi_2', 'rssi_accuracy_2', 'weekminute', 'latitude',
        'longitude', 'speed', 'speedAcc', 'vertical_acc', 'altitude', 'course',
@@ -441,28 +437,26 @@ def mlp_gridsearch(trips = None, params = None, method = 'grid', n_iter = 128):
         'n_iter_no_change': [10, 20]
     }
 
-    kf = StratifiedGroupKFold(n_splits=5)
-    # kf = GroupKFold(n_splits = 5)
+    kf = StratifiedKFold(n_splits=5)
 
-    X_data = data[all_features]
-    y_data = data["seat"]
-    groups = data["group"]
+    X_data = [frame[all_features] for frame in data]
+    y_data = [frame.iloc[0]["seat"] if frame.shape[0] > 0 else -1 for frame in data]
 
     if method == 'random':
-        grid_search = RandomizedSearchCV(MLP(), params, n_iter = n_iter, cv = kf, scoring = "accuracy", n_jobs = -1, verbose = 5)
-        grid_search.fit(X_data, y_data, groups=groups)
+        grid_search = RandomizedSearchCV(MLP(), params, n_iter = n_iter, cv = kf, scoring = mlp_prediction_scorer, n_jobs = -1, verbose = 5)
+        grid_search.fit(X_data, y_data)
         results = pd.DataFrame(grid_search.cv_results_)
         now = datetime.now()
         results.to_csv("gridsearch_results/mlp_randomsearch_results_{}.csv".format(now), index = False)
     elif method == 'halving':
-        grid_search = HalvingGridSearchCV(MLP(), params, cv = kf, scoring = "accuracy", n_jobs = -1, verbose = 5)
+        grid_search = HalvingGridSearchCV(MLP(), params, cv = kf, scoring = mlp_prediction_scorer, n_jobs = -1, verbose = 5)
         grid_search.fit(X_data, y_data)
         results = pd.DataFrame(grid_search.cv_results_)
         now = datetime.now()
         results.to_csv("gridsearch_results/mlp_halvingsearch_results_{}.csv".format(now), index = False)
     else:
-        grid_search = GridSearchCV(MLP(), params, cv = kf, scoring = "accuracy", n_jobs = -1, verbose = 5)
-        grid_search.fit(X_data, y_data, groups=groups)
+        grid_search = GridSearchCV(MLP(), params, cv = kf, scoring = mlp_prediction_scorer, n_jobs = -1, verbose = 5)
+        grid_search.fit(X_data, y_data)
         results = pd.DataFrame(grid_search.cv_results_)
         now = datetime.now()
         results.to_csv("gridsearch_results/mlp_gridsearch_results_{}.csv".format(now), index = False)
@@ -477,6 +471,7 @@ def lstm_gridsearch(trips = None, params = None, method = 'grid', n_iter = 128):
         trips = get_trips_quick()
     
     data = get_tagged_dataset(trips, include_pretrip=False, trim_end_zeros=True)
+
     all_features = ['rssi_1', 'rssi_accuracy_1', 'rssi_2', 'rssi_accuracy_2', 'latitude',
        'longitude', 'speed', 'speedAcc', 'vertical_acc', 'altitude', 'course',
        'courseAcc', 'heading', 'horizontal_acc', 'attitude_pitch',

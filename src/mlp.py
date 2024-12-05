@@ -149,8 +149,10 @@ class MLP(BaseEstimator, ClassifierMixin):
     y: pd.DataFrame of shape = (n_samples,)
     """
     def fit(self, X, y):
-        X_train = self.prep_train_data(X)
-        self.mlp.fit(X_train, y)
+        X_train = pd.concat(X)
+        y_train = pd.concat(y)
+        X_train = self.prep_train_data(X_train)
+        self.mlp.fit(X_train, y_train)
 
         self.classes_ = self.mlp.classes_
         self.n_layers_ = self.mlp.n_layers_
@@ -165,76 +167,92 @@ class MLP(BaseEstimator, ClassifierMixin):
     y: pd.DataFrame of shape = (n_samples,)
     """
     def predict(self, X):
-        X_test = self.prep_test_data(X)
+        X_test = pd.concat(X)
+        X_test = self.prep_test_data(X_test)
         return self.mlp.predict(X_test)
     
     def predict_proba(self, X):
-        X_test = self.prep_test_data(X)
-        return self.mlp.predict_proba(X)
+        X_test = pd.concat(X)
+        X_test = self.prep_test_data(X_test)
+        return self.mlp.predict_proba(X_test)
 
+"""
+Scoring function to be used in Gridsearch
+Allows for compatability of stratified kfold cross validation, as y values need to represent entire frame instead of being repeated for each row in the frame
+model: trained LSTM model used to predict labels
+X: array of test data of shape (n_samples, n_features)
+y: array of test targets
+"""
+def mlp_prediction_scorer(model, X, y):
+    y_pred = model.predict(X)
+    y_true = []
+    for i, frame in enumerate(X):
+        y_true.extend([y[i] for it in range(frame.shape[0])])
+    acc = accuracy_score(y_true, y_pred)
+    return acc
 
     
-    def kfold(self, X, y, n_splits = 5):
-        kf = KFold(n_splits=n_splits, shuffle=True, random_state = 3)
+    # def kfold(self, X, y, n_splits = 5):
+    #     kf = KFold(n_splits=n_splits, shuffle=True, random_state = 3)
 
-        scores = []
+    #     scores = []
         
-        for i, (train_index, test_index) in enumerate(kf.split(X)):
-            # print("i: {}, (train_index, test_index) = ({}, {})".format(i, train_index, test_index))
-            X_train = [X[i] for i in train_index].copy()
-            y_train = [y[i] for i in train_index].copy()
-            X_test = [X[i] for i in test_index].copy()
-            y_test = [y[i] for i in test_index].copy()
+    #     for i, (train_index, test_index) in enumerate(kf.split(X)):
+    #         # print("i: {}, (train_index, test_index) = ({}, {})".format(i, train_index, test_index))
+    #         X_train = [X[i] for i in train_index].copy()
+    #         y_train = [y[i] for i in train_index].copy()
+    #         X_test = [X[i] for i in test_index].copy()
+    #         y_test = [y[i] for i in test_index].copy()
 
-            X_train = pd.concat(X_train)
-            y_train = pd.concat(y_train)
-            X_test = pd.concat(X_test)
-            y_test = pd.concat(y_test)
+    #         X_train = pd.concat(X_train)
+    #         y_train = pd.concat(y_train)
+    #         X_test = pd.concat(X_test)
+    #         y_test = pd.concat(y_test)
 
-            if self.scaler:
-                new_scaler = clone(self.scaler)
-                X_train = new_scaler.fit_transform(X_train)
-                X_test = new_scaler.transform(X_test)
-            if self.pca:
-                new_pca = clone(self.pca)
-                X_train = new_pca.fit_transform(X_train)
-                X_test = new_pca.transform(X_test)
+    #         if self.scaler:
+    #             new_scaler = clone(self.scaler)
+    #             X_train = new_scaler.fit_transform(X_train)
+    #             X_test = new_scaler.transform(X_test)
+    #         if self.pca:
+    #             new_pca = clone(self.pca)
+    #             X_train = new_pca.fit_transform(X_train)
+    #             X_test = new_pca.transform(X_test)
 
-            clf = clone(self.clf)
+    #         clf = clone(self.clf)
 
-            clf.fit(X_train, y_train)
+    #         clf.fit(X_train, y_train)
 
-            y_pred = clf.predict(X_test)
+    #         y_pred = clf.predict(X_test)
 
-            acc = accuracy_score(y_test, y_pred)
-            scores.append(acc)
+    #         acc = accuracy_score(y_test, y_pred)
+    #         scores.append(acc)
         
-        return scores
+    #     return scores
 
-    def GroupKFold(self, X, y, groups, n_splits = 5):
-        kf = GroupKFold(n_splits=n_splits)
+    # def GroupKFold(self, X, y, groups, n_splits = 5):
+    #     kf = GroupKFold(n_splits=n_splits)
 
-        scores = []
+    #     scores = []
         
-        for i, (train_index, test_index) in enumerate(kf.split(X, y, groups)):
-            # print("i: {}, (train_index, test_index) = ({}, {})".format(i, train_index, test_index))
-            X_train = X.iloc[train_index].copy()
-            y_train = y.iloc[train_index].copy()
-            X_test = X.iloc[test_index].copy()
-            y_test = y.iloc[test_index].copy()
+    #     for i, (train_index, test_index) in enumerate(kf.split(X, y, groups)):
+    #         # print("i: {}, (train_index, test_index) = ({}, {})".format(i, train_index, test_index))
+    #         X_train = X.iloc[train_index].copy()
+    #         y_train = y.iloc[train_index].copy()
+    #         X_test = X.iloc[test_index].copy()
+    #         y_test = y.iloc[test_index].copy()
 
-            X_train, X_test = self.prep(X_train, X_test)
+    #         X_train, X_test = self.prep(X_train, X_test)
 
-            print("X_train shape: ", X_train.shape)
-            print("X_test shape: ", X_test.shape)
+    #         print("X_train shape: ", X_train.shape)
+    #         print("X_test shape: ", X_test.shape)
 
-            clf = clone(self.mlp)
+    #         clf = clone(self.mlp)
 
-            clf.fit(X_train, y_train)
+    #         clf.fit(X_train, y_train)
 
-            y_pred = clf.predict(X_test)
+    #         y_pred = clf.predict(X_test)
 
-            acc = accuracy_score(y_test, y_pred)
-            scores.append(acc)
+    #         acc = accuracy_score(y_test, y_pred)
+    #         scores.append(acc)
         
-        return scores
+    #     return scores

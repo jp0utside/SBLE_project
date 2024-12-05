@@ -115,6 +115,10 @@ class RandomForest(BaseEstimator, ClassifierMixin):
     def fit(self, X, y):
         X_train = self.prep_training_data(X)
         self.rf.fit(X_train, y)
+
+        self.classes_ = np.unique(y)
+        self.n_features_in_ = X_train.shape[1]
+        
         return self
     
     """
@@ -125,6 +129,11 @@ class RandomForest(BaseEstimator, ClassifierMixin):
         X_test = self.prep_testing_data(X)
 
         return self.rf.predict(X_test)
+    
+    def predict_proba(self, X):
+        X_test = self.prep_testing_data(X)
+
+        return self.rf.predict_proba(X_test)
     
     def kfold(self, X, y, n_splits = 5):
         kf = KFold(n_splits=n_splits, shuffle=True, random_state = 3)

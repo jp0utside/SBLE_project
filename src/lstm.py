@@ -47,8 +47,10 @@ class SklearnLSTMWrapper(BaseEstimator, ClassifierMixin):
         self.num_epochs = num_epochs
         self.features = features
         self.pca_features = pca_features
-        self.scaler = clone(scaler) if scaler else None
-        self.pca = clone(pca) if pca else None
+        # self.scaler = clone(scaler) if scaler else None
+        # self.pca = clone(pca) if pca else None
+        self.scaler = scaler
+        self.pca = pca
         self.num_layers = num_layers
         self.dropout = dropout
         self.bidirectional = bidirectional
@@ -149,7 +151,7 @@ class SklearnLSTMWrapper(BaseEstimator, ClassifierMixin):
         if self.optimizer == 'adam':
             optimizer = torch.optim.Adam(self.model.parameters(), lr = self.lr)
         elif self.optimizer == 'sgd':
-            optimizer = torch.optim.SGD(self.mode.parameters(), lf = self.lr, momentum = self.momentum)
+            optimizer = torch.optim.SGD(self.model.parameters(), lr = self.lr, momentum = self.momentum)
 
 
         criterion = nn.CrossEntropyLoss()

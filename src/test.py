@@ -7,7 +7,8 @@ from rnn import *
 from joint_model import *
 from lstm import *
 from datetime import datetime
-from sklearn.model_selection import GridSearchCV, StratifiedKFold, GroupKFold, StratifiedGroupKFold
+from sklearn.experimental import enable_halving_search_cv
+from sklearn.model_selection import GridSearchCV, RandomizedSearchCV, StratifiedKFold, GroupKFold, StratifiedGroupKFold, HalvingGridSearchCV
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, RobustScaler
 from sklearn.decomposition import PCA
@@ -61,14 +62,10 @@ def test_random_forest(data = [], features = [], split_seed=3, tree_seed=3, use_
     random_forest.train(X_train, y_train)
     # end = time.time()
     acc, cm = random_forest.test(X_test, y_test)
-    print("Accuracy: ", acc)
-    print(cm)
-    # print("Time: ", (end - start))
-    # importance_table = random_forest.get_importance_table(X_test, y_test)
-    # print(importance_table)
-    # print(importance_table.to_dict())
-    # print()
-    return acc
+    # print("Accuracy: ", acc)
+    # print(cm)
+
+    return acc, cm
 
 def test_random_forest_new(trips = None, model = None):
     if trips is None:
@@ -98,10 +95,10 @@ def test_random_forest_new(trips = None, model = None):
     model.fit(X_train, y_train)
     y_pred = model.predict(X_test)
 
-    acc, cm = accuracy_score(y_test, y_pred)
+    acc, cm = accuracy_score(y_test, y_pred), confusion_matrix(y_test, y_pred)
 
-    print("acc: ", acc)
-    print(cm)
+    # print("acc: ", acc)
+    # print(cm)
     
     return acc, cm
 
@@ -148,10 +145,10 @@ def test_mlp_new(trips = None, model = None):
     model.fit(X_train, y_train)
     y_pred = model.predict(X_test)
 
-    acc, cm = accuracy_score(y_test, y_pred)
+    acc, cm = accuracy_score(y_test, y_pred), confusion_matrix(y_test, y_pred)
 
-    print("acc: ", acc)
-    print(cm)
+    # print("acc: ", acc)
+    # print(cm)
     
     return acc, cm
 
@@ -198,11 +195,11 @@ def test_lstm(trips = None, model = None):
     model.fit(X_train, y_train)
     y_pred, test_idx = model.predict(X_test)
 
-    y_true = [y_test[idx].iloc[0] for idx in test_idx]
+    y_true = [y_test[idx] for idx in test_idx]
 
-    acc, cm = accuracy_score(y_true, y_pred)
-    print("acc: ", acc)
-    print(cm)
+    acc, cm = accuracy_score(y_true, y_pred), confusion_matrix(y_true, y_pred)
+    # print("acc: ", acc)
+    # print(cm)
 
     return acc, cm
     # return preds, y_test, seq_idxs
@@ -232,8 +229,8 @@ def kfold_random_forest(data = [], features = [], split_seed=3, tree_seed=3, use
 
     scores = random_forest.kfold(X_data, y_data)
 
-    print(scores)
-    print("Average: {}".format(sum(scores)/len(scores)))
+    # print(scores)
+    # print("Average: {}".format(sum(scores)/len(scores)))
 
     return scores
 
@@ -266,13 +263,13 @@ def kfold_random_forest_new(trips = None, model = None):
         split_model.fit(X_train, y_train)
         y_pred = split_model.predict(X_test)
 
-        acc, cm = accuracy_score(y_test, y_pred)
+        acc, cm = accuracy_score(y_test, y_pred), confusion_matrix(y_test, y_pred)
         scores.append(acc)
         confs.append(cm)
     
-    print("Scores: ", scores)
-    print("Avg: ", sum(scores)/len(scores))
-    print("CMs: ", confs)
+    # print("Scores: ", scores)
+    # print("Avg: ", sum(scores)/len(scores))
+    # print("CMs: ", confs)
 
     return scores, confs
 
@@ -305,12 +302,12 @@ def kfold_mlp_new(trips = None, model = None):
         split_model.fit(X_train, y_train)
         y_pred = split_model.predict(X_test)
 
-        acc, cm = accuracy_score(y_test, y_pred)
+        acc, cm = accuracy_score(y_test, y_pred), confusion_matrix(y_test, y_pred)
         scores.append(acc)
         cms.append(cm)
     
-    print("Scores: ", scores)
-    print("Avg: ", sum(scores)/len(scores))
+    # print("Scores: ", scores)
+    # print("Avg: ", sum(scores)/len(scores))
     return scores, cms
 
 def kfold_lstm(trips = None, model = None):
@@ -340,7 +337,7 @@ def kfold_lstm(trips = None, model = None):
        'magnetic_field_x', 'magnetic_field_y', 'magnetic_field_z']
 
     X_data = [frame[all_features] for frame in data]
-    y_data = [frame["seat"] for frame in data]
+    y_data = [frame.iloc[0]["seat"] for frame in data]
 
     kf = StratifiedKFold(n_splits=5)
 
@@ -358,13 +355,13 @@ def kfold_lstm(trips = None, model = None):
 
         y_pred, test_idx = split_model.predict(X_test)
 
-        y_true = [y_test[idx].iloc[0] for idx in test_idx]
+        y_true = [y_test[idx] for idx in test_idx]
 
-        acc, cm = accuracy_score(y_true, y_pred)
+        acc, cm = accuracy_score(y_true, y_pred), confusion_matrix(y_true, y_pred)
         scores.append(acc)
         cms.append(cm)
 
-    return scores, cm
+    return scores, cms
 
 """
 -------------------------------------------------------------------------------------
@@ -379,20 +376,9 @@ Function to perform gridsearch for random forest model using inputted parameter 
 trips: array of trip objects holding the data. trips will be called for all users if no object is used.
 params: dictionary of parameter options to be used in gridsearch.
 """
-def random_forest_gridsearch(trips = None, params = None):
+def random_forest_gridsearch(trips = None, params = None, method = 'grid', n_iter = 128):
     if trips is None:
         trips = get_trips_quick()
-    
-    if params is None:
-        params = {
-        'features': [rssi_features],
-        'scaler': [RobustScaler()],
-        'n_estimators': [50, 100, 200],
-        'max_depth' : [20],
-        'min_samples_split' : [2,5,10],
-        'min_samples_leaf' : [1,2,4],
-        'max_features' : ['sqrt', 'log'],
-    }
 
     data = get_tagged_dataset(trips, trim_end_zeros=True)
     data = pd.concat(data)
@@ -413,6 +399,17 @@ def random_forest_gridsearch(trips = None, params = None):
        'rotation_rate_z', 'gravity_accel_x', 'gravity_accel_y',
        'gravity_accel_z', 'user_accel_x', 'user_accel_y', 'user_accel_z',
        'magnetic_field_x', 'magnetic_field_y', 'magnetic_field_z']
+    
+    if params is None:
+        params = {
+        'features': [rssi_features],
+        'scaler': [RobustScaler()],
+        'n_estimators': [50, 100],
+        'max_depth' : [20],
+        'min_samples_split' : [10],
+        'min_samples_leaf' : [4],
+        'max_features' : ['sqrt'],
+    }
 
     kf = StratifiedGroupKFold(n_splits=5)
     # kf = GroupKFold(n_splits = 5)
@@ -427,22 +424,24 @@ def random_forest_gridsearch(trips = None, params = None):
     now = datetime.now()
     results.to_csv("gridsearch_results/rf_gridsearch_results_{}.csv".format(now), index = False)
 
-def mlp_gridsearch_old(data, pipelines, param_options, features):
-    groups = np.repeat(range(len(data)), [len(df) for df in data])
-
-    all_data = pd.concat(data)
-    X_data = all_data[features]
-    y_data = all_data["seat"]
-
-    kf = GroupKFold(n_splits=5)
-
-    for pipeline, params in zip(pipelines, param_options):
-        grid_search = GridSearchCV(pipeline, params, cv = kf, scoring = "accuracy", n_jobs = -1, verbose = 5)
+    if method == 'random':
+        grid_search = RandomizedSearchCV(RandomForest(), params, n_iter = n_iter, cv = kf, scoring = "accuracy", n_jobs = -1, verbose = 5)
         grid_search.fit(X_data, y_data, groups=groups)
-
         results = pd.DataFrame(grid_search.cv_results_)
         now = datetime.now()
-        results.to_csv("gridsearch_results/mlp_gridsearch_results_{}.csv".format(now), index = False)
+        results.to_csv("gridsearch_results/rf_randomsearch_results_{}.csv".format(now), index = False)
+    elif method == 'halving':
+        grid_search = HalvingGridSearchCV(RandomForest(), params, cv = kf, scoring = "accuracy", n_jobs = -1, verbose = 5)
+        grid_search.fit(X_data, y_data)
+        results = pd.DataFrame(grid_search.cv_results_)
+        now = datetime.now()
+        results.to_csv("gridsearch_results/rf_halvingsearch_results_{}.csv".format(now), index = False)
+    else:
+        grid_search = GridSearchCV(RandomForest(), params, cv = kf, scoring = "accuracy", n_jobs = -1, verbose = 5)
+        grid_search.fit(X_data, y_data, groups=groups)
+        results = pd.DataFrame(grid_search.cv_results_)
+        now = datetime.now()
+        results.to_csv("gridsearch_results/rf_gridsearch_results_{}.csv".format(now), index = False)
 
 
 """
@@ -450,27 +449,9 @@ Function to perform gridsearch for mlp model using inputted parameter options
 trips: array of trip objects holding the data. trips will be called for all users if no object is used.
 params: dictionary of parameter options to be used in gridsearch.
 """
-def mlp_gridsearch(trips = None, params = None):
+def mlp_gridsearch(trips = None, params = None, method = 'grid', n_iter = 128):
     if trips is None:
         trips = get_trips_quick()
-    
-    if params is None:
-        params = {
-        'features': [rssi_features],
-        'pca_features': [(rssi_features + position_features), position_features],
-        'scaler': [RobustScaler()],
-        'pca': [PCA(n_components=2), PCA(n_components=3), PCA(n_components=4)],
-        'hidden_layer_sizes': [(50,), (100,), (50,50), (100, 50)],
-        'learning_rate_init' : [0.001],
-        'learning_rate' : ['constant'],
-        'alpha' : [0.0001],
-        'activation' : ['relu', 'tanh', 'logistic'],
-        'momentum' : [0.8, 0.9, 0.95],
-        # 'batch_size': [16, 32, 64],
-        'max_iter': [200, 500, 1000],
-        'early_stopping': [True, False],
-        'n_iter_no_change': [10, 20, 50]
-    }
 
     data = get_tagged_dataset(trips, trim_end_zeros=True)
     data = pd.concat(data)
@@ -491,6 +472,24 @@ def mlp_gridsearch(trips = None, params = None):
        'rotation_rate_z', 'gravity_accel_x', 'gravity_accel_y',
        'gravity_accel_z', 'user_accel_x', 'user_accel_y', 'user_accel_z',
        'magnetic_field_x', 'magnetic_field_y', 'magnetic_field_z']
+    
+    if params is None:
+        params = {
+        'features': [rssi_features],
+        'pca_features': [position_features],
+        'scaler': [RobustScaler()],
+        'pca': [PCA(n_components=2), PCA(n_components=4)],
+        'hidden_layer_sizes': [(50,)],
+        'learning_rate_init' : [0.001],
+        'learning_rate' : ['constant'],
+        'alpha' : [0.0001],
+        'activation' : ['logistic'],
+        'momentum' : [0.95],
+        # 'batch_size': [16, 32, 64],
+        'max_iter': [200, 500],
+        'early_stopping': [True, False],
+        'n_iter_no_change': [10, 20]
+    }
 
     kf = StratifiedGroupKFold(n_splits=5)
     # kf = GroupKFold(n_splits = 5)
@@ -499,18 +498,31 @@ def mlp_gridsearch(trips = None, params = None):
     y_data = data["seat"]
     groups = data["group"]
 
-    grid_search = GridSearchCV(MLP(), params, cv = kf, scoring = "accuracy", n_jobs = -1, verbose = 5)
-    grid_search.fit(X_data, y_data, groups=groups)
-    results = pd.DataFrame(grid_search.cv_results_)
-    now = datetime.now()
-    results.to_csv("gridsearch_results/mlp_gridsearch_results_{}.csv".format(now), index = False)
+    if method == 'random':
+        grid_search = RandomizedSearchCV(MLP(), params, n_iter = n_iter, cv = kf, scoring = "accuracy", n_jobs = -1, verbose = 5)
+        grid_search.fit(X_data, y_data, groups=groups)
+        results = pd.DataFrame(grid_search.cv_results_)
+        now = datetime.now()
+        results.to_csv("gridsearch_results/mlp_randomsearch_results_{}.csv".format(now), index = False)
+    elif method == 'halving':
+        grid_search = HalvingGridSearchCV(MLP(), params, cv = kf, scoring = "accuracy", n_jobs = -1, verbose = 5)
+        grid_search.fit(X_data, y_data)
+        results = pd.DataFrame(grid_search.cv_results_)
+        now = datetime.now()
+        results.to_csv("gridsearch_results/mlp_halvingsearch_results_{}.csv".format(now), index = False)
+    else:
+        grid_search = GridSearchCV(MLP(), params, cv = kf, scoring = "accuracy", n_jobs = -1, verbose = 5)
+        grid_search.fit(X_data, y_data, groups=groups)
+        results = pd.DataFrame(grid_search.cv_results_)
+        now = datetime.now()
+        results.to_csv("gridsearch_results/mlp_gridsearch_results_{}.csv".format(now), index = False)
 
 """
 Function to perform gridsearch for lstm model using inputted parameter options
 trips: array of trip objects holding the data. trips will be called for all users if no object is used.
 params: dictionary of parameter options to be used in gridsearch.
 """
-def lstm_gridsearch(trips = None, params = None):
+def lstm_gridsearch(trips = None, params = None, method = 'grid', n_iter = 128):
     if trips is None:
         trips = get_trips_quick()
     
@@ -538,22 +550,81 @@ def lstm_gridsearch(trips = None, params = None):
         params = {
             'features': [rssi_features],
             'scaler': [StandardScaler()],
-            'pca': [None, PCA(n_components=2), PCA(n_components=3)],
-            'pca_features': [all_features, position_features],
+            'pca': [PCA(n_components=2), PCA(n_components=3)],
+            'pca_features': [position_features],
             'hidden_size': [50, 100],
             'lr' : [0.001, 0.01],
-            'num_epochs': [10, 25],
-            'sub_sequence_length': [7, 10],
-            'batch_size': [10, 25]
+            'num_epochs': [10],
+            'sub_sequence_length': [7],
+            'batch_size': [10]
         }
 
     kf = StratifiedKFold(n_splits=5)
     
-    grid_search = GridSearchCV(SklearnLSTMWrapper(), params, cv = kf, scoring = sequence_prediction_scorer, n_jobs = -1, verbose = 5)
+    if method == 'random':
+        grid_search = RandomizedSearchCV(SklearnLSTMWrapper(), params, n_iter = n_iter, cv = kf, scoring = sequence_prediction_scorer, n_jobs = -1, verbose = 5)
+        grid_search.fit(X_data, y_data)
+        results = pd.DataFrame(grid_search.cv_results_)
+        now = datetime.now()
+        results.to_csv("gridsearch_results/lstm_randomsearch_results_{}.csv".format(now), index = False)
+    elif method == 'halving':
+        grid_search = HalvingGridSearchCV(SklearnLSTMWrapper(), params, cv = kf, scoring = sequence_prediction_scorer, n_jobs = -1, verbose = 5)
+        grid_search.fit(X_data, y_data)
+        results = pd.DataFrame(grid_search.cv_results_)
+        now = datetime.now()
+        results.to_csv("gridsearch_results/lstm_halvingsearch_results_{}.csv".format(now), index = False)
+    else:
+        grid_search = GridSearchCV(SklearnLSTMWrapper(), params, cv = kf, scoring = sequence_prediction_scorer, n_jobs = -1, verbose = 5)
+        grid_search.fit(X_data, y_data)
+        results = pd.DataFrame(grid_search.cv_results_)
+        now = datetime.now()
+        results.to_csv("gridsearch_results/lstm_gridsearch_results_{}.csv".format(now), index = False)
+
+
+def lstm_randomsearch(trips = None, params = None, n_iter = 128):
+    if trips is None:
+        trips = get_trips_quick()
+    
+    data = get_tagged_dataset(trips, include_pretrip=False, trim_end_zeros=True)
+    all_features = ['rssi_1', 'rssi_accuracy_1', 'rssi_2', 'rssi_accuracy_2', 'latitude',
+       'longitude', 'speed', 'speedAcc', 'vertical_acc', 'altitude', 'course',
+       'courseAcc', 'heading', 'horizontal_acc', 'attitude_pitch',
+       'attitude_roll', 'attitude_yaw', 'rotation_rate_x', 'rotation_rate_y',
+       'rotation_rate_z', 'gravity_accel_x', 'gravity_accel_y',
+       'gravity_accel_z', 'user_accel_x', 'user_accel_y', 'user_accel_z']
+    
+    rssi_features = ['rssi_1', 'rssi_accuracy_1', 'rssi_2', 'rssi_accuracy_2']
+    position_features = ['latitude',
+       'longitude', 'speed', 'speedAcc', 'vertical_acc', 'altitude', 'course',
+       'courseAcc', 'heading', 'horizontal_acc', 'attitude_pitch',
+       'attitude_roll', 'attitude_yaw', 'rotation_rate_x', 'rotation_rate_y',
+       'rotation_rate_z', 'gravity_accel_x', 'gravity_accel_y',
+       'gravity_accel_z', 'user_accel_x', 'user_accel_y', 'user_accel_z']
+    
+    X_data = [frame[all_features] for frame in data]
+
+    y_data = [frame.iloc[0]["seat"] if frame.shape[0] > 0 else -1 for frame in data]
+    
+    if params is None:
+        params = {
+            'features': [rssi_features],
+            'scaler': [StandardScaler()],
+            'pca': [PCA(n_components=2), PCA(n_components=3)],
+            'pca_features': [position_features],
+            'hidden_size': [50, 100],
+            'lr' : [0.001, 0.01],
+            'num_epochs': [10],
+            'sub_sequence_length': [7],
+            'batch_size': [10]
+        }
+
+    kf = StratifiedKFold(n_splits=5)
+    
+    grid_search = RandomizedSearchCV(SklearnLSTMWrapper(), params, n_iter = n_iter, cv = kf, scoring = sequence_prediction_scorer, n_jobs = -1, verbose = 5)
     grid_search.fit(X_data, y_data)
     results = pd.DataFrame(grid_search.cv_results_)
     now = datetime.now()
-    results.to_csv("gridsearch_results/lstm_gridsearch_results_{}.csv".format(now), index = False)
+    results.to_csv("gridsearch_results/lstm_randomsearch_results_{}.csv".format(now), index = False)
 
 """
 Function to get average performance metrics for each param option saved from gridsearch

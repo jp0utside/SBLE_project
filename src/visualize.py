@@ -297,11 +297,6 @@ def graph_map(trip):
 
     plt.show()
 
-
-
-    
-
-
 """
 Function to graph RSSI readings over time for a single trip.
 Red and blue markers represent pre-trip readings for minors one and two respectively,
@@ -485,9 +480,6 @@ def plot_data_with_clf(X_train, y_train, clf):
     for i in range(len(x_data)):
         plt.scatter(x_data[i], y_data[i], c=c[y_data[i]])
     plt.show()
-
-
-
 
 
 """

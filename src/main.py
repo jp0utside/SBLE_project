@@ -82,15 +82,15 @@ def main():
             'scaler': [StandardScaler()],
             'pca': [PCA(n_components = 4)],
             'pca_features': [position_features],
-            'hidden_size': [50, 100],
+            'hidden_size': [25, 50],
             'lr' : [0.001, 0.01],
-            'num_epochs': [10, 25],
+            'num_epochs': [5, 10],
             'sub_sequence_length': [5, 10, 15],
             'batch_size': [10, 25],
             'num_layers': [1,2],
             'optimizer': ['adam'], #'sgd'
             'bidirectional': [True, False],
-            'dropout': [0, 0.1]
+            'dropout': [0.2, 0.3, 0.35]
             # 'momentum': [0.8, 0.9, 0.95]
     }
 

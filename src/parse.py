@@ -5,18 +5,15 @@ import glob
 from trip import trip
 # from filter import *
 
-def pandas_format():
-    pd.options.display.float_format = '{:.10f}'.format
-    pd.set_option('display.max_rows', None)
-    pd.set_option('display.max_columns', None)
-    
-
-def get_stop_data():
-    stop_data = pd.read_csv("/Users/Jake/Computer Science/SBLE_project/data/stops.csv")
+"""
+Helper functions to import and concatenate data from saved csv files
+"""
+def get_stop_data(dir_path = "/Users/Jake/Computer Science/SBLE_project/data/stops.csv"):
+    stop_data = pd.read_csv(dir_path)
     return stop_data
 
-def get_sble_data():
-    dir_path = "/Users/Jake/Computer Science/SBLE_project/data"
+def get_sble_data(dir_path = "/Users/Jake/Computer Science/SBLE_project/data"):
+    
     files = glob.glob(dir_path + "/*_data*")
     dfs = []
     for file in files:
@@ -32,8 +29,7 @@ def get_sble_data():
     
     return data
 
-def get_notif_data():
-    dir_path = "/Users/Jake/Computer Science/SBLE_project/data"
+def get_notif_data(dir_path = "/Users/Jake/Computer Science/SBLE_project/data"):
     files = glob.glob(dir_path + "/*_notification*")
     dfs = []
     for file in files:
@@ -54,6 +50,13 @@ def add_datetimes(data):
 """
 Function to generate array of trip objects using SBLE and notification data
 Parsing process follows procedure used in matlab code
+
+Args:
+    sble_data (DataFrame): Data frame holding all SBLE data.
+    notif_data (DataFrame): Data frame holding all notification data.
+
+Returns:
+    trips (array): Array of trip objects representing each trip taken, parsed as defined by previous work.
 """
 def get_trips(sble_data, notif_data, debug = False):
     all_trips = []
@@ -278,7 +281,15 @@ def get_trips(sble_data, notif_data, debug = False):
     return all_trips
 
 """
-Function to get trip objects WITHOUT merging trips as outlined in the matlab code
+Function to get parsed trip objects before the merging step.
+
+Args:
+    sble_data (DataFrame): Data frame holding all SBLE data.
+    notif_data (DataFrame): Data frame holding all notification data.
+
+Returns:
+    trips (array): Array of trip objects parsed from the data as defined by previous work,
+        except without merging any trips.
 """
 
 def get_trips_unmerged(sble_data, notif_data):
@@ -415,6 +426,17 @@ def get_trips_unmerged(sble_data, notif_data):
 
 """
 Single function to generate trip objects, including other parsing options
+
+Args:
+    clean_majors (bool): Only include rows in the dataset which come from the majority major.
+    clean_minors (bool): Only include rows which have a corresponding row with the opposite minor.
+    merge (bool): Merge trips.
+    include_pretrips (bool): Include pretrip data in the parsed trips.
+    debug (bool): Print debug statements.
+    user (string): Designate a specific user to get trips for. Function will return trips for all users if string is empty.
+
+Returns:
+    trips (array): Array of trips generated according to inputted options.
 """
 def get_trips_quick(clean_majors = True, clean_minors = False, merge = True, include_pretrips = True, debug = False, user = ""):
     sble = get_sble_data()

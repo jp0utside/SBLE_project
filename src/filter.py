@@ -7,6 +7,16 @@ from datetime import datetime
 
 """
 Function to handle initial filtering of data to be later passed into major and minor processing functions
+
+Args:
+    trip (trip object): Trip to process data from.
+    include_pretrip (bool): Include pre-trip data in frames.
+    only_dominant_major (bool): Only include data which comes from the major most frequently seen during the trip.
+    normalize_zero (bool): Adjust rssi readings of 0 because non-zero readings are measured negatively.
+    zero_val (int): Value to normalize rssi readings of zero to.
+
+Returns:
+    data (DataFrame): Pandas data frame containing trip readings, adjusted based on inputted filter options.
 """
 def prelim_filter(trip, include_pretrip, only_dominant_major, normalize_zero, zero_val):
     data = trip.data.copy()
@@ -29,6 +39,18 @@ def prelim_filter(trip, include_pretrip, only_dominant_major, normalize_zero, ze
 
 """
 Function to get rssi associated with each minor, using only data collected at the same time.
+
+Args:
+    trip (trip object): Trip to process data from.
+    exclude_unmatched (bool): Exclude data points collected from one beacon that do not have a corresponding point from the other.
+    include_pretrip (bool): Include pre-trip data in frames.
+    only_dominant_major (bool): Only include data which comes from the major most frequently seen during the trip.
+    normalize_zero (bool): Adjust rssi readings of 0 because non-zero readings are measured negatively.
+    zero_val (int): Value to normalize rssi readings of zero to.
+    exclude_zeros (bool): Exclude all rows with a 0 value for either rssi reading.
+
+Returns:
+    join (DataFrame): Pandas data frame containing trip data, joined based on timestamp and opposing minors.
 """
 def get_joint_rssi(trip, exclude_unmatched = True, include_pretrip = True, only_dominant_major = True, 
                    normalize_zero = True, zero_val = -100, exclude_zeros = False):
@@ -58,7 +80,27 @@ def get_joint_rssi(trip, exclude_unmatched = True, include_pretrip = True, only_
 """
 Function to get master dataset for use.
 Compiles the relevant SBLE data points for each trip and adds additional columns to store relevant trip information.
-All trips are then put into a single dataframe for use.
+Matches data points by timestamp to merge readings from minors 1 and 2.
+Returns array of pandas DataFrames, each representing a trip, to be used for model training.
+
+Args:
+    trips (list): List of trip objects to extract data from
+    n (int): Optional parameter to return data frames using average rssi values across n samples.
+    exclude_unmatched (bool): Passed to preliminary filter, option to exclude data points collected from one beacon that do not have a corresponding point from the other.
+    include_pretrip (bool): Passed to preliminary filter, option to include pre-trip data in frames
+    only_dominant_major (bool): Passed to preliminary filter, option to only include data which comes from the major most frequently seen during the trip
+    normalize_zero (bool): Passed to preliminary filter, option to adjust rssi readings of 0 because non-zero readings are measured negatively
+    zero_val (int): Passed to preliminary filter, value to normalize rssi readings of zero to
+    aggregate_feats (bool): Option to average position data between matched rssi readings than having both values in the dataset
+    exclude_null_trips (bool): Remove empty trips from the dataset, as other filters may cause datasets to be emptied
+    exclude_zeros (bool): Passed to preliminary filter, exclude all rows with a 0 value for either rssi reading 
+    trim_end_zeros (bool): Remove all rows with two zero value rssi readings which fall at the end of data frames
+    trim_double_zeros (bool): Remove all rosw with two zero value rssi readings
+    normalize_acc (bool): Divides all rssi accuracy values by acc_val. If acc_val is 1 it normalizes all accuracy values to the largest accuracy value.
+    acc_val (bool): Value used to normalize rssi readings.
+
+Returns:
+    df (array): Array holding pandas DataFrames storing filterd and tagged datasets from each trip.
 """
 def get_tagged_dataset(trips, n = 1, exclude_unmatched = True, include_pretrip = False, only_dominant_major = True, 
                    normalize_zero = True, zero_val = -100, aggregate_feats = True, exclude_null_trips = True, exclude_zeros = False, trim_end_zeros = False, trim_all_zeros = False, trim_double_zeros = False,
@@ -160,6 +202,12 @@ def aggregate_columns(data):
             cols.remove(col)
     return new_data
 
+
+"""
+------------------------------------------------------------
+ARCHIVE
+------------------------------------------------------------
+"""
 def get_multilevel_frame(data):
     new_data = pad_data(data)
     return np.stack(new_data)
@@ -293,229 +341,3 @@ def get_average_dataset(trips, n, exclude_unmatched = True, include_pretrip = Tr
 
     data = pd.concat(df)
     return data
-
-
-"""
-This is old code which tries to generate aggregate metrics for training (i.e. weighted avg of rssi from each beacon).
-"""
-
-# """
-# Function to extract RSSI of minors 1 and 2
-# Data points consist of each RSSI reading of the given minor, corrolated with the next RSSI
-# point for the opposite minor. 
-# """
-
-# def get_minor_rssi_next_minor(trip, include_pretrip = False, only_dominant_major = True, normalize_zero = True, zero_val = -100):
-#     data = prelim_filter(trip, include_pretrip, only_dominant_major, normalize_zero, zero_val)
-
-
-#     #Graphing each data point as follows:
-#     #   For each minor = 1, graphing the data point with rssi of next minor = 2 data point
-#     #   Same for minor = 2
-#     minor_one = []
-#     minor_two = []
-
-
-#     for i in range(data.shape[0]-1):
-#         j = i + 1
-#         if data.iloc[i]["minor"] == 1:
-#             br = False
-#             while data.iloc[j]["minor"] == 1:
-#                 j += 1
-#                 if j >= data.shape[0]:
-#                     br = True
-#                     break
-#             if not br:
-#                 minor_one.append(data.iloc[i]["rssi"])
-#                 minor_two.append(data.iloc[j]["rssi"])
-#         else:
-#             br = False
-#             while data.iloc[j]["minor"] == 2:
-#                 j += 1
-#                 if j >= data.shape[0]:
-#                     br = True
-#                     break
-#             if not br:
-#                 minor_one.append(data.iloc[j]["rssi"])
-#                 minor_two.append(data.iloc[i]["rssi"])
-        
-#     return minor_one, minor_two
-
-# """
-# Function to extract RSSI data of minor against average of previously seen and next seen RSSI of opposite minor
-# """
-
-# def get_minor_rssi_average_nearest_minor(trip, include_pretrip = False, only_dominant_major = True, normalize_zero = True, zero_val = -100):
-#     data = prelim_filter(trip, include_pretrip, only_dominant_major, normalize_zero, zero_val)
-
-#     #Graphing each data point as follows:
-#     #   For each minor = 1, graphing the data point with rssi of next minor = 2 data point
-#     #   Same for minor = 2
-#     minor_one = []
-#     minor_two = []
-
-#     one_idx = 0
-#     two_idx = 0
-#     br = False
-
-#     if one_idx < data.shape[0] and data.iloc[one_idx]["minor"] != 1:
-#         one_idx, br = advance(one_idx, 1, data)
-
-#     if two_idx < data.shape[0] and data.iloc[two_idx]["minor"] != 2:
-#         two_idx, br = advance(two_idx, 2, data)
-    
-#     if not br:
-#         while (one_idx < data.shape[0]) and (two_idx < data.shape[0]) and (data.iloc[one_idx]["minor"] == 1) and (data.iloc[two_idx]["minor"] == 2):
-#             if one_idx < two_idx:
-#                 one_sum = data.iloc[one_idx]["rssi"]
-#                 next_one, br = advance(two_idx, 1, data)
-
-#                 if br:
-#                     break
-#                 else:
-#                     one_sum += data.iloc[next_one]["rssi"]
-#                     one_idx, br = advance(one_idx, 1, data)
-#                     minor_one.append(one_sum/2)
-#                     minor_two.append(data.iloc[two_idx]["rssi"])
-#             else:
-#                 two_sum = data.iloc[two_idx]["rssi"]
-#                 next_two, br = advance(one_idx, 2, data)
-
-#                 if br:
-#                     break
-#                 else:
-#                     two_sum += data.iloc[next_two]["rssi"]
-#                     two_idx, br = advance(two_idx, 2, data)
-#                     minor_two.append(two_sum/2)
-#                     minor_one.append(data.iloc[one_idx]["rssi"])
-#     return minor_one, minor_two
-
-# def get_minor_rssi_unweighted_average(trip, include_pretrip = False, only_dominant_major = True, normalize_zero = True, zero_val = -100):
-#     data = prelim_filter(trip, include_pretrip, only_dominant_major, normalize_zero, zero_val)
-
-#     #Graphing each data point as follows:
-#     #   For each minor = 1, graphing the data point with rssi of next minor = 2 data point
-#     #   Same for minor = 2
-#     minor_one = []
-#     minor_two = []
-
-#     one_data = []
-#     two_data = []
-
-#     for i in range(data.shape[0]):
-#         if data.iloc[i]["minor"] == 1:
-#             one_data.append(data.iloc[i]["rssi"])
-#         else:
-#             two_data.append(data.iloc[i]["rssi"])
-#         if not((not one_data) or (not two_data)):
-#             minor_one.append(sum(one_data)/len(one_data))
-#             minor_two.append(sum(two_data)/len(two_data))
-#     return minor_one, minor_two
-
-# def get_minor_rssi_weighted_sum_earlier(trip, multiplier, include_pretrip = False, only_dominant_major = True, normalize_zero = True, zero_val = -100):
-#     data = prelim_filter(trip, include_pretrip, only_dominant_major, normalize_zero, zero_val)
-
-#     #Graphing each data point as follows:
-#     #   For each minor = 1, graphing the data point with rssi of next minor = 2 data point
-#     #   Same for minor = 2
-#     minor_one = []
-#     minor_two = []
-
-#     one_data = []
-#     two_data = []
-
-#     weight = 1
-
-#     for i in range(data.shape[0]):
-#         if data.iloc[i]["minor"] == 1:
-#             one_data.append(data.iloc[i]["rssi"]*weight)
-#             weight = weight*multiplier
-#         else:
-#             two_data.append(data.iloc[i]["rssi"]*weight)
-#             weight = weight*multiplier
-#         if not((not one_data) or (not two_data)):
-#             minor_one.append(sum(one_data))
-#             minor_two.append(sum(two_data))
-#     return minor_one, minor_two
-
-# def get_minor_rssi_weighted_avg_earlier(trip, multiplier, include_pretrip = False, only_dominant_major = True, normalize_zero = True, zero_val = -100):
-#     data = prelim_filter(trip, include_pretrip, only_dominant_major, normalize_zero, zero_val)
-
-#     #Graphing each data point as follows:
-#     #   For each minor = 1, graphing the data point with rssi of next minor = 2 data point
-#     #   Same for minor = 2
-#     minor_one = []
-#     minor_two = []
-
-#     one_data = []
-#     two_data = []
-
-#     weight = 1
-#     one_weight = 0
-#     two_weight = 0
-
-#     for i in range(data.shape[0]):
-#         if data.iloc[i]["minor"] == 1:
-#             one_data.append(data.iloc[i]["rssi"]*weight)
-#             one_weight += weight
-#             weight = weight*multiplier
-#         else:
-#             two_data.append(data.iloc[i]["rssi"]*weight)
-#             two_weight += weight
-#             weight = weight*multiplier
-#         if not((not one_data) or (not two_data)):
-#             minor_one.append(sum(one_data)/one_weight)
-#             minor_two.append(sum(two_data)/two_weight)
-#     return minor_one, minor_two
-
-# def get_minor_rssi_weighted_avg_bustime(trip, multiplier, include_pretrip = True, only_dominant_major = True, normalize_zero = True, zero_val = -100):
-#     data = prelim_filter(trip, include_pretrip, only_dominant_major, normalize_zero, zero_val)
-
-#     #Graphing each data point as follows:
-#     #   For each minor = 1, graphing the data point with rssi of next minor = 2 data point
-#     #   Same for minor = 2
-#     minor_one = []
-#     minor_two = []
-
-#     one_data = []
-#     two_data = []
-
-#     weight = 1
-#     one_weight = 0
-#     two_weight = 0
-
-#     for i in range(data.shape[0]):
-#         if data.iloc[i]["timestamp"] < trip.on_bus:
-#             if data.iloc[i]["minor"] == 1:
-#                 one_data.append(data.iloc[i]["rssi"]*weight)
-#                 one_weight += weight
-#             else:
-#                 two_data.append(data.iloc[i]["rssi"]*weight)
-#                 two_weight += weight
-#             weight = weight / multiplier
-#             if not((not one_data) or (not two_data)):
-#                 minor_one.append(sum(one_data)/one_weight)
-#                 minor_two.append(sum(two_data)/two_weight)
-#         else:
-#             if data.iloc[i]["minor"] == 1:
-#                 one_data.append(data.iloc[i]["rssi"]*weight)
-#                 one_weight += weight
-#             else:
-#                 two_data.append(data.iloc[i]["rssi"]*weight)
-#                 two_weight += weight
-#             weight = weight * multiplier
-#             if not((not one_data) or (not two_data)):
-#                 minor_one.append(sum(one_data)/one_weight)
-#                 minor_two.append(sum(two_data)/two_weight)
-#     return minor_one, minor_two
-
-# def advance(idx, minor, data):
-#     idx += 1
-#     br = True
-#     while idx < data.shape[0]:
-#         if data.iloc[idx]["minor"] != minor:
-#             idx += 1
-#         else:
-#             br = False
-#             break
-#     return idx, br

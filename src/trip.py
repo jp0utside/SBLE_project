@@ -1,5 +1,6 @@
 """
 Class to store a recorded trip for a given user.
+
 Params:
     user - the username of the person recording the trip.
     first - time of first recorded sble data point for given trip.

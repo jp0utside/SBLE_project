@@ -518,7 +518,7 @@ def lstm_gridsearch(trips = None, params = None, method = 'grid', n_iter = 128):
         now = datetime.now()
         results.to_csv("gridsearch_results/lstm_randomsearch_results_{}.csv".format(now), index = False)
     elif method == 'halving':
-        grid_search = HalvingGridSearchCV(SklearnLSTMWrapper(), params, cv = kf, scoring = sequence_prediction_scorer, n_jobs = -1, verbose = 5)
+        grid_search = HalvingGridSearchCV(SklearnLSTMWrapper(), params, cv = kf, scoring = sequence_prediction_scorer, n_jobs = -1, verbose = 5, factor = 2)
         grid_search.fit(X_data, y_data)
         results = pd.DataFrame(grid_search.cv_results_)
         now = datetime.now()
@@ -533,7 +533,9 @@ def lstm_gridsearch(trips = None, params = None, method = 'grid', n_iter = 128):
 """
 Function to get average performance metrics for each param option saved from gridsearch
 Returns a dictionary conversion of a pandas dataframe
-file: a filepath string pointing to gridsearch results
+
+Args:
+    file: a filepath string pointing to gridsearch results
 """
 def get_gridsearch_splits(file):
     df = pd.read_csv(file)

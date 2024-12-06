@@ -190,6 +190,16 @@ def get_tagged_dataset(trips, n = 1, exclude_unmatched = True, include_pretrip =
 
     return df
 
+"""
+Helper function to combine position data between each minor reading by averaging.
+
+Args:
+    data (DataFrame): DataFrame with already combined columns for each corresponding minor reading, but storing each
+        position feature from each reading with column titles having extra _1 or _2 indicating which minor it comes from.
+
+Returns:
+    new_data (DataFrame): DataFrame with only one column per position features, averaged between readings
+"""
 def aggregate_columns(data):
     unique = ["level_0", "index", "username", "major", "minor", "rssi", "rssi_accuracy"]
     cols = [x[:-2] for x in list(data.columns)]

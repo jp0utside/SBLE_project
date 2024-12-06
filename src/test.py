@@ -513,7 +513,7 @@ def lstm_gridsearch(trips = None, params = None, method = 'grid', n_iter = 128):
         now = datetime.now()
         results.to_csv("gridsearch_results/lstm_randomsearch_results_{}.csv".format(now), index = False)
     elif method == 'halving':
-        grid_search = HalvingGridSearchCV(SklearnLSTMWrapper(), params, cv = kf, scoring = sequence_prediction_scorer, n_jobs = -1, verbose = 5, factor = 2, min_resources = 46)
+        grid_search = HalvingGridSearchCV(SklearnLSTMWrapper(), params, cv = kf, scoring = sequence_prediction_scorer, n_jobs = -1, verbose = 5, factor = 2, min_resources = 46) 
         grid_search.fit(X_data, y_data)
         results = pd.DataFrame(grid_search.cv_results_)
         now = datetime.now()

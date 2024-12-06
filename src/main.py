@@ -83,15 +83,16 @@ def main():
             'pca': [PCA(n_components = 4)],
             'pca_features': [position_features],
             'hidden_size': [25, 50],
-            'lr' : [0.001, 0.01],
+            'lr' : [0.001],
             'num_epochs': [5, 10],
-            'sub_sequence_length': [5, 10, 15],
+            'sub_sequence_length': [10, 15],
             'batch_size': [10, 25],
             'num_layers': [1,2],
             'optimizer': ['adam'], #'sgd'
             'bidirectional': [True, False],
-            'dropout': [0.2, 0.3, 0.35]
-            # 'momentum': [0.8, 0.9, 0.95]
+            'dropout': [0.2, 0.3],
+            'recurrent_dropout': [0.1, 0.3],
+            'l2_lambda': [0.001, 0.01]
     }
 
     trips = get_trips_quick()

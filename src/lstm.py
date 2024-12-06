@@ -18,7 +18,8 @@ class LSTM(nn.Module):
         super().__init__()
         self.hidden_size = hidden_size
         self.num_layers = num_layers
-        self.recurrent_dropout = nn.Dropout(recurrent_dropout)
+        self.bidirectional = bidirectional
+        self.recurrent_dropout = nn.Dropout(recurrent_dropout) if (num_layers == 1 and not bidirectional) else nn.Dropout(0)
         self.lstm = nn.LSTM(input_size, hidden_size, num_layers = num_layers, batch_first = True, dropout = dropout if num_layers > 1 else 0, bidirectional = bidirectional)
         self.coef = 2 if bidirectional else 1
         self.clf = nn.Linear(hidden_size * self.coef, output_size)
@@ -27,19 +28,29 @@ class LSTM(nn.Module):
         h0 = torch.zeros(self.num_layers * self.coef, x.size(0), self.hidden_size).to(x.device)
         c0 = torch.zeros(self.num_layers * self.coef, x.size(0), self.hidden_size).to(x.device)
 
-        outputs = []
-        h_t = h0[0]
-        c_t = c0[0]
+        if self.num_layers > 1 or self.bidirectional:
+            output, (h_n, c_n) = self.lstm(x, (h0, c0))
+            last_output = output[:, -1, :]
+        else:
+            outputs = []
+            h_t = h0[0]
+            c_t = c0[0]
 
-        for t in range(x.size(1)):
-            h_dropped = self.recurrent_dropout(h_t)
-            _, (h_t, c_t) = self.lstm(x[:, t:t+1, :], (h_dropped.unsqueeze(0), c_t.unsqueeze(0)))
-            h_t = h_t.squeeze(0)
-            c_t = c_t.squeeze(0)
-            outputs.append(h_t)
+            for t in range(x.size(1)):
+                # print(f"Step {t}: h_t before dropout: {torch.isnan(h_t).any()}")
+                h_dropped = self.recurrent_dropout(h_t)
+                # print(f"Step {t}: h_t after dropout: {torch.isnan(h_dropped).any()}")
+                _, (h_t, c_t) = self.lstm(x[:, t:t+1, :], (h_dropped.unsqueeze(0), c_t.unsqueeze(0)))
+                # print(f"Step {t}: h_t after lstm: {torch.isnan(h_t).any()}")
 
-        outputs = torch.stack(outputs, dim = 1)
-        output = self.clf(outputs[:, -1, :])
+                h_t = h_t.squeeze(0)
+                c_t = c_t.squeeze(0)
+                outputs.append(h_t)
+
+            outputs = torch.stack(outputs, dim = 1)
+            last_output = outputs[:, -1, :]
+
+        output = self.clf(last_output)
         return output
 
 """

@@ -59,14 +59,14 @@ def test_random_forest(trips = None, model = None):
     train_index, test_index = next(split_gen)
 
     X_train = [X_data[idx] for idx in train_index]
+    y_train = [y_targets[idx] for idx in train_index]
     X_test = [X_data[idx] for idx in test_index]
-    y_train = [y_data[idx] for idx in train_index]
-    y_test = [y_data[idx] for idx in test_index]
+    y_test = pd.concat([pd.Series([y_targets[idx]]*X_data[idx].shape[0]) for idx in test_index])
 
     model.fit(X_train, y_train)
     y_pred = model.predict(X_test)
 
-    y_test = pd.concat(y_test)
+    
 
     acc, cm = accuracy_score(y_test, y_pred), confusion_matrix(y_test, y_pred)
 
@@ -111,14 +111,12 @@ def test_mlp(trips = None, model = None):
     train_index, test_index = next(split_gen)
 
     X_train = [X_data[idx] for idx in train_index]
+    y_train = [y_targets[idx] for idx in train_index]
     X_test = [X_data[idx] for idx in test_index]
-    y_train = [y_data[idx] for idx in train_index]
-    y_test = [y_data[idx] for idx in test_index]
+    y_test = pd.concat([pd.Series([y_targets[idx]]*X_data[idx].shape[0]) for idx in test_index])
 
     model.fit(X_train, y_train)
     y_pred = model.predict(X_test)
-
-    y_test = pd.concat(y_test)
 
     acc, cm = accuracy_score(y_test, y_pred), confusion_matrix(y_test, y_pred)
 
@@ -210,14 +208,14 @@ def kfold_random_forest(trips = None, model = None):
     for i, (train_index, test_index) in enumerate(kf.split(X_data, y_targets)):
         split_model = clone(model)
         X_train = [X_data[idx] for idx in train_index]
-        y_train = [y_data[idx] for idx in train_index]
+        y_train = [y_targets[idx] for idx in train_index]
         X_test = [X_data[idx] for idx in test_index]
-        y_test = [y_data[idx] for idx in test_index]
+        y_test = pd.concat([pd.Series([y_targets[idx]]*X_data[idx].shape[0]) for idx in test_index])
 
         split_model.fit(X_train, y_train)
         y_pred = split_model.predict(X_test)
 
-        y_test = pd.concat(y_test)
+        # y_test = pd.concat(y_test)
 
         acc, cm = accuracy_score(y_test, y_pred), confusion_matrix(y_test, y_pred)
         scores.append(acc)
@@ -250,13 +248,15 @@ def kfold_mlp(trips = None, model = None):
 
     for i, (train_index, test_index) in enumerate(kf.split(X_data, y_targets)):
         split_model = clone(model)
-        X_train = X_data.iloc[train_index].copy()
-        X_test = X_data.iloc[test_index].copy()
-        y_train = y_data.iloc[train_index].copy()
-        y_test = y_data.iloc[test_index].copy()
+        X_train = [X_data[idx] for idx in train_index]
+        y_train = [y_targets[idx] for idx in train_index]
+        X_test = [X_data[idx] for idx in test_index]
+        y_test = pd.concat([pd.Series([y_targets[idx]]*X_data[idx].shape[0]) for idx in test_index])
 
         split_model.fit(X_train, y_train)
         y_pred = split_model.predict(X_test)
+
+        # y_test = pd.concat(y_test)
 
         acc, cm = accuracy_score(y_test, y_pred), confusion_matrix(y_test, y_pred)
         scores.append(acc)
@@ -372,23 +372,18 @@ def random_forest_gridsearch(trips = None, params = None, method = 'grid', n_ite
     y_data = [frame.iloc[0]["seat"] if frame.shape[0] > 0 else -1 for frame in data]
 
     if method == 'random':
-        grid_search = RandomizedSearchCV(RandomForest(), params, n_iter = n_iter, cv = kf, scoring = rf_prediction_scorer, n_jobs = -1, verbose = 5)
-        grid_search.fit(X_data, y_data)
-        results = pd.DataFrame(grid_search.cv_results_)
-        now = datetime.now()
-        results.to_csv("gridsearch_results/rf_randomsearch_results_{}.csv".format(now), index = False)
+        grid_search = RandomizedSearchCV(RandomForest(), params, n_iter = n_iter, cv = kf, scoring = rf_prediction_scorer, n_jobs = -1, verbose = 5, return_train_score = True)
     elif method == 'halving':
-        grid_search = HalvingGridSearchCV(RandomForest(), params, cv = kf, scoring = rf_prediction_scorer, n_jobs = -1, verbose = 5)
-        grid_search.fit(X_data, y_data)
-        results = pd.DataFrame(grid_search.cv_results_)
-        now = datetime.now()
-        results.to_csv("gridsearch_results/rf_halvingsearch_results_{}.csv".format(now), index = False)
+        grid_search = HalvingGridSearchCV(RandomForest(), params, cv = kf, scoring = rf_prediction_scorer, n_jobs = -1, verbose = 5, return_train_score = True)
     else:
-        grid_search = GridSearchCV(RandomForest(), params, cv = kf, scoring = rf_prediction_scorer, n_jobs = -1, verbose = 5)
-        grid_search.fit(X_data, y_data)
-        results = pd.DataFrame(grid_search.cv_results_)
-        now = datetime.now()
-        results.to_csv("gridsearch_results/rf_gridsearch_results_{}.csv".format(now), index = False)
+        grid_search = GridSearchCV(RandomForest(), params, cv = kf, scoring = rf_prediction_scorer, n_jobs = -1, verbose = 5, return_train_score = True)
+
+    grid_search.fit(X_data, y_data)
+    results = pd.DataFrame(grid_search.cv_results_)
+
+    now = datetime.now().strftime("%Y-%m-%d-%H_%M_%S")
+
+    results.to_csv("gridsearch_results/rf_{}_search_{}.csv".format(method, now))
 
 
 """
@@ -443,23 +438,18 @@ def mlp_gridsearch(trips = None, params = None, method = 'grid', n_iter = 128):
     y_data = [frame.iloc[0]["seat"] if frame.shape[0] > 0 else -1 for frame in data]
 
     if method == 'random':
-        grid_search = RandomizedSearchCV(MLP(), params, n_iter = n_iter, cv = kf, scoring = mlp_prediction_scorer, n_jobs = -1, verbose = 5)
-        grid_search.fit(X_data, y_data)
-        results = pd.DataFrame(grid_search.cv_results_)
-        now = datetime.now()
-        results.to_csv("gridsearch_results/mlp_randomsearch_results_{}.csv".format(now), index = False)
+        grid_search = RandomizedSearchCV(MLP(), params, n_iter = n_iter, cv = kf, scoring = mlp_prediction_scorer, n_jobs = -1, verbose = 5, return_train_score = True)
     elif method == 'halving':
-        grid_search = HalvingGridSearchCV(MLP(), params, cv = kf, scoring = mlp_prediction_scorer, n_jobs = -1, verbose = 5)
-        grid_search.fit(X_data, y_data)
-        results = pd.DataFrame(grid_search.cv_results_)
-        now = datetime.now()
-        results.to_csv("gridsearch_results/mlp_halvingsearch_results_{}.csv".format(now), index = False)
+        grid_search = HalvingGridSearchCV(MLP(), params, cv = kf, scoring = mlp_prediction_scorer, n_jobs = -1, verbose = 5, return_train_score = True)
     else:
-        grid_search = GridSearchCV(MLP(), params, cv = kf, scoring = mlp_prediction_scorer, n_jobs = -1, verbose = 5)
-        grid_search.fit(X_data, y_data)
-        results = pd.DataFrame(grid_search.cv_results_)
-        now = datetime.now()
-        results.to_csv("gridsearch_results/mlp_gridsearch_results_{}.csv".format(now), index = False)
+        grid_search = GridSearchCV(MLP(), params, cv = kf, scoring = mlp_prediction_scorer, n_jobs = -1, verbose = 4, return_train_score = True)
+
+    grid_search.fit(X_data, y_data)
+    results = pd.DataFrame(grid_search.cv_results_)
+
+    now = datetime.now().strftime("%Y-%m-%d-%H_%M_%S")
+
+    results.to_csv("gridsearch_results/mlp_{}_search_{}.csv".format(method, now))
 
 """
 Function to perform gridsearch for lstm model using inputted parameter options
@@ -507,23 +497,44 @@ def lstm_gridsearch(trips = None, params = None, method = 'grid', n_iter = 128):
     kf = StratifiedKFold(n_splits=5)
     
     if method == 'random':
-        grid_search = RandomizedSearchCV(SklearnLSTMWrapper(), params, n_iter = n_iter, cv = kf, scoring = sequence_prediction_scorer, n_jobs = -1, verbose = 5)
-        grid_search.fit(X_data, y_data)
-        results = pd.DataFrame(grid_search.cv_results_)
-        now = datetime.now()
-        results.to_csv("gridsearch_results/lstm_randomsearch_results_{}.csv".format(now), index = False)
+        grid_search = RandomizedSearchCV(SklearnLSTMWrapper(), params, n_iter = n_iter, cv = kf, scoring = sequence_prediction_scorer, n_jobs = -1, verbose = 5, return_train_score = True)
     elif method == 'halving':
-        grid_search = HalvingGridSearchCV(SklearnLSTMWrapper(), params, cv = kf, scoring = sequence_prediction_scorer, n_jobs = -1, verbose = 5, factor = 2, min_resources = 46) 
-        grid_search.fit(X_data, y_data)
-        results = pd.DataFrame(grid_search.cv_results_)
-        now = datetime.now()
-        results.to_csv("gridsearch_results/lstm_halvingsearch_results_{}.csv".format(now), index = False)
+        grid_search = HalvingGridSearchCV(SklearnLSTMWrapper(), params, cv = kf, scoring = sequence_prediction_scorer, n_jobs = -1, verbose = 5, factor = 2, min_resources = 30, return_train_score = True)
     else:
-        grid_search = GridSearchCV(SklearnLSTMWrapper(), params, cv = kf, scoring = sequence_prediction_scorer, n_jobs = -1, verbose = 5)
-        grid_search.fit(X_data, y_data)
-        results = pd.DataFrame(grid_search.cv_results_)
-        now = datetime.now()
-        results.to_csv("gridsearch_results/lstm_gridsearch_results_{}.csv".format(now), index = False)
+        grid_search = GridSearchCV(SklearnLSTMWrapper(), params, cv = kf, scoring = sequence_prediction_scorer, n_jobs = -1, verbose = 3, return_train_score = True)
+
+    grid_search.fit(X_data, y_data)
+    results = pd.DataFrame(grid_search.cv_results_)
+
+    now = datetime.now().strftime("%Y-%m-%d-%H_%M_%S")
+
+    results.to_csv("gridsearch_results/mlp_{}_search_{}.csv".format(method, now))
+
+    
+def clean_gridsearch_results(df):
+    new_df = df.copy()
+    index_dict = {}
+
+    for i, col in enumerate(new_df.columns):
+        index_dict[col] = i
+    
+    new_order = []
+    first_cols = ['rank_test_score', 'mean_test_score', 'std_test_score', 'mean_train_score', 'std_train_score', 'mean_fit_time', 'std_fit_time', 'mean_score_time', 'std_score_time',
+                  'split0_test_score', 'split1_test_score', 'split2_test_score', 'split3_test_score', 'split4_test_score', 'split0_train_score', 'split1_train_score', 'split2_train_score', 
+                  'split3_train_score', 'split4_train_score']
+
+    for col in first_cols:
+        if col in index_dict.keys():
+            new_order.append(index_dict[col])
+            del index_dict[col]
+    
+    new_order.extend(index_dict.values())
+    
+    new_df = new_df.iloc[:, new_order]
+    return new_df
+
+
+
 
 """
 Function to get average performance metrics for each param option saved from gridsearch

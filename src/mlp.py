@@ -150,8 +150,11 @@ class MLP(BaseEstimator, ClassifierMixin):
     """
     def fit(self, X, y):
         X_train = pd.concat(X)
-        y_train = pd.concat(y)
+        y_train = pd.concat([pd.Series([y[i]]*frame.shape[0]) for i, frame in enumerate(X)])
+
         X_train = self.prep_train_data(X_train)
+        y_train = np.array(y_train)
+
         self.mlp.fit(X_train, y_train)
 
         self.classes_ = self.mlp.classes_

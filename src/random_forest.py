@@ -114,8 +114,11 @@ class RandomForest(BaseEstimator, ClassifierMixin):
     """
     def fit(self, X, y):
         X_train = pd.concat(X)
-        y_train = pd.concat(y)
+        y_train = pd.concat([pd.Series([y[i]]*frame.shape[0]) for i, frame in enumerate(X)])
+
         X_train = self.prep_training_data(X_train)
+        y_train = np.array(y_train)
+
         self.rf.fit(X_train, y_train)
 
         self.classes_ = np.unique(y_train)
@@ -142,17 +145,18 @@ class RandomForest(BaseEstimator, ClassifierMixin):
 """
 Scoring function to be used in Gridsearch
 Allows for compatability of stratified kfold cross validation, as y values need to represent entire frame instead of being repeated for each row in the frame
-model: trained LSTM model used to predict labels
+model: trained RandomForest model used to predict labels
 X: array of test data of shape (n_samples, n_features)
 y: array of test targets
 """
 def rf_prediction_scorer(model, X, y):
     y_pred = model.predict(X)
-    y_true = []
-    for i, frame in enumerate(X):
-        y_true.extend([y[i] for it in range(frame.shape[0])])
+    y_true = np.array(pd.concat([pd.Series([y[i]]*frame.shape[0]) for i, frame in enumerate(X)]))
+    # for i, frame in enumerate(X):
+    #     y_true.extend([y[i] for it in range(frame.shape[0])])
     acc = accuracy_score(y_true, y_pred)
     return acc
+
     # def kfold(self, X, y, n_splits = 5):
     #     kf = KFold(n_splits=n_splits, shuffle=True, random_state = 3)
 

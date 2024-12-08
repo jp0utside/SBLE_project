@@ -62,6 +62,28 @@ hex_colors = [
 
 def main():
     pass
+    
+    params = {
+            'features': [rssi_features],
+            'scaler': [StandardScaler()],
+            'pca': [PCA(n_components = 4)],
+            'pca_features': [position_features],
+            'hidden_size': [25, 50],
+            'lr' : [0.001],
+            'num_epochs': [5],
+            'sub_sequence_length': [10, 12, 15],
+            'batch_size': [10, 25, 50],
+            'num_layers': [1],
+            'optimizer': ['adam'], #'sgd'
+            'bidirectional': [False],
+            # 'dropout': [0.2, 0.3],
+            'recurrent_dropout': [0.25, 0.3, 0.35, 0.4],
+            'l2_lambda': [0.01, 0.05]
+    }
+
+    # test_all()
+
+def test_all():
     all_features = ['rssi_1', 'rssi_accuracy_1', 'rssi_2', 'rssi_accuracy_2', 'latitude',
        'longitude', 'speed', 'speedAcc', 'vertical_acc', 'altitude', 'course',
        'courseAcc', 'heading', 'horizontal_acc', 'attitude_pitch',
@@ -77,26 +99,57 @@ def main():
        'rotation_rate_z', 'gravity_accel_x', 'gravity_accel_y',
        'gravity_accel_z', 'user_accel_x', 'user_accel_y', 'user_accel_z']
     
-    params = {
-            'features': [rssi_features],
-            'scaler': [StandardScaler()],
-            'pca': [PCA(n_components = 4)],
-            'pca_features': [position_features],
-            'hidden_size': [25, 50],
-            'lr' : [0.001],
-            'num_epochs': [5, 10],
-            'sub_sequence_length': [10, 15],
-            'batch_size': [10, 25],
-            'num_layers': [1,2],
-            'optimizer': ['adam'], #'sgd'
-            'bidirectional': [True, False],
-            'dropout': [0.2, 0.3],
-            'recurrent_dropout': [0.1, 0.3],
-            'l2_lambda': [0.001, 0.01]
-    }
-
     trips = get_trips_quick()
-    lstm_gridsearch(trips, params, method = 'halving')
+    data = get_tagged_dataset(trips)
+
+    rf = RandomForest(StandardScaler(), None, rssi_features, [], n_estimators = 100, criterion = 'entropy', class_weight = None, max_depth = 20, min_samples_split = 10, min_samples_leaf = 4, max_features = 'sqrt')
+    mlp = MLP(RobustScaler(), None, rssi_features, [], hidden_layer_sizes = (50, 50), learning_rate_init = 0.001, learning_rate = 'adaptive', activation = 'logistic', alpha = 0.001, max_iter = 500)
+    lstm = SklearnLSTMWrapper(rssi_features, StandardScaler(), position_features, PCA(n_components=4), hidden_size = 50, sub_sequence_length = 10, batch_size = 25, lr = 0.001, num_epochs = 5, num_layers = 1, recurrent_dropout = 0.3, l2_lambda = 0.01)
+
+    """ TESTING """
+    acc, cm = test_random_forest(trips, clone(rf))
+    print("RandomForest: ", acc)
+    print(cm)
+    print()
+    acc, cm = test_mlp(trips, clone(mlp))
+    print("MLP: ", acc)
+    print(cm)
+    print()
+    acc, cm = test_lstm(trips, clone(lstm))
+    print("LSTM: ", acc)
+    print(cm)
+    print()
+
+    """ KFold """
+    scores, cms = kfold_random_forest(trips, clone(rf))
+    print("RandomForest: ", scores)
+    print(cms)
+    print()
+
+    scores, cms = kfold_mlp(trips, clone(mlp))
+    print("MLP: ", scores)
+    print(cms)
+    print()
+
+    scores, cms = kfold_lstm(trips, clone(lstm))
+    print("LSTM: ", scores)
+    print(cms)
+    print()
+
+    """ gridsearch """
+    print("Starting rf gridsearch")
+    random_forest_gridsearch(trips)
+    print("Finished rf gridsearch")
+    print()
+
+    print("Starting mlp gridsearch")
+    mlp_gridsearch(trips)
+    print("Finished mlp gridsearch")
+    print()
+
+    print("Starting lstm gridsearch")
+    lstm_gridsearch(trips)
+    print("Finished lstm gridsearch")
 
 
 """

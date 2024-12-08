@@ -11,6 +11,28 @@ from matplotlib.patches import Ellipse
 import matplotlib.transforms as transforms
 from scipy.stats import norm, expon
 
+def generate_graphs(rf_data, mlp_data, lstm_data):
+    data = [rf_data, mlp_data, lstm_data]
+    colors = {0: 'blue', 1: 'green', 2: 'red'}
+
+    # Pdf of trip accuracy for each class
+    for i, model in enumerate(data):
+        fig, ax = plt.subplots()
+        graph_pdf(model['trip_acc'])
+        plt.show()
+        plt.clf()
+    
+    # Pdf of trip f1 for each class
+    for i, model in enumerate(data):
+        fig, ax = plt.subplots()
+        graph_cdf(model['trip_f1'])
+        plt.show()
+        plt.clf()
+
+    
+
+
+
 seat_color = {0 : "blue", 1 : "green", 2 : "red"}
 
 hex_colors = [
@@ -81,8 +103,9 @@ def quick_scatter(x, y, color = "blue", xlabel = "", ylabel = "", title = "", fi
     if show:
         plt.show()
 
-def graph_pdf(data, bin_count = 10, label = ""):
-    fig, ax = plt.subplots()
+def graph_pdf(data, bin_count = 10, label = "", fig = None, ax = None):
+    if fig is None:
+        fig, ax = plt.subplots()
 
     sorted = data.sort_values().to_list()
 
@@ -106,7 +129,41 @@ def graph_pdf(data, bin_count = 10, label = ""):
         bidx += 1
 
     ax.plot(bin_vals, bins, color="blue")
-    plt.show()
+    if fig is None:
+        plt.show()
+
+def graph_cdf(data, bin_count = 10, label = "", fig = None, ax = None):
+    if fig is None:
+        fig, ax = plt.subplots()
+
+    sorted = data.sort_values().to_list()
+
+    bins = [0 for x in range(bin_count)]
+    bin_vals = [x for x in np.linspace(math.floor(sorted[0]), math.ceil(sorted[-1]), bin_count)]
+
+    idx = 0
+    bidx = 0
+    while idx < len(sorted):
+        bin = [bin_vals[bidx], bin_vals[bidx+1]]
+        print("idx: {}".format(idx))
+        print("bidx: {}".format(bidx))
+        print("bin: {}".format(bin))
+        print()
+        try:
+            while sorted[idx] <= bin[1]:
+                bins[bidx] += 1
+                idx += 1
+        except:
+            break
+        bidx += 1
+    
+    tot = 0
+    for i in range(1, len(bins)):
+        bins[i] = bins[i] + bins[i-1]
+
+    ax.plot(bin_vals, bins, color="blue")
+    if fig is None:
+        plt.show()
 
 def graph_pdf_norm(data):
     fig, ax = plt.subplots()

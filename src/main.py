@@ -10,7 +10,7 @@ from lstm import *
 from eval import *
 import time
 from datetime import datetime
-from sklearn.model_selection import GridSearchCV, StratifiedKFold, GroupKFold
+from sklearn.model_selection import GridSearchCV, StratifiedKFold, GroupKFold, ParameterGrid
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, RobustScaler
 from sklearn.decomposition import PCA
@@ -18,6 +18,7 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, confusion_matrix, make_scorer
 from test import *
+import pickle
 
 bad_MM = [2, 8, 21]
 cmap = {"front" : "blue", "middle" : "green", "back" : "red"}
@@ -81,9 +82,58 @@ def main():
             'l2_lambda': [0.01, 0.05]
     }
 
-    # test_all()
+    mlp_params = {
+        'features': [rssi_features],
+        'scaler': [RobustScaler()],
+        'hidden_layer_sizes': [(50,), (50, 50), (100,)],
+        'learning_rate_init' : [0.0005, 0.001, 0.002],
+        'learning_rate' : ['adaptive'],
+        'alpha' : [0.001, 0.01],
+        'activation' : ['relu'],
+        'momentum' : [0.85, 0.9, 0.95],
+        'batch_size': [8, 16, 32, 64],
+        'max_iter': [200, 500],
+        'early_stopping': [True],
+        'n_iter_no_change': [10, 25]
+    }
 
-def test_all():
+    rf_params = {
+        'features': [rssi_features],
+        'scaler': [RobustScaler()],
+        'n_estimators': [50, 100, 200],
+        'max_depth' : [5, 8, 10, 12],
+        'min_samples_split' : [10, 15, 20],
+        'min_samples_leaf' : [5, 8, 10, 12],
+        'max_features' : ['sqrt'],
+        'ccp_alpha' : [0, 0.01, 0.02],
+        'criterion' : ['entropy', 'log_loss', 'gini']
+    }
+
+    rf_data, mlp_data, lstm_data = load_eval()
+    trips = get_loaded_trips()
+    data = get_tagged_dataset(trips)
+    generate_graphs(rf_data, mlp_data, lstm_data, data)
+    
+
+def test_eval():
+    trips = get_loaded_trips()
+
+    rf = RandomForest(StandardScaler(), None, rssi_features, [], n_estimators = 100, criterion = 'entropy', class_weight = None, max_depth = 20, min_samples_split = 10, min_samples_leaf = 4, max_features = 'sqrt')
+    mlp = MLP(RobustScaler(), None, rssi_features, [], hidden_layer_sizes = (50, 50), learning_rate_init = 0.001, learning_rate = 'adaptive', activation = 'logistic', alpha = 0.001, max_iter = 500)
+    lstm = SklearnLSTMWrapper(rssi_features, StandardScaler(), position_features, PCA(n_components=4), hidden_size = 50, sub_sequence_length = 10, batch_size = 25, lr = 0.001, num_epochs = 5, num_layers = 1, recurrent_dropout = 0.3, l2_lambda = 0.01)
+
+    start = time.time()
+    print("Start: ", start)
+
+    rf_data, mlp_data, lstm_data = full_suite(rf, mlp, lstm, trips)
+
+    end = time.time()
+    print("End: ", end)
+    print(end - start)
+
+    return rf_data, mlp_data, lstm_data
+
+def test_all(trips = None):
     all_features = ['rssi_1', 'rssi_accuracy_1', 'rssi_2', 'rssi_accuracy_2', 'latitude',
        'longitude', 'speed', 'speedAcc', 'vertical_acc', 'altitude', 'course',
        'courseAcc', 'heading', 'horizontal_acc', 'attitude_pitch',
@@ -99,7 +149,9 @@ def test_all():
        'rotation_rate_z', 'gravity_accel_x', 'gravity_accel_y',
        'gravity_accel_z', 'user_accel_x', 'user_accel_y', 'user_accel_z']
     
-    trips = get_trips_quick()
+    if trips is None:
+        trips = get_trips_quick()
+
     data = get_tagged_dataset(trips)
 
     rf = RandomForest(StandardScaler(), None, rssi_features, [], n_estimators = 100, criterion = 'entropy', class_weight = None, max_depth = 20, min_samples_split = 10, min_samples_leaf = 4, max_features = 'sqrt')

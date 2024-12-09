@@ -3,7 +3,15 @@ import math
 import os
 import glob
 from trip import trip
+import pickle
 # from filter import *
+
+def get_loaded_trips(path = "trip_save.pickle"):
+    with open(path, 'rb') as f:
+        loaded_trips = pickle.load(f)
+
+    return loaded_trips
+
 
 """
 Helper functions to import and concatenate data from saved csv files

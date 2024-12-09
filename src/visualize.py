@@ -1,37 +1,13 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
-from mpl_toolkits.basemap import Basemap
 from trip import trip
 from parse import *
 from filter import *
-import cartopy.crs as ccrs
-import cartopy.feature as cfeature
 from matplotlib.patches import Ellipse
 import matplotlib.transforms as transforms
-from scipy.stats import norm, expon
-
-def generate_graphs(rf_data, mlp_data, lstm_data):
-    data = [rf_data, mlp_data, lstm_data]
-    colors = {0: 'blue', 1: 'green', 2: 'red'}
-
-    # Pdf of trip accuracy for each class
-    for i, model in enumerate(data):
-        fig, ax = plt.subplots()
-        graph_pdf(model['trip_acc'])
-        plt.show()
-        plt.clf()
-    
-    # Pdf of trip f1 for each class
-    for i, model in enumerate(data):
-        fig, ax = plt.subplots()
-        graph_cdf(model['trip_f1'])
-        plt.show()
-        plt.clf()
-
-    
-
-
+import scipy.stats as scipy
+import seaborn as sns
 
 seat_color = {0 : "blue", 1 : "green", 2 : "red"}
 
@@ -74,6 +50,69 @@ hex_colors = [
         "#FF3357"   # Bright Crimson
     ]
 
+def generate_graphs(rf_data, mlp_data, lstm_data, raw_data):
+    data = [rf_data, mlp_data, lstm_data]
+    raw_data = pd.concat(raw_data)
+    model_color = {0: "#FFAF33", 1: "#33B1FF", 2:  "#8D33FF"}
+    model_name = {0: 'RF', 1: 'MLP', 2: 'LSTM'}
+    seat_name = {0: "Front", 1: "Middle", 2: "Back"}
+
+
+    # KDE OF MINOR DIFFERENCE BY SEAT
+    fig, ax = plt.subplots()
+    for seat in range(3):
+        seat_data = raw_data.loc[raw_data["seat"] == seat, "rssi_diff"]
+        kde = scipy.gaussian_kde(seat_data)
+        x_range = np.linspace(min(seat_data), max(seat_data), 200)
+
+        ax.plot(x_range, kde(x_range), seat_color[seat], lw = 2, label = seat_name[seat])
+        ax.fill_between(x_range, kde(x_range), color = seat_color[seat], alpha = 0.3)
+
+    ax.legend()
+    ax.set_title("Kernel Density of RSSI Differene by Seat, Overlayed")
+    ax.set_xlabel("Trip Accuracy Scores")
+    ax.set_ylabel("Probability Density")
+    plt.show()
+    
+
+    # KDE OF TRIP ACCURACY FOR EACH MODEL
+    for i, model in enumerate(data):
+        fig, ax = graph_kde(model['trip_acc'], color = model_color[i], alpha = 0.3)
+
+        ax.set_title("Kernel Density of Trip Accuracy Prediction by {}".format(model_name[i]))
+        ax.set_xlabel("Trip Accuracy Scores")
+        ax.set_ylabel("Probability Density")
+
+        plt.show()
+    
+    # KDE OF TRIP ACCURACY FOR EACH MODEL OVERLAYED
+    fig, ax = plt.subplots()
+    for i, model in enumerate(data):
+        kde = scipy.gaussian_kde(model['trip_acc'])
+        x_range = np.linspace(min(model['trip_acc']), max(model['trip_acc']), 200)
+
+        ax.plot(x_range, kde(x_range), seat_color[seat], lw = 2, label = seat_name[seat])
+        ax.fill_between(x_range, kde(x_range), color = seat_color[seat], alpha = 0.3)
+
+    ax.legend()
+    ax.set_title("Kernel Density of Trip Accuracy Prediction by Model, Overlayed")
+    ax.set_xlabel("Trip Accuracy Scores")
+    ax.set_ylabel("Probability Density")
+    plt.show()
+
+    
+    # CONFUSION MATRICES FOR EACH MODEL
+    for i, model in enumerate(data):
+        # df = cmat_to_df(model["cmat"][0])
+        print(model["cmat"][0])
+        print(model["cmat"][0][0])
+        graph_table(model["cmat"][0])
+
+def cmat_to_df(cmat):
+    labels = ['Front', 'Middle', 'Back']
+    new_cmat = pd.DataFrame(cmat, index = pd.Index(labels, name = 'True'), columns = pd.Index(labels, name = 'Predicted'))
+    return new_cmat
+
 def pandas_format():
     pd.options.display.float_format = '{:.0f}'.format
 
@@ -89,6 +128,7 @@ def quick_plot(x, y, color = "blue", xlabel = "", ylabel = "", title = "", fig =
     plt.title(title)
     if show:
         plt.show()
+    return fig, ax
 
 def quick_scatter(x, y, color = "blue", xlabel = "", ylabel = "", title = "", fig = None, ax = None):
     show = False
@@ -102,12 +142,56 @@ def quick_scatter(x, y, color = "blue", xlabel = "", ylabel = "", title = "", fi
     plt.title(title)
     if show:
         plt.show()
+    
+    return fig, ax
 
-def graph_pdf(data, bin_count = 10, label = "", fig = None, ax = None):
+def graph_kde(data, title = "", label = "", fig = None, ax = None, show = False, color = "blue", x_label = "", y_label = "", alpha = 0):
+    if fig is None:
+        fig, ax = plt.subplots()
+    
+    kde = scipy.gaussian_kde(data)
+    x_range = np.linspace(min(data), max(data), 200)
+
+    ax.plot(x_range, kde(x_range), color, lw = 2, label = label)
+    ax.fill_between(x_range, kde(x_range), color = color, alpha = alpha)
+
+    # ax.set_title(title)
+    # ax.set_xlabel(x_label)
+    # ax.set_ylabel(y_label)
+    # ax.grid(True, alpha = 0.3)
+
+    if show:
+        plt.show()
+    
+    return fig, ax
+
+
+def graph_table(data, title = "", fig = None, ax = None, show = False, x_label = "", y_label = ""):
     if fig is None:
         fig, ax = plt.subplots()
 
-    sorted = data.sort_values().to_list()
+    plt.style.use('grayscale')
+    plt.figure(figsize = (8,6))
+
+    labels = ["Front", "Middle", "Back"]
+
+    table = plt.table(cellText = data, colLabels = labels, rowLabels = labels, loc = 'center', cellLoc = 'center')
+    table.scale(1.2, 1.8)
+    table.auto_set_font_size(False)
+    table.set_fontsize(12)
+
+    if show:
+        plt.show()
+    
+    return fig, ax
+
+    
+
+def graph_pdf(data, bin_count = 10, label = "", fig = None, ax = None, color = "blue"):
+    if fig is None:
+        fig, ax = plt.subplots()
+
+    sorted = sort(data)
 
     bins = [0 for x in range(bin_count)]
     bin_vals = [x for x in np.linspace(math.floor(sorted[0]), math.ceil(sorted[-1]), bin_count)]
@@ -128,7 +212,7 @@ def graph_pdf(data, bin_count = 10, label = "", fig = None, ax = None):
             break
         bidx += 1
 
-    ax.plot(bin_vals, bins, color="blue")
+    ax.plot(bin_vals, bins, color=color)
     if fig is None:
         plt.show()
 
@@ -170,10 +254,10 @@ def graph_pdf_norm(data):
 
     sorted = data.sort_values().to_list()
 
-    mu, std = norm.fit(sorted)
+    mu, std = scipy.norm.fit(sorted)
 
     x = np.linspace(mu - 3*std, mu + 3*std, 100)
-    y = norm.pdf(x, mu, std)*len(sorted)
+    y = scipy.norm.pdf(x, mu, std)*len(sorted)
 
     ax.plot(x, y, color = "red")
 
@@ -203,10 +287,10 @@ def graph_pdf_exp(data):
 
     sorted = data.sort_values().to_list()
 
-    loc, scale = expon.fit(sorted)
+    loc, scale = scipy.expon.fit(sorted)
 
     x = np.linspace(min(sorted), max(sorted), 100)
-    y = expon.pdf(x, loc, scale)*len(sorted)
+    y = scipy.expon.pdf(x, loc, scale)*len(sorted)
 
     ax.plot(x, y, color = "red")
 
@@ -324,35 +408,35 @@ def graph_trip_rssi_diff(data):
 
     plt.show()
 
-"""
-(Non) Function to graph latitude and longitude data for a trip on top of a map.
+# """
+# (Non) Function to graph latitude and longitude data for a trip on top of a map.
 
-"""
-def graph_map(trip):
-    data = trip.data.copy()
-    stop_data = get_stop_data()
+# """
+# def graph_map(trip):
+#     data = trip.data.copy()
+#     stop_data = get_stop_data()
 
-    pre_trip = data.loc[data["timestamp"] < trip.on_bus]
-    mid_trip = data.loc[data["timestamp"] >= trip.on_bus]
+#     pre_trip = data.loc[data["timestamp"] < trip.on_bus]
+#     mid_trip = data.loc[data["timestamp"] >= trip.on_bus]
 
-    ax = plt.axes(projection=ccrs.PlateCarree())
+#     ax = plt.axes(projection=ccrs.PlateCarree())
     
-    ax.add_feature(cfeature.LAND.with_scale('10m'))
-    ax.add_feature(cfeature.OCEAN.with_scale('10m'))
-    ax.add_feature(cfeature.COASTLINE.with_scale('10m'))
-    ax.add_feature(cfeature.BORDERS.with_scale('10m'), linestyle=":")
-    ax.add_feature(cfeature.LAKES.with_scale('10m'))
-    ax.add_feature(cfeature.RIVERS.with_scale('10m'))
+#     ax.add_feature(cfeature.LAND.with_scale('10m'))
+#     ax.add_feature(cfeature.OCEAN.with_scale('10m'))
+#     ax.add_feature(cfeature.COASTLINE.with_scale('10m'))
+#     ax.add_feature(cfeature.BORDERS.with_scale('10m'), linestyle=":")
+#     ax.add_feature(cfeature.LAKES.with_scale('10m'))
+#     ax.add_feature(cfeature.RIVERS.with_scale('10m'))
 
-    plt.xlim(min(stop_data["stop_lon"]) - 0.005, max(stop_data["stop_lon"]) + 0.005)
-    plt.ylim(min(stop_data["stop_lat"]) - 0.005, max(stop_data["stop_lat"]) + 0.005)
+#     plt.xlim(min(stop_data["stop_lon"]) - 0.005, max(stop_data["stop_lon"]) + 0.005)
+#     plt.ylim(min(stop_data["stop_lat"]) - 0.005, max(stop_data["stop_lat"]) + 0.005)
 
-    plt.scatter(stop_data["stop_lon"], stop_data["stop_lat"], color = hex_colors[:stop_data.shape[0]], marker = "^", s = 50)
+#     plt.scatter(stop_data["stop_lon"], stop_data["stop_lat"], color = hex_colors[:stop_data.shape[0]], marker = "^", s = 50)
 
-    plt.scatter(pre_trip["longitude"], pre_trip["latitude"], color="red", s = 2)
-    plt.scatter(mid_trip["longitude"], mid_trip["latitude"], color="blue", s = 2)
+#     plt.scatter(pre_trip["longitude"], pre_trip["latitude"], color="red", s = 2)
+#     plt.scatter(mid_trip["longitude"], mid_trip["latitude"], color="blue", s = 2)
 
-    plt.show()
+#     plt.show()
 
 """
 Function to graph RSSI readings over time for a single trip.

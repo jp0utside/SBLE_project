@@ -417,7 +417,6 @@ def mlp_gridsearch(trips = None, params = None, method = 'grid', n_iter = 128):
     if params is None:
         params = {
         'features': [rssi_features],
-        'pca_features': [position_features],
         'scaler': [RobustScaler()],
         'pca': [PCA(n_components=2), PCA(n_components=4)],
         'hidden_layer_sizes': [(50,)],

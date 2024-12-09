@@ -36,6 +36,8 @@ class LSTM(nn.Module):
             h_t = h0[0]
             c_t = c0[0]
 
+            
+
             for t in range(x.size(1)):
                 # print(f"Step {t}: h_t before dropout: {torch.isnan(h_t).any()}")
                 h_dropped = self.recurrent_dropout(h_t)

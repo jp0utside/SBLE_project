@@ -8,7 +8,6 @@ from matplotlib.patches import Ellipse
 import matplotlib.transforms as transforms
 import scipy.stats as scipy
 import seaborn as sns
-
 seat_color = {0 : "blue", 1 : "green", 2 : "red"}
 
 hex_colors = [
@@ -50,71 +49,172 @@ hex_colors = [
         "#FF3357"   # Bright Crimson
     ]
 
-def generate_graphs(rf_data, mlp_data, lstm_data, raw_data):
+styles = ['Solarize_Light2', '_classic_test_patch', '_mpl-gallery', '_mpl-gallery-nogrid', 'bmh', 'classic', 'dark_background', 'fast', 'fivethirtyeight', 'ggplot', 'grayscale', 'seaborn-v0_8', 'seaborn-v0_8-bright', 'seaborn-v0_8-colorblind', 
+              'seaborn-v0_8-dark', 'seaborn-v0_8-dark-palette', 'seaborn-v0_8-darkgrid', 'seaborn-v0_8-deep', 'seaborn-v0_8-muted', 'seaborn-v0_8-notebook', 'seaborn-v0_8-paper', 'seaborn-v0_8-pastel', 'seaborn-v0_8-poster', 'seaborn-v0_8-talk', 
+              'seaborn-v0_8-ticks', 'seaborn-v0_8-white', 'seaborn-v0_8-whitegrid', 'tableau-colorblind10']
+
+def generate_graphs(rf_data, mlp_data, lstm_data, trips):
     data = [rf_data, mlp_data, lstm_data]
-    raw_data = pd.concat(raw_data)
-    model_color = {0: "#FFAF33", 1: "#33B1FF", 2:  "#8D33FF"}
+    raw_data = pd.concat(get_tagged_dataset(trips))
+    trimmed_zeros = pd.concat(get_tagged_dataset(trips, trim_double_zeros = True))
+    model_color = {0: "#FF4A26", 1: "#33B1FF", 2:  "#8D33FF"}
     model_name = {0: 'RF', 1: 'MLP', 2: 'LSTM'}
     seat_name = {0: "Front", 1: "Middle", 2: "Back"}
+    chosen_trip = trips[1]
 
+    # fig = plt.figure(figsize = (6, 8))
+    # ax = fig.add_subplot(111)
+
+    # fig, ax = graph_trip(chosen_trip)
+
+    # ax.legend(fontsize = 12)
+    
+    # ax.grid(True, alpha = 0.3)
+
+    # ax.set_xlabel("Longitude", fontsize = 15, fontweight = 200)
+    # ax.set_ylabel("Latitude", fontsize = 15, fontweight = 200)
+    # plt.tight_layout()
+    # plt.subplots_adjust(bottom = 0.2)
+    # fig.text(0.5, 0.05, "Plot 1: Sample Trip #",
+    #          ha='center', va='center', fontsize = 20, fontweight=400)
+    
+    # plt.show()
+
+
+
+    # fig = plt.figure(figsize = (6, 8))
+    # ax = fig.add_subplot(111)
+
+    # fig, ax = graph_trip_rssi_diff(chosen_trip)
+
+    # ax.legend(fontsize = 12)
+    
+    # ax.grid(True, alpha = 0.3)
+
+    # ax.set_xlabel("Longitude", fontsize = 15, fontweight = 200)
+    # ax.set_ylabel("Latitude", fontsize = 15, fontweight = 200)
+    # plt.tight_layout()
+    # plt.subplots_adjust(bottom = 0.2)
+    # fig.text(0.5, 0.05, "Plot 2: Sample Trip # RSSI Diff",
+    #          ha='center', va='center', fontsize = 20, fontweight=400)
+    
+    # plt.show()
+
+
+
+
+
+    # plt.rcParams['font.family'] = 'Avenir'
+    # plt.style.use('ggplot')
 
     # KDE OF MINOR DIFFERENCE BY SEAT
-    fig, ax = plt.subplots()
+    fig = plt.figure(figsize = (8, 6))
+    ax = fig.add_subplot(111)
+
     for seat in range(3):
-        seat_data = raw_data.loc[raw_data["seat"] == seat, "rssi_diff"]
+        seat_data = trimmed_zeros.loc[trimmed_zeros["seat"] == seat, "rssi_diff"]
         kde = scipy.gaussian_kde(seat_data)
         x_range = np.linspace(min(seat_data), max(seat_data), 200)
 
         ax.plot(x_range, kde(x_range), seat_color[seat], lw = 2, label = seat_name[seat])
         ax.fill_between(x_range, kde(x_range), color = seat_color[seat], alpha = 0.3)
 
-    ax.legend()
-    ax.set_title("Kernel Density of RSSI Differene by Seat, Overlayed")
-    ax.set_xlabel("Trip Accuracy Scores")
-    ax.set_ylabel("Probability Density")
+    ax.legend(prop = {'family': 'Avenir next', 'size': 12})
+    
+    ax.grid(True, alpha = 0.3)
+
+    ax.set_xlabel("RSSI Difference (Minor 2 - Minor 1)", fontsize = 15, fontweight = 50, fontfamily = "Avenir")
+    ax.set_ylabel("Probability Density", fontsize = 15, fontweight = 50, fontfamily = "Avenir")
+    plt.tight_layout()
+    plt.subplots_adjust(bottom = 0.2)
+    fig.text(0.5, 0.05, "Figure 1: Kernel Density of RSSI Difference by Seat",
+             ha='center', va='center', fontsize = 20, fontfamily = "Avenir next")
+    
     plt.show()
     
-
-    # KDE OF TRIP ACCURACY FOR EACH MODEL
-    for i, model in enumerate(data):
-        fig, ax = graph_kde(model['trip_acc'], color = model_color[i], alpha = 0.3)
-
-        ax.set_title("Kernel Density of Trip Accuracy Prediction by {}".format(model_name[i]))
-        ax.set_xlabel("Trip Accuracy Scores")
-        ax.set_ylabel("Probability Density")
-
-        plt.show()
     
+
     # KDE OF TRIP ACCURACY FOR EACH MODEL OVERLAYED
-    fig, ax = plt.subplots()
+    fig = plt.figure(figsize = (8, 6))
+    ax = fig.add_subplot(111)
+
     for i, model in enumerate(data):
         kde = scipy.gaussian_kde(model['trip_acc'])
         x_range = np.linspace(min(model['trip_acc']), max(model['trip_acc']), 200)
 
-        ax.plot(x_range, kde(x_range), seat_color[seat], lw = 2, label = seat_name[seat])
-        ax.fill_between(x_range, kde(x_range), color = seat_color[seat], alpha = 0.3)
+        ax.plot(x_range, kde(x_range), model_color[i], lw = 2, label = model_name[i])
+        ax.fill_between(x_range, kde(x_range), color = model_color[i], alpha = 0.3)
 
-    ax.legend()
-    ax.set_title("Kernel Density of Trip Accuracy Prediction by Model, Overlayed")
-    ax.set_xlabel("Trip Accuracy Scores")
-    ax.set_ylabel("Probability Density")
+    ax.legend(fontsize = 12)
+    
+    ax.set_xlabel("Trip Accuracy Scores", fontsize = 15, fontfamily = "Avenir")
+    ax.set_ylabel("Probability Density", fontsize = 15, fontfamily = "Avenir")
+    ax.grid(True, alpha = 0.3)
+
+    plt.tight_layout()
+    plt.subplots_adjust(bottom = 0.2)
+    fig.text(0.5, 0.05, "Figure 2: Kernel Density of Trip Accuracy Prediction by Model", ha = 'center', va = 'center', fontsize = 20, fontfamily = 'Avenir next')
+    plt.show()
+    
+
+
+    # MODEL ACC BY SPLIT, WITH AVERAGE AND STD
+    table = [[], [], []]
+    for i, model in enumerate(data):
+        row = model['split_acc'] + [np.mean(model['split_acc'])] + [np.std(model['split_acc'])]
+        row = [round(el*100, 2) for el in row]
+        table[i] = row
+        
+    rows = ["RF", "MLP", "LSTM"]
+    cols = ["Split 0", "Split 1", "Split2", "Split3", "Split4", "Avg", "Std"]
+    df = pd.DataFrame(table)
+
+    fig = plt.figure(figsize = (8, 2))
+    ax = fig.add_subplot(111)
+    fig, ax = graph_table(df, fig = fig, ax = ax, row_labels=rows, col_labels=cols)
+
+    plt.tight_layout()
+    plt.subplots_adjust(bottom = 0.2)
+    fig.text(0.5, 0.075, "Table 1: Accuracy Scores for Each Model", ha = 'center', va = 'center', fontsize = 20, fontfamily = 'Avenir next')
     plt.show()
 
-    
-    # CONFUSION MATRICES FOR EACH MODEL
+
+    # MODEL F1 BY SPLIT, WITH AVERAGE AND STD
+    table = [[], [], []]
     for i, model in enumerate(data):
-        # df = cmat_to_df(model["cmat"][0])
-        print(model["cmat"][0])
-        print(model["cmat"][0][0])
-        graph_table(model["cmat"][0])
+        row = model['split_f1'] + [np.mean(model['split_f1'])] + [np.std(model['split_f1'])]
+        row = [round(el*100, 2) for el in row]
+        table[i] = row
 
-def cmat_to_df(cmat):
-    labels = ['Front', 'Middle', 'Back']
-    new_cmat = pd.DataFrame(cmat, index = pd.Index(labels, name = 'True'), columns = pd.Index(labels, name = 'Predicted'))
-    return new_cmat
+    df = pd.DataFrame(table)
+    fig = plt.figure(figsize = (8, 2))
+    ax = fig.add_subplot(111)
+    fig, ax = graph_table(df, fig = fig, ax = ax, row_labels=rows, col_labels=cols)
 
-def pandas_format():
-    pd.options.display.float_format = '{:.0f}'.format
+    plt.tight_layout()
+    plt.subplots_adjust(bottom = 0.2)
+    fig.text(0.5, 0.075, "Table 2: Macro-Averaged F1 Scores for Each Model", ha = 'center', va = 'center', fontsize = 20, fontfamily = 'Avenir next')
+    plt.show()
+    
+    for i, model in enumerate(data):
+        fig = plt.figure(figsize = (8, 4))
+        ax = fig.add_subplot(111)
+
+        conf_matrix = model["cmat"][0]
+        
+        graph_conf_heatmap(conf_matrix, fig, ax)
+
+        ax.set_xticklabels(ax.get_xticks(), fontsize = 12)
+        ax.set_yticklabels(ax.get_yticks(), fontsize = 12)
+        
+        ax.set_xlabel("Predicted", fontfamily = 'Avenir', fontsize = 15)
+        ax.set_ylabel("True", fontfamily = 'Avenir', fontsize = 15)
+
+        plt.tight_layout()
+        plt.subplots_adjust(bottom = 0.2)
+        fig.text(0.5, 0.05, "Matrix {}: Confusion Matrix Heat Map for {}".format(i + 1, model_name[i]), ha = 'center', va = 'center', fontsize = 20, fontfamily = 'Avenir next')
+        plt.show()
+
 
 def quick_plot(x, y, color = "blue", xlabel = "", ylabel = "", title = "", fig = None, ax = None):
     show = False
@@ -145,7 +245,7 @@ def quick_scatter(x, y, color = "blue", xlabel = "", ylabel = "", title = "", fi
     
     return fig, ax
 
-def graph_kde(data, title = "", label = "", fig = None, ax = None, show = False, color = "blue", x_label = "", y_label = "", alpha = 0):
+def graph_kde(data, label = "", fig = None, ax = None, show = False, color = "blue", alpha = 0):
     if fig is None:
         fig, ax = plt.subplots()
     
@@ -155,99 +255,168 @@ def graph_kde(data, title = "", label = "", fig = None, ax = None, show = False,
     ax.plot(x_range, kde(x_range), color, lw = 2, label = label)
     ax.fill_between(x_range, kde(x_range), color = color, alpha = alpha)
 
-    # ax.set_title(title)
-    # ax.set_xlabel(x_label)
-    # ax.set_ylabel(y_label)
-    # ax.grid(True, alpha = 0.3)
-
     if show:
         plt.show()
     
     return fig, ax
 
-
-def graph_table(data, title = "", fig = None, ax = None, show = False, x_label = "", y_label = ""):
+def graph_table(data, row_labels=None, col_labels=None, fig=None, ax=None, 
+                show=False, font_family = 'Avenir next', font_size=12):
     if fig is None:
-        fig, ax = plt.subplots()
-
-    plt.style.use('grayscale')
-    plt.figure(figsize = (8,6))
-
-    labels = ["Front", "Middle", "Back"]
-
-    table = plt.table(cellText = data, colLabels = labels, rowLabels = labels, loc = 'center', cellLoc = 'center')
-    table.scale(1.2, 1.8)
+        fig, ax = plt.subplots(figsize=(8, 6))
+    
+    # Hide axes
+    ax.axis('tight')
+    ax.axis('off')
+    
+    # Convert data to numpy array if it isn't already
+    data = np.array(data)
+    
+    # Default labels if none provided
+    if row_labels is None:
+        row_labels = [f'Row {i+1}' for i in range(data.shape[0])]
+    if col_labels is None:
+        col_labels = [f'Col {i+1}' for i in range(data.shape[1])]
+    
+    # Create table
+    table = ax.table(cellText=data,
+                    rowLabels=row_labels,
+                    colLabels=col_labels,
+                    cellLoc='center',
+                    loc='center')
+    
+    # Style the table
     table.auto_set_font_size(False)
-    table.set_fontsize(12)
+    table.set_fontsize(font_size)
+    
+    # Adjust cell heights and widths
+    table.scale(1.2, 1.8)
+    
+    # Style cells
+    for key, cell in table._cells.items():
+        cell.set_text_props(fontsize = 15, fontfamily='Avenir')
+        cell.set_edgecolor('black')
+        
+        # Make header cells bold
+        if cell.get_text().get_text() in row_labels + col_labels:
+            cell.set_text_props(fontsize = 15, family = 'Avenir next')
+            # cell.get_text().set_weight('bold')
+            # cell.get_text().set_fontweight('bold')
+            cell.set_facecolor('#E6E6E6')  # Light gray background
+    
+    plt.tight_layout()
+    
+    if show:
+        plt.show()
+    
+    return fig, ax
+
+def graph_cdf(data, label="", fig=None, ax=None, show=False, color="blue", x_label="", y_label="", alpha=0):
+    if fig is None:
+        fig, ax = plt.subplots()
+    
+    kde = scipy.gaussian_kde(data)
+    x_range = np.linspace(min(data), max(data), 200)
+    kde_values = kde(x_range)
+    
+    cdf_values = np.zeros_like(x_range)
+    for i in range(len(x_range)):
+        cdf_values[i] = np.trapz(kde_values[:i+1], x_range[:i+1])
+    
+    cdf_values = cdf_values / cdf_values[-1]
+    
+    ax.plot(x_range, cdf_values, color=color, lw=2, label=label)
+    ax.fill_between(x_range, cdf_values, color=color, alpha=alpha)
+    
+    ax.grid(True, alpha=0.3)
+    ax.set_ylim(0, 1)
 
     if show:
         plt.show()
     
     return fig, ax
 
-    
-
-def graph_pdf(data, bin_count = 10, label = "", fig = None, ax = None, color = "blue"):
+def graph_conf_heatmap(data, label = "", fig = None, ax = None, show = False):
     if fig is None:
         fig, ax = plt.subplots()
-
-    sorted = sort(data)
-
-    bins = [0 for x in range(bin_count)]
-    bin_vals = [x for x in np.linspace(math.floor(sorted[0]), math.ceil(sorted[-1]), bin_count)]
-
-    idx = 0
-    bidx = 0
-    while idx < len(sorted):
-        bin = [bin_vals[bidx], bin_vals[bidx+1]]
-        print("idx: {}".format(idx))
-        print("bidx: {}".format(bidx))
-        print("bin: {}".format(bin))
-        print()
-        try:
-            while sorted[idx] <= bin[1]:
-                bins[bidx] += 1
-                idx += 1
-        except:
-            break
-        bidx += 1
-
-    ax.plot(bin_vals, bins, color=color)
-    if fig is None:
-        plt.show()
-
-def graph_cdf(data, bin_count = 10, label = "", fig = None, ax = None):
-    if fig is None:
-        fig, ax = plt.subplots()
-
-    sorted = data.sort_values().to_list()
-
-    bins = [0 for x in range(bin_count)]
-    bin_vals = [x for x in np.linspace(math.floor(sorted[0]), math.ceil(sorted[-1]), bin_count)]
-
-    idx = 0
-    bidx = 0
-    while idx < len(sorted):
-        bin = [bin_vals[bidx], bin_vals[bidx+1]]
-        print("idx: {}".format(idx))
-        print("bidx: {}".format(bidx))
-        print("bin: {}".format(bin))
-        print()
-        try:
-            while sorted[idx] <= bin[1]:
-                bins[bidx] += 1
-                idx += 1
-        except:
-            break
-        bidx += 1
     
-    tot = 0
-    for i in range(1, len(bins)):
-        bins[i] = bins[i] + bins[i-1]
-
-    ax.plot(bin_vals, bins, color="blue")
-    if fig is None:
+    # Convert to percentages
+    row_sums = data.sum(axis=1)
+    cm_pct = (data.T / row_sums).T * 100
+    
+    sns.heatmap(cm_pct, 
+            annot=data, 
+            xticklabels=['Front', 'Middle', 'Back'],
+            yticklabels=['Front', 'Middle', 'Back'],
+            cmap='YlOrRd',
+            ax=ax)
+    
+    if show:
         plt.show()
+    
+    return fig, ax
+
+# def graph_pdf(data, bin_count = 10, label = "", fig = None, ax = None, color = "blue"):
+#     if fig is None:
+#         fig, ax = plt.subplots()
+
+#     sorted = sort(data)
+
+#     bins = [0 for x in range(bin_count)]
+#     bin_vals = [x for x in np.linspace(math.floor(sorted[0]), math.ceil(sorted[-1]), bin_count)]
+
+#     idx = 0
+#     bidx = 0
+#     while idx < len(sorted):
+#         bin = [bin_vals[bidx], bin_vals[bidx+1]]
+#         print("idx: {}".format(idx))
+#         print("bidx: {}".format(bidx))
+#         print("bin: {}".format(bin))
+#         print()
+#         try:
+#             while sorted[idx] <= bin[1]:
+#                 bins[bidx] += 1
+#                 idx += 1
+#         except:
+#             break
+#         bidx += 1
+
+#     ax.plot(bin_vals, bins, color=color)
+#     if fig is None:
+#         plt.show()
+
+# def graph_cdf(data, bin_count = 10, label = "", fig = None, ax = None):
+#     if fig is None:
+#         fig, ax = plt.subplots()
+
+#     sorted = data.sort_values().to_list()
+
+#     bins = [0 for x in range(bin_count)]
+#     bin_vals = [x for x in np.linspace(math.floor(sorted[0]), math.ceil(sorted[-1]), bin_count)]
+
+#     idx = 0
+#     bidx = 0
+#     while idx < len(sorted):
+#         bin = [bin_vals[bidx], bin_vals[bidx+1]]
+#         print("idx: {}".format(idx))
+#         print("bidx: {}".format(bidx))
+#         print("bin: {}".format(bin))
+#         print()
+#         try:
+#             while sorted[idx] <= bin[1]:
+#                 bins[bidx] += 1
+#                 idx += 1
+#         except:
+#             break
+#         bidx += 1
+    
+#     tot = 0
+#     for i in range(1, len(bins)):
+#         bins[i] = bins[i] + bins[i-1]
+
+#     ax.plot(bin_vals, bins, color="blue")
+#     if fig is None:
+#         plt.show()
 
 def graph_pdf_norm(data):
     fig, ax = plt.subplots()
@@ -368,43 +537,53 @@ def graph_decision_boundaries(X, y, clf, feature_names=None):
 Function to plot latitude and longitude data for a given trip.
 Pre-trip data plotted in red, mid-trip data plotted in blue.
 """
-def graph_trip(trip):
+def graph_trip(trip, fig = None, ax = None, show = False):
+    if fig is None:
+        fig, ax = plt.subplots()
+
     stop_data = get_stop_data()
     data = trip.data.copy()
 
     pre_trip = data.loc[data["timestamp"] < trip.on_bus]
     mid_trip = data.loc[data["timestamp"] >= trip.on_bus]
 
-    plt.xlim(min(stop_data["stop_lon"]) - 0.005, max(stop_data["stop_lon"]) + 0.005)
-    plt.ylim(min(stop_data["stop_lat"]) - 0.005, max(stop_data["stop_lat"]) + 0.005)
+    ax.set_xlim(min(stop_data["stop_lon"]) - 0.005, max(stop_data["stop_lon"]) + 0.005)
+    ax.set_ylim(min(stop_data["stop_lat"]) - 0.005, max(stop_data["stop_lat"]) + 0.005)
 
-    plt.scatter(stop_data["stop_lon"], stop_data["stop_lat"], color = hex_colors[:stop_data.shape[0]], marker = "^", s = 50)
+    ax.scatter(stop_data["stop_lon"], stop_data["stop_lat"], color = hex_colors[:stop_data.shape[0]], marker = "^", s = 50)
 
-    plt.scatter(pre_trip["longitude"], pre_trip["latitude"], color="red", s = 2)
-    plt.scatter(mid_trip["longitude"], mid_trip["latitude"], color="blue", s = 2)
+    ax.scatter(pre_trip["longitude"], pre_trip["latitude"], color="red", s = 2)
+    ax.scatter(mid_trip["longitude"], mid_trip["latitude"], color="blue", s = 2)
 
-    plt.show()
+    if show:
+        plt.show()
+    
+    return fig, ax
 
 """
 Function to plot latitude and longitude data for a given trip.
 Pre-trip data plotted in red, mid-trip data plotted in blue.
 """
-def graph_trip_rssi_diff(data):
+def graph_trip_rssi_diff(data, fig = None, ax = None, show = False):
+    if fig is None:
+        fig, ax = plt.subplots()
+
     stop_data = get_stop_data()
 
-    plt.xlim(min(stop_data["stop_lon"]) - 0.005, max(stop_data["stop_lon"]) + 0.005)
-    plt.ylim(min(stop_data["stop_lat"]) - 0.005, max(stop_data["stop_lat"]) + 0.005)
+    ax.xlim(min(stop_data["stop_lon"]) - 0.005, max(stop_data["stop_lon"]) + 0.005)
+    ax.ylim(min(stop_data["stop_lat"]) - 0.005, max(stop_data["stop_lat"]) + 0.005)
 
-    plt.scatter(stop_data["stop_lon"], stop_data["stop_lat"], color = hex_colors[:stop_data.shape[0]], marker = "^", s = 50)
+    ax.scatter(stop_data["stop_lon"], stop_data["stop_lat"], color = hex_colors[:stop_data.shape[0]], marker = "^", s = 50)
 
-    norm = plt.Normalize(data["rssi_diff"].min(), data["rssi_diff"].max())
+    norm = ax.Normalize(data["rssi_diff"].min(), data["rssi_diff"].max())
 
-    sc = plt.scatter(data["longitude_1"], data["latitude_1"], c=data["rssi_diff"], cmap="viridis", norm=norm, s=100)
+    sc = ax.scatter(data["longitude_1"], data["latitude_1"], c=data["rssi_diff"], cmap="viridis", norm=norm, s=100)
 
-    cbar = plt.colorbar(sc)
+    cbar = ax.colorbar(sc)
     cbar.set_label('Value')
 
-    # plt.figure(figsize=(10,10))
+    if show:
+        plt.show()
 
     plt.show()
 

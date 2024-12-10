@@ -40,7 +40,7 @@ def load_eval(rf_fp = 'rf_data_temp.pickle', mlp_fp = 'mlp_data_temp.pickle', ls
     return rf_data, mlp_data, lstm_data
 
 
-def full_suite(rf, mlp, lstm, trips = []):
+def full_suite(rf, mlp, lstm, trips = [], split_seed = 33):
     """
     Metrics:
         - Raw Accuray
@@ -62,7 +62,7 @@ def full_suite(rf, mlp, lstm, trips = []):
     X = [frame[all_features] for frame in data]
     y = [frame.iloc[0]["seat"] if frame.shape[0] > 0 else -1 for frame in data]
 
-    cv = StratifiedKFold(n_splits = 5, random_state = 33, shuffle = True)
+    cv = StratifiedKFold(n_splits = 5, random_state = split_seed, shuffle = True)
 
     def run_rf():
         return analyze_rf(rf, X, y, cv) if rf is not None else None

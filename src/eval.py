@@ -27,6 +27,14 @@ position_features = ['latitude',
        'gravity_accel_z', 'user_accel_x', 'user_accel_y', 'user_accel_z',
        'magnetic_field_x', 'magnetic_field_y', 'magnetic_field_z']
 
+"""
+Function to load saved results of eval function
+
+Args:
+    rf_fp: filepath of saved rf data
+    mlp_fp: filepath of saved mlp data
+    lstm_fp: filepath of saved lstm data
+"""
 def load_eval(rf_fp = 'rf_data_temp.pickle', mlp_fp = 'mlp_data_temp.pickle', lstm_fp = 'lstm_data_temp.pickle'):
     with open(rf_fp, 'rb') as f:
         rf_data = pickle.load(f)
@@ -40,18 +48,23 @@ def load_eval(rf_fp = 'rf_data_temp.pickle', mlp_fp = 'mlp_data_temp.pickle', ls
     return rf_data, mlp_data, lstm_data
 
 
+"""
+Function to return the full suite of prediction data generated for each model.
+Includes accuracy, macro-averaged f1, and confusion matrices for each trip, each split, and average/total of splits
+
+Args:
+    rf: Pre-configured Random Forest model to be used for generating predictions
+    mlp: Pre-configured MLP model to be used for generating predictions
+    lstm: Pre-configured LSTM model to be used for generating predictions
+    trips: array of all trip objects
+    split_seed: random seed to be used in generating splits
+
+Returns:
+    rf: dictionary containing all prediction results for Random Forest
+    mlp: dictionary containing all prediction results for MLP
+    lstm: dictionary containing all prediction results for LSTM
+"""
 def full_suite(rf, mlp, lstm, trips = [], split_seed = 33):
-    """
-    Metrics:
-        - Raw Accuray
-        - F1 score (or something)
-        - Weighted f1 score
-        - Some way to measure how concentrated misclassified points are
-            (i.e. are the errors all over or are certain trips just always misclassified?)
-        - Maybe that's the majority voting metric. 
-        - Confusion Matrices
-        - 
-    """
     if not trips:
         trips = get_trips_quick()
     data = get_tagged_dataset(trips)
@@ -85,8 +98,21 @@ def full_suite(rf, mlp, lstm, trips = [], split_seed = 33):
 
     return rf_results, mlp_results, lstm_results
 
+"""
+Function to generate both trip and aggregate metrics for rf predictions
+
+Args:
+    model: Random Forest model to be used for predictions
+    X: X data following the convention for input data
+    y: y data following the convention for input data
+    cv: cross-validation object pre-configured to be used in kfold cross-validation
+
+Returns:
+    data: dictionary containing all generated metrics
+"""
 def analyze_rf(model, X, y, cv = None):
     preds, true, split = get_rf_preds(model, X, y, cv)
+    majors = get_majority_preds(preds)
 
     data = {'acc': [], 'f1': [], 'cmat': [], 'split_acc': [], 'split_f1': [],
             'split_cmats': [], 'trip_acc': [], 'trip_f1': [], 'trip_cmats': []}
@@ -128,6 +154,19 @@ def analyze_rf(model, X, y, cv = None):
     
     return data
 
+
+"""
+Function to generate both trip and aggregate metrics for mlp predictions
+
+Args:
+    model: MLP model to be used for predictions
+    X: X data following the convention for input data
+    y: y data following the convention for input data
+    cv: cross-validation object pre-configured to be used in kfold cross-validation
+
+Returns:
+    data: dictionary containing all generated metrics
+"""
 def analyze_mlp(model, X, y, cv = None):
     preds, true, split = get_mlp_preds(model, X, y, cv)
 
@@ -177,6 +216,18 @@ def analyze_mlp(model, X, y, cv = None):
     
     return data
 
+"""
+Function to generate both trip and aggregate metrics for lstm predictions
+
+Args:
+    model: LSTM model to be used for predictions
+    X: X data following the convention for input data
+    y: y data following the convention for input data
+    cv: cross-validation object pre-configured to be used in kfold cross-validation
+
+Returns:
+    data: dictionary containing all generated metrics
+"""
 def analyze_lstm(model, X, y, cv = None):
     preds, true, split = get_lstm_preds(model, X, y, cv)
 
@@ -220,7 +271,19 @@ def analyze_lstm(model, X, y, cv = None):
 
     return data
 
-    
+"""
+Function to get all predictions for given splits using inputted Random Forest model
+
+Args:
+    model: Random Forest model to be used in generating predictions
+    X: X data to be used in training and testing
+    y: y data to be used in training and testing
+    cv: Pre-configured cross-validation object to be used in splitting
+Returns:
+    preds: 2d array containing predictions for each trip
+    true: 2d array containing true values for each trip
+    split: 1d array indicating which split each trip is a part of
+"""
 def get_rf_preds(model, X, y, cv = None):
 
     if cv is None:
@@ -248,7 +311,19 @@ def get_rf_preds(model, X, y, cv = None):
         
     return preds, true, split
     
+"""
+Function to get all predictions for given splits using inputted MLP model
 
+Args:
+    model: MLP model to be used in generating predictions
+    X: X data to be used in training and testing
+    y: y data to be used in training and testing
+    cv: Pre-configured cross-validation object to be used in splitting
+Returns:
+    preds: 2d array containing predictions for each trip
+    true: 2d array containing true values for each trip
+    split: 1d array indicating which split each trip is a part of
+"""
 def get_mlp_preds(model, X, y, cv = None):
     
     if cv is None:
@@ -275,7 +350,19 @@ def get_mlp_preds(model, X, y, cv = None):
         
     return preds, true, split
 
-# Expects array of data frames
+"""
+Function to get all predictions for given splits using inputted LSTM model
+
+Args:
+    model: LSTM model to be used in generating predictions
+    X: X data to be used in training and testing
+    y: y data to be used in training and testing
+    cv: Pre-configured cross-validation object to be used in splitting
+Returns:
+    preds: 2d array containing predictions for each trip
+    true: 2d array containing true values for each trip
+    split: 1d array indicating which split each trip is a part of
+"""
 def get_lstm_preds(model, X, y, cv = None):
 
     if cv is None:
@@ -307,6 +394,27 @@ def get_lstm_preds(model, X, y, cv = None):
         
     return preds, true, split
 
+
+"""
+Function to get cumulative majority by voting with all predictions up to the given point
+
+Args:
+    preds: predictions made by the model
+
+Return:
+    majority_preds: array of predictions by majority voting from the prior predictions
+"""
+
+def get_majority_preds(preds):
+    votes = {0: 0, 1: 0, 2: 0}
+    majority_preds = []
+
+    for pred in preds:
+        votes[pred] += 1
+        max_vote = max(votes, key = votes.get)
+        majority_preds.append(max_vote)
+    
+    return majority_preds
 
 
     

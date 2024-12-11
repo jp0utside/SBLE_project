@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-from visualize import graph_decision_boundaries
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split, KFold, StratifiedKFold
 from sklearn.preprocessing import StandardScaler

@@ -35,6 +35,7 @@ class trip:
         self.didNotMarkExit = False
         self.major = -1
         self.noFinalCollectingData = False
+        self.postSeatChange = False
         self.trip_idx = 0
 
     def get_duration(self):
@@ -92,4 +93,27 @@ class trip:
         else:
             sec_rec = 0
         return [pre_dur,trip_dur,actual_dur,sec_rec]
+    
+    def copy(self):
+        # Create new trip with basic attributes
+        new_trip = trip(
+            user=self.user,
+            start=self.start,
+            on_bus=self.on_bus,
+            seat=self.seat,
+            seat_time=self.seat_time,
+            end=self.end
+        )
+        
+        # Copy the additional attributes
+        new_trip.didNotMarkExit = self.didNotMarkExit
+        new_trip.major = self.major
+        new_trip.noFinalCollectingData = self.noFinalCollectingData
+        new_trip.postSeatChange = self.postSeatChange
+        new_trip.trip_idx = self.trip_idx
+        
+        # Copy the pandas DataFrame
+        new_trip.data = self.data.copy()
+        
+        return new_trip
     

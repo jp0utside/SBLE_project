@@ -35,6 +35,14 @@ TESTING FUNCTIONS
 Functions to test each model using appropriate train-test splitting methods
 Takes in trips object for efficiency, model with desired hyperparameters
 Returns accuracy score and confusion matrix
+
+Args:
+    trips: array of trip objects to be used for generating tagged data
+    model: model (specific to each function) to be kfold cross-validated
+
+Returns:
+    acc: accuracy score for the predictions made by the model on the given split
+    cm: confusion matrix for the predictions made
 -------------------------------------------------------------------------------------
 """
 
@@ -183,6 +191,14 @@ KFOLD FUNCTIONS
 Functions to perform KFold cross-validation tests for each kind of model
 Takes in trips object for efficiency, model with desired hyperparameters
 Returns accuracy scores for each of the 5 folds, confusion matrices for each
+
+Args:
+    trips: array of trip objects to be used for generating tagged data
+    model: model (specific to each function) to be kfold cross-validated
+
+Returns:
+    scores: array of scores for each split
+    confs: array of confusion matrices for each split
 -------------------------------------------------------------------------------------
 """
 
@@ -324,6 +340,14 @@ def kfold_lstm(trips = None, model = None):
 GRIDSEARCH FUNCTIONS
 Functions to help perform gridsearches to find optimal hyperparameters for each model
 Takes in trips object for efficiency, and desired parameters
+
+Args:
+    trips: array of trip objects to be used for generating tagged data
+    model: model (specific to each function) to be kfold cross-validated
+
+Returns:
+    scores: array of scores for each split
+    confs: array of confusion matrices for each split
 -------------------------------------------------------------------------------------
 """
 
@@ -510,6 +534,15 @@ def lstm_gridsearch(trips = None, params = None, method = 'grid', n_iter = 128):
     results.to_csv("gridsearch_results/mlp_{}_search_{}.csv".format(method, now))
 
     
+"""
+Function to reorder columns in gridsearch results for easier visualization
+
+Args:
+    df: a data frame object containing gridsearch test results
+
+Returns:
+    new_df: re-ordered frame of results
+"""
 def clean_gridsearch_results(df):
     new_df = df.copy()
     index_dict = {}
@@ -533,14 +566,15 @@ def clean_gridsearch_results(df):
     return new_df
 
 
-
-
 """
 Function to get average performance metrics for each param option saved from gridsearch
 Returns a dictionary conversion of a pandas dataframe
 
 Args:
-    file: a filepath string pointing to gridsearch results
+    df: a data frame object containing gridsearch test results
+
+Returns:
+    split_frame: frame containing average metrics for each option provided in the gridsearch parameters
 """
 def get_gridsearch_splits(df):
     sum_cols = ['mean_fit_time', 'std_fit_time', 'mean_score_time', 'std_score_time', 'split0_test_score', 'split1_test_score', 'split2_test_score', 'split3_test_score', 'split4_test_score', 'mean_test_score', 'std_test_score','rank_test_score',

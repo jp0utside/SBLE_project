@@ -115,6 +115,10 @@ def get_trips(sble_data, notif_data, debug = False):
 
             #Iterating through notifications to find and handle the next event
             while not (user_notif.iloc[nidx]["message_type"] == "collecting_data" and user_notif.iloc[nidx]["message"] != "answered no"):
+                # if debug:
+                #     print(user_notif.iloc[nidx][["message_type", "message"]])
+            
+
                 match user_notif.iloc[nidx]["message_type"]:
                     case "sitting_on_bus":
                         if user_notif.iloc[nidx]["message"] == "true":
@@ -129,13 +133,30 @@ def get_trips(sble_data, notif_data, debug = False):
                             nidx += 1
                             break
                     case "seat_location":
+                        if debug:
+                            if user_notif.iloc[nidx - 1]["message_type"] == "seat_location":
+                                print("Consecutive seat locations: {}, {}".format(user_notif.iloc[nidx - 1]["message"], user_notif.iloc[nidx]["message"]))
+
+                        # Need to handle consecutive seat locations by creating new trip
+                        if (user_notif.iloc[nidx - 1]["message_type"] == "seat_location") and (user_notif.iloc[nidx-1]["message"] != user_notif.iloc[nidx]["message"]):
+                            new_trip.end = user_notif.iloc[nidx-1]["timestamp"]
+                            trips.append(new_trip.copy())
+
+                            print("Consecutive seat locations, time difference: {}".format(user_notif.iloc[nidx]["timestamp"] - user_notif.iloc[nidx-1]["timestamp"]))
+
+                            new_trip = trip(user, user_notif.iloc[nidx]["timestamp"])
+                            new_trip.on_bus = user_notif.iloc[nidx]["timestamp"]
+
                         new_trip.seat = user_notif.iloc[nidx]["message"]
                         new_trip.seat_time = user_notif.iloc[nidx]["timestamp"]
+                        new_trip.postSeatChange = True
+
                 if nidx == user_notif.shape[0] - 1:
                     eof = True
                     break
                 nidx += 1
-            
+        
+
             if not no_trip:
                 #Covering for the case where a collecting_data = false was not received
                 #In this case setting end time to timestamp of next collecting_data = true
@@ -143,6 +164,10 @@ def get_trips(sble_data, notif_data, debug = False):
                 #If last notification for user is "sitting_on_bus" or "seat_location", setting 
                 #noFinalCollectingData to true
                 new_trip.end = user_notif.iloc[nidx]["timestamp"]
+
+                if debug:
+                    print(f"Setting end of trip {nidx}")
+
                 if (user_notif.iloc[nidx]["message"] == "true"):
                     new_trip.didNotMarkExit = True
                 elif eof:

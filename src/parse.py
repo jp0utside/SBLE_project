@@ -6,7 +6,7 @@ from trip import trip
 import pickle
 # from filter import *
 
-def get_loaded_trips(path = "trip_save.pickle"):
+def get_saved_trips(path = "trips.pickle"):
     with open(path, 'rb') as f:
         loaded_trips = pickle.load(f)
 
@@ -134,22 +134,29 @@ def get_trips(sble_data, notif_data, debug = False):
                             break
                     case "seat_location":
                         if debug:
+                            if new_trip.seat != "none":
+                                print("User choosing seat after location for trip was already assigned: {} -> {}".format(new_trip.seat, user_notif.iloc[nidx]["message"]))
                             if user_notif.iloc[nidx - 1]["message_type"] == "seat_location":
                                 print("Consecutive seat locations: {}, {}".format(user_notif.iloc[nidx - 1]["message"], user_notif.iloc[nidx]["message"]))
 
                         # Need to handle consecutive seat locations by creating new trip
-                        if (user_notif.iloc[nidx - 1]["message_type"] == "seat_location") and (user_notif.iloc[nidx-1]["message"] != user_notif.iloc[nidx]["message"]):
+                        if ((user_notif.iloc[nidx - 1]["message_type"] == "seat_location") and (user_notif.iloc[nidx-1]["message"] != user_notif.iloc[nidx]["message"])) or ((new_trip.seat != "none") and (new_trip.seat != user_notif.iloc[nidx]["message"])):
                             new_trip.end = user_notif.iloc[nidx-1]["timestamp"]
+                            new_trip.preSeatChange = True
+                            
                             trips.append(new_trip.copy())
 
-                            print("Consecutive seat locations, time difference: {}".format(user_notif.iloc[nidx]["timestamp"] - user_notif.iloc[nidx-1]["timestamp"]))
+                            if debug:
+                                print("Consecutive seat locations, time difference: {}".format(user_notif.iloc[nidx]["timestamp"] - user_notif.iloc[nidx-1]["timestamp"]))
+                                print("Seat change: {} -> {}".format(user_notif.iloc[nidx - 1]["message"], user_notif.iloc[nidx]["message"]))
+                                print("Splitting trip")
 
                             new_trip = trip(user, user_notif.iloc[nidx]["timestamp"])
                             new_trip.on_bus = user_notif.iloc[nidx]["timestamp"]
+                            new_trip.postSeatChange = True
 
                         new_trip.seat = user_notif.iloc[nidx]["message"]
                         new_trip.seat_time = user_notif.iloc[nidx]["timestamp"]
-                        new_trip.postSeatChange = True
 
                 if nidx == user_notif.shape[0] - 1:
                     eof = True
@@ -185,7 +192,17 @@ def get_trips(sble_data, notif_data, debug = False):
         #Also assigns trip major data for major which it saw for the longest duration.
         if debug:
             print("Filling in data for trips")
+        
+        # pre_count = len([t for t in trips if t.preSeatChange])
+        # post_count = len([t for t in trips if t.postSeatChange])
+        # print(f"Before filtering - len: {len(trips)}, Pre: {pre_count}, Post: {post_count}")
         for t in trips:
+            if debug:
+                if t.postSeatChange:
+                    print("Post-seat change trip")
+                if t.preSeatChange:
+                    print("Pre-seat change trip")
+
             start_idx = 0
             end_idx = 0
             sble_idx = 0
@@ -258,12 +275,29 @@ def get_trips(sble_data, notif_data, debug = False):
                         freq += 1
                 major_dur[major] = max(major_dur[major], freq)
                 t.major = major_dur.index(max(major_dur))
+            
+            if debug:
+                if t.postSeatChange:
+                    print("Endcap of post-seat change")
+                if t.preSeatChange:
+                    print("Endcap of pre-seat change")
+
+        # pre_count = len([t for t in trips if t.preSeatChange])
+        # post_count = len([t for t in trips if t.postSeatChange])
+        # print(f"After filtering - len: {len(trips)}, Pre: {pre_count}, Post: {post_count}")
+
 
         #Checking to see if majority major is seen in just the pre-trip
         #If so, trip should be discarded
         tidx = 0
         while tidx < len(trips):
             t = trips[tidx]
+            if debug:
+                if t.postSeatChange:
+                    print("Post-seat change trip")
+                if t.preSeatChange:
+                    print("Pre-seat change trip")
+
             if t.data.shape[0] > 0:
                 if t.major not in list(t.data.loc[t.data["timestamp"] > t.on_bus]["major"].unique()):
                     trips.pop(tidx)
@@ -271,12 +305,28 @@ def get_trips(sble_data, notif_data, debug = False):
                         print("Removing trip due to lack of majority major in mid-trip data")
                         t.print()
                 else:
+                    if debug:
+                        if t.postSeatChange:
+                            print("Post-seat change trip not removed")
+                        if t.preSeatChange:
+                            print("Pre-seat change trip not removed")
+
                     tidx += 1
             else:
+                if debug:
+                    if t.postSeatChange:
+                        print("Post-seat change trip not removed")
+                    if t.preSeatChange:
+                            print("Pre-seat change trip not removed")
                 tidx += 1
 
         # print("Data filled in")
         trips = group_sort(trips)
+
+        # pre_count = len([t for t in trips if t.preSeatChange])
+        # post_count = len([t for t in trips if t.postSeatChange])
+        # print(f"Before merging - len: {len(trips)}, Pre: {pre_count}, Post: {post_count}")
+
 
         # print("Finding trips to merge")
         #With all trips for the given user filled, merge trips which may have been separated
@@ -297,6 +347,15 @@ def get_trips(sble_data, notif_data, debug = False):
                     if (new_trips[-1].seat == trips[t].seat) | (not ((new_trips[-1].seat != "none") and (trips[t].seat != "none"))):
                         if debug:
                             print("Merging Trips " + str(len(new_trips)-1) + " and " + str(t))
+                            if new_trips[-1].preSeatChange:
+                                print("First trip is a pre-seat change trip")
+                            if new_trips[-1].postSeatChange:
+                                print("First trip is a post-seat change trip")
+                            if trips[t].preSeatChange:
+                                print("Second trip is a pre-seat change trip")
+                            if trips[t].postSeatChange:
+                                print("Second trip is a post-seat change trip")
+
                         old_trip = new_trips.pop(-1)
                         new_trips.append(merge_trips(old_trip, trips[t]))
                     else:
@@ -305,8 +364,12 @@ def get_trips(sble_data, notif_data, debug = False):
                     new_trips.append(trips[t])
             
             trips = new_trips
-        # print("Finished merging trips")
-        # print()
+        
+        # pre_count = len([t for t in trips if t.preSeatChange])
+        # post_count = len([t for t in trips if t.postSeatChange])
+        # print(f"After merging - len: {len(trips)}, Pre: {pre_count}, Post: {post_count}")
+
+
         all_trips.extend(trips)
 
     add_trip_numbers(all_trips)
@@ -509,6 +572,8 @@ def merge_trips(t1, t2):
     new_trip.on_bus = t1.on_bus
     new_trip.end = t2.end
     new_trip.didNotMarkExit = t2.didNotMarkExit
+    new_trip.postSeatChange = t1.postSeatChange
+    new_trip.preSeatChange = t2.preSeatChange
     new_trip.major = t1.major
     new_trip.data = pd.concat([t1.data, t2.data])
 

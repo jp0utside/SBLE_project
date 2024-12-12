@@ -61,62 +61,64 @@ hex_colors = [
     "#FF3357"   # Bright Crimson
 ]
 
+
 def main():
     pass
     
-    params = {
-            'features': [rssi_features],
-            'scaler': [StandardScaler()],
-            'pca': [PCA(n_components = 4)],
-            'pca_features': [position_features],
-            'hidden_size': [25, 50],
-            'lr' : [0.001],
-            'num_epochs': [5],
-            'sub_sequence_length': [10, 12, 15],
-            'batch_size': [10, 25, 50],
-            'num_layers': [1],
-            'optimizer': ['adam'], #'sgd'
-            'bidirectional': [False],
-            # 'dropout': [0.2, 0.3],
-            'recurrent_dropout': [0.25, 0.3, 0.35, 0.4],
-            'l2_lambda': [0.01, 0.05]
-    }
-
-    mlp_params = {
-        'features': [rssi_features],
-        'scaler': [RobustScaler()],
-        'hidden_layer_sizes': [(50,), (50, 50), (100,)],
-        'learning_rate_init' : [0.0005, 0.001, 0.002],
-        'learning_rate' : ['adaptive'],
-        'alpha' : [0.001, 0.01],
-        'activation' : ['relu'],
-        'momentum' : [0.85, 0.9, 0.95],
-        'batch_size': [8, 16, 32, 64],
-        'max_iter': [200, 500],
-        'early_stopping': [True],
-        'n_iter_no_change': [10, 25]
-    }
-
-    rf_params = {
-        'features': [rssi_features],
-        'scaler': [RobustScaler()],
-        'n_estimators': [50, 100, 200],
-        'max_depth' : [5, 8, 10, 12],
-        'min_samples_split' : [10, 15, 20],
-        'min_samples_leaf' : [5, 8, 10, 12],
-        'max_features' : ['sqrt'],
-        'ccp_alpha' : [0, 0.01, 0.02],
-        'criterion' : ['entropy', 'log_loss', 'gini']
-    }
-
-    rf_data, mlp_data, lstm_data = load_eval()
-    trips = get_loaded_trips()
-    data = get_tagged_dataset(trips)
-    generate_graphs(rf_data, mlp_data, lstm_data, data)
+    all_features = ['rssi_1', 'rssi_accuracy_1', 'rssi_2', 'rssi_accuracy_2', 'latitude',
+       'longitude', 'speed', 'speedAcc', 'vertical_acc', 'altitude', 'course',
+       'courseAcc', 'heading', 'horizontal_acc', 'attitude_pitch',
+       'attitude_roll', 'attitude_yaw', 'rotation_rate_x', 'rotation_rate_y',
+       'rotation_rate_z', 'gravity_accel_x', 'gravity_accel_y',
+       'gravity_accel_z', 'user_accel_x', 'user_accel_y', 'user_accel_z']
     
+    rssi_features = ['rssi_1', 'rssi_accuracy_1', 'rssi_2', 'rssi_accuracy_2']
+    position_features = ['latitude',
+       'longitude', 'speed', 'speedAcc', 'vertical_acc', 'altitude', 'course',
+       'courseAcc', 'heading', 'horizontal_acc', 'attitude_pitch',
+       'attitude_roll', 'attitude_yaw', 'rotation_rate_x', 'rotation_rate_y',
+       'rotation_rate_z', 'gravity_accel_x', 'gravity_accel_y',
+       'gravity_accel_z', 'user_accel_x', 'user_accel_y', 'user_accel_z']
+    
+    lstm_params = {
+        'hidden_size': [25, 50, 100],
+        'lr': [0.001],
+        'num_epochs': [5, 10],
+        'sub_sequence_length': [8, 10, 12],
+        'batch_size': [25, 50],
+        'num_layers': [1],
+        'optimizer': ['adam'],
+        'bidirectional': [False],
+        'recurrent_droupout': [0.2, 0.25, 0.3, 0.35],
+        'l2_lambda': [0.01, 0.05, 0.1]
+    }
+
+    models_config_1 = {
+        "rf": RandomForest(features = rssi_features, scaler = RobustScaler(), n_estimators = 50, criterion = 'log_loss', max_features = 'sqrt', max_depth = 10, min_samples_split = 20, min_samples_leaf = 12, ccp_alpha = 0),
+        "mlp": MLP(features = rssi_features, scaler = RobustScaler(), hidden_layer_sizes = (50, 50), batch_size = 16, activation = 'relu', learning_rate = 'adaptive', learning_rate_init = 0.001, alpha = 0.01, max_iter = 500, early_stopping = True, n_iter_no_change = 25),
+        "lstm": SklearnLSTMWrapper(features = rssi_features, scaler = StandardScaler(), pca = PCA(n_components = 5), hidden_size = 50, lr = 0.001, num_epochs = 5, sub_sequence_length = 12, batch_size = 25, num_layers = 1, bidirectional = False, recurrent_dropout = 0.25, l2_lambda = 0.05)
+    }
+
+    # trips = get_trips_quick()
+    # rf_data, mlp_data, lstm_data = full_suite(models_config_1['rf'], models_config_1['mlp'], models_config_1['lstm'], trips, split_seed = 27)
+
+    # trips = get_saved_trips()
+
+    # with open('rf_data_new.pickle', 'rb') as f:
+    #     rf_data = pickle.load(f)
+
+    # with open('mlp_data_new.pickle', 'rb') as f:
+    #     mlp_data = pickle.load(f)
+    
+    # with open('lstm_data_new.pickle', 'rb') as f:
+    #     lstm_data = pickle.load(f)
+
+    # generate_graphs(rf_data, mlp_data, lstm_data, trips)
+
+
 
 def test_eval():
-    trips = get_loaded_trips()
+    trips = get_saved_trips(rf_data, mlp_data, lstm_data, trips)
 
     rf = RandomForest(StandardScaler(), None, rssi_features, [], n_estimators = 100, criterion = 'entropy', class_weight = None, max_depth = 20, min_samples_split = 10, min_samples_leaf = 4, max_features = 'sqrt')
     mlp = MLP(RobustScaler(), None, rssi_features, [], hidden_layer_sizes = (50, 50), learning_rate_init = 0.001, learning_rate = 'adaptive', activation = 'logistic', alpha = 0.001, max_iter = 500)
@@ -210,68 +212,68 @@ ARCHIVE
 -------------------------------------------------------------------------------------
 """
 
-def gaussian_discovery(x=1):
-    trips = get_trips_quick(user = "Zebra")
-    for n in range(1,x+1):
-        print(n)
-        data = get_tagged_dataset(trips, n=n, include_pretrip = False, exclude_zeros = False, trim_end_zeros=True)
-        data = pd.concat(data)
-        front = data.loc[data["seat"] == "front"]
-        middle = data.loc[data["seat"] == "middle"]
-        back = data.loc[data["seat"] == "back"]
-        fig, ax = plt.subplots()
-        gmm = gaussian_mixture_model(front, features = ["rssi_1_adj", "rssi_2_adj"])
-        graph_gaussian(front, gmm, fig, ax, "blue")
-        gmm = gaussian_mixture_model(middle, features = ["rssi_1_adj", "rssi_2_adj"])
-        graph_gaussian(middle, gmm, fig, ax, "green")
-        gmm = gaussian_mixture_model(back, features = ["rssi_1_adj", "rssi_2_adj"])
-        graph_gaussian(back, gmm, fig, ax, "red")
-        plt.show()
-        print()
+# def gaussian_discovery(x=1):
+#     trips = get_trips_quick(user = "Zebra")
+#     for n in range(1,x+1):
+#         print(n)
+#         data = get_tagged_dataset(trips, n=n, include_pretrip = False, exclude_zeros = False, trim_end_zeros=True)
+#         data = pd.concat(data)
+#         front = data.loc[data["seat"] == "front"]
+#         middle = data.loc[data["seat"] == "middle"]
+#         back = data.loc[data["seat"] == "back"]
+#         fig, ax = plt.subplots()
+#         gmm = gaussian_mixture_model(front, features = ["rssi_1_adj", "rssi_2_adj"])
+#         graph_gaussian(front, gmm, fig, ax, "blue")
+#         gmm = gaussian_mixture_model(middle, features = ["rssi_1_adj", "rssi_2_adj"])
+#         graph_gaussian(middle, gmm, fig, ax, "green")
+#         gmm = gaussian_mixture_model(back, features = ["rssi_1_adj", "rssi_2_adj"])
+#         graph_gaussian(back, gmm, fig, ax, "red")
+#         plt.show()
+#         print()
 
-def plot_various_data():
-    trips = get_trips_quick(user = "Zebra")
-    data = get_tagged_dataset(trips, normalize_acc = True, acc_val=10)
-    data = pd.concat(data)
-    for i, x in enumerate(data):
-        graph_trip_rssi_diff(x)
-        quick_scatter(x["rssi_1_adj"], x["rssi_2_adj"], xlabel="rssi_1_adj", ylabel="rssi_2_adj", title = "{} trip {}, seat: {}".format(trips[i].user, trips[i].trip_idx, trips[i].seat), color = cmap[trips[i].seat])
-        quick_plot(x["timestamp"], x["rssi_diff_adj"], xlabel="timestamp", ylabel="rssi_diff_adj", title = "{} trip {}, seat: {}".format(trips[i].user, trips[i].trip_idx, trips[i].seat), color = cmap[trips[i].seat])
-        quick_scatter(x["speed_1"], x["rssi_diff_adj"], xlabel="speed", ylabel="rssi_diff_adj", title = "{} trip {}, seat: {}".format(trips[i].user, trips[i].trip_idx, trips[i].seat), color = cmap[trips[i].seat])
-        quick_plot(x["timestamp"], x["rssi_diff_adj"], xlabel="timestamp", ylabel="rssi_diff_adj", title = "{} trip {}, seat: {}".format(trips[i].user, trips[i].trip_idx, trips[i].seat), color = cmap[trips[i].seat])
-        prog_mean = [sum(x.iloc[:idx+1]["rssi_diff_adj"])/(idx+1) for idx in range(x.shape[0])]
-        quick_plot(x["timestamp"], prog_mean, xlabel="timestamp", ylabel="rssi_diff_adj", title = "{} trip {}, seat: {}".format(trips[i].user, trips[i].trip_idx, trips[i].seat), color = cmap[trips[i].seat])
+# def plot_various_data():
+#     trips = get_trips_quick(user = "Zebra")
+#     data = get_tagged_dataset(trips, normalize_acc = True, acc_val=10)
+#     data = pd.concat(data)
+#     for i, x in enumerate(data):
+#         graph_trip_rssi_diff(x)
+#         quick_scatter(x["rssi_1_adj"], x["rssi_2_adj"], xlabel="rssi_1_adj", ylabel="rssi_2_adj", title = "{} trip {}, seat: {}".format(trips[i].user, trips[i].trip_idx, trips[i].seat), color = cmap[trips[i].seat])
+#         quick_plot(x["timestamp"], x["rssi_diff_adj"], xlabel="timestamp", ylabel="rssi_diff_adj", title = "{} trip {}, seat: {}".format(trips[i].user, trips[i].trip_idx, trips[i].seat), color = cmap[trips[i].seat])
+#         quick_scatter(x["speed_1"], x["rssi_diff_adj"], xlabel="speed", ylabel="rssi_diff_adj", title = "{} trip {}, seat: {}".format(trips[i].user, trips[i].trip_idx, trips[i].seat), color = cmap[trips[i].seat])
+#         quick_plot(x["timestamp"], x["rssi_diff_adj"], xlabel="timestamp", ylabel="rssi_diff_adj", title = "{} trip {}, seat: {}".format(trips[i].user, trips[i].trip_idx, trips[i].seat), color = cmap[trips[i].seat])
+#         prog_mean = [sum(x.iloc[:idx+1]["rssi_diff_adj"])/(idx+1) for idx in range(x.shape[0])]
+#         quick_plot(x["timestamp"], prog_mean, xlabel="timestamp", ylabel="rssi_diff_adj", title = "{} trip {}, seat: {}".format(trips[i].user, trips[i].trip_idx, trips[i].seat), color = cmap[trips[i].seat])
 
-def three_by_three_test(data = pd.DataFrame(), features = [], use_scaler = True, use_pca = True, n_components = 2):
-    for tree_seed in range(3):
-        for split_seed in range(3):
-            print("Tree Seed: {}, Split Seed: {}".format(tree_seed, split_seed))
-            test_random_forest(data, features, split_seed=split_seed, tree_seed=tree_seed, use_scaler=use_scaler, use_pca=use_pca, n_components=n_components)
+# def three_by_three_test(data = pd.DataFrame(), features = [], use_scaler = True, use_pca = True, n_components = 2):
+#     for tree_seed in range(3):
+#         for split_seed in range(3):
+#             print("Tree Seed: {}, Split Seed: {}".format(tree_seed, split_seed))
+#             test_random_forest(data, features, split_seed=split_seed, tree_seed=tree_seed, use_scaler=use_scaler, use_pca=use_pca, n_components=n_components)
 
-#Procedure to compare accuracy between non-aggregated and aggregated feature sets
-def featureset_comparison():
-    all_features_raw = ['latitude_1', 'longitude_1', 'speed_1', 'speedAcc_1', 'vertical_acc_1', 'altitude_1', 'course_1', 'courseAcc_1', 'heading_1', 'horizontal_acc_1', 'rssi_1', 'rssi_accuracy_1', 'attitude_pitch_1', 'attitude_roll_1', 'attitude_yaw_1', 'rotation_rate_x_1', 'rotation_rate_y_1', 'rotation_rate_z_1', 'gravity_accel_x_1', 'gravity_accel_y_1', 'gravity_accel_z_1', 'user_accel_x_1', 'user_accel_y_1', 'user_accel_z_1', 'latitude_2', 'longitude_2', 'speed_2', 'speedAcc_2', 'vertical_acc_2', 'altitude_2', 'course_2', 'courseAcc_2', 'heading_2', 'horizontal_acc_2', 'rssi_2', 'rssi_accuracy_2', 'attitude_pitch_2', 'attitude_roll_2', 'attitude_yaw_2', 'rotation_rate_x_2', 'rotation_rate_y_2', 'rotation_rate_z_2', 'gravity_accel_x_2', 'gravity_accel_y_2', 'gravity_accel_z_2', 'user_accel_x_2', 'user_accel_y_2', 'user_accel_z_2', 'rssi_diff']
-    all_features_agg = ['rssi_1', 'rssi_accuracy_1', 'rssi_2', 'rssi_accuracy_2', 'rssi_diff', 'latitude', 'longitude', 'speed', 'speedAcc', 'vertical_acc', 'altitude', 'course', 'courseAcc', 'heading', 'horizontal_acc', 'attitude_pitch', 'attitude_roll', 'attitude_yaw', 'rotation_rate_x', 'rotation_rate_y', 'rotation_rate_z', 'gravity_accel_x', 'gravity_accel_y', 'gravity_accel_z', 'user_accel_x', 'user_accel_y', 'user_accel_z']
-    trips = get_trips_quick()
-    # features = all_features_agg.copy()
-    data = pd.concat(get_tagged_dataset(trips))
+# #Procedure to compare accuracy between non-aggregated and aggregated feature sets
+# def featureset_comparison():
+#     all_features_raw = ['latitude_1', 'longitude_1', 'speed_1', 'speedAcc_1', 'vertical_acc_1', 'altitude_1', 'course_1', 'courseAcc_1', 'heading_1', 'horizontal_acc_1', 'rssi_1', 'rssi_accuracy_1', 'attitude_pitch_1', 'attitude_roll_1', 'attitude_yaw_1', 'rotation_rate_x_1', 'rotation_rate_y_1', 'rotation_rate_z_1', 'gravity_accel_x_1', 'gravity_accel_y_1', 'gravity_accel_z_1', 'user_accel_x_1', 'user_accel_y_1', 'user_accel_z_1', 'latitude_2', 'longitude_2', 'speed_2', 'speedAcc_2', 'vertical_acc_2', 'altitude_2', 'course_2', 'courseAcc_2', 'heading_2', 'horizontal_acc_2', 'rssi_2', 'rssi_accuracy_2', 'attitude_pitch_2', 'attitude_roll_2', 'attitude_yaw_2', 'rotation_rate_x_2', 'rotation_rate_y_2', 'rotation_rate_z_2', 'gravity_accel_x_2', 'gravity_accel_y_2', 'gravity_accel_z_2', 'user_accel_x_2', 'user_accel_y_2', 'user_accel_z_2', 'rssi_diff']
+#     all_features_agg = ['rssi_1', 'rssi_accuracy_1', 'rssi_2', 'rssi_accuracy_2', 'rssi_diff', 'latitude', 'longitude', 'speed', 'speedAcc', 'vertical_acc', 'altitude', 'course', 'courseAcc', 'heading', 'horizontal_acc', 'attitude_pitch', 'attitude_roll', 'attitude_yaw', 'rotation_rate_x', 'rotation_rate_y', 'rotation_rate_z', 'gravity_accel_x', 'gravity_accel_y', 'gravity_accel_z', 'user_accel_x', 'user_accel_y', 'user_accel_z']
+#     trips = get_trips_quick()
+#     # features = all_features_agg.copy()
+#     data = pd.concat(get_tagged_dataset(trips))
 
-    print("Old feature set")
-    features_old = all_features_raw.copy()
-    features_old.remove("timestamp")
-    features_old.remove("major_1")
-    data = get_tagged_dataset(trips, aggregate_feats=False)
-    data = pd.concat(data)
-    test_random_forest(data, features_old, use_pca=False)
-    print()
+#     print("Old feature set")
+#     features_old = all_features_raw.copy()
+#     features_old.remove("timestamp")
+#     features_old.remove("major_1")
+#     data = get_tagged_dataset(trips, aggregate_feats=False)
+#     data = pd.concat(data)
+#     test_random_forest(data, features_old, use_pca=False)
+#     print()
 
-    print("New feature set")
-    features_new = all_features_agg.copy()
-    features_new.remove("timestamp")
-    features_new.remove("major_1")
-    data = get_tagged_dataset(trips)
-    data = pd.concat(data)
-    test_random_forest(data, features_new, use_pca=False)
+#     print("New feature set")
+#     features_new = all_features_agg.copy()
+#     features_new.remove("timestamp")
+#     features_new.remove("major_1")
+#     data = get_tagged_dataset(trips)
+#     data = pd.concat(data)
+#     test_random_forest(data, features_new, use_pca=False)
 
 
 if __name__ == "__main__":

@@ -36,6 +36,7 @@ class trip:
         self.major = -1
         self.noFinalCollectingData = False
         self.postSeatChange = False
+        self.preSeatChange = False
         self.trip_idx = 0
 
     def get_duration(self):
@@ -110,6 +111,7 @@ class trip:
         new_trip.major = self.major
         new_trip.noFinalCollectingData = self.noFinalCollectingData
         new_trip.postSeatChange = self.postSeatChange
+        new_trip.preSeatChange = self.preSeatChange
         new_trip.trip_idx = self.trip_idx
         
         # Copy the pandas DataFrame

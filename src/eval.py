@@ -110,12 +110,14 @@ Args:
 Returns:
     data: dictionary containing all generated metrics
 """
-def analyze_rf(model, X, y, cv = None):
+def analyze_rf(model, X, y, cv = None, clip_val = 0):
     preds, true, split = get_rf_preds(model, X, y, cv)
-    majors = get_majority_preds(preds)
 
-    data = {'acc': [], 'f1': [], 'cmat': [], 'split_acc': [], 'split_f1': [],
-            'split_cmats': [], 'trip_acc': [], 'trip_f1': [], 'trip_cmats': []}
+    data = {'acc': [], 'f1': [], 'cmat': [], 'majority_acc': [], 'majority_cmat': [],
+            'split_acc': [], 'split_f1': [], 'split_cmats': [],
+            'split_majority_acc': [], 'split_majority_cmats': [],
+            'trip_acc': [], 'trip_f1': [], 'trip_cmats': [],
+            'trip_majority_acc': [], 'trip_majority_cmats': []}
 
     # Analyze accuracy for each trip with raw predictions
     for idx, (p, t) in enumerate(zip(preds, true)):
@@ -128,22 +130,47 @@ def analyze_rf(model, X, y, cv = None):
             data['trip_f1'].append(-1)
             data['trip_cmats'].append([])
 
+    majority = [get_majority_preds(p) for p in preds]
+    majority_clipped = [maj[clip_val:] for maj in majority]
+    true_clipped = [t[clip_val:] for t in true]
+    
+    for idx, (m, c) in enumerate(zip(majority_clipped, true_clipped)):
+        if len(t) > 0 and t[0] != -1:
+            data['trip_majority_acc'].append(accuracy_score(m, c))
+            data['trip_majority_cmats'].append(confusion_matrix(m, c, labels = [0, 1, 2]))
+        else:
+            data['trip_majority_acc'].append(-1)
+            data['trip_majority_cmats'].append([])
+
+    # Get split data for acc and majority acc
     for i in range(max(split) + 1):
         split_preds = []
         split_true = []
+        split_majority = []
+        split_true_clipped = []
         for tidx, (p, t) in enumerate(zip(preds, true)):
             if split[tidx] == i and t[0] != -1:
                 split_preds.extend(p)
                 split_true.extend(t)
+        
+        for tidx, (m, c) in enumerate(zip(majority_clipped, true_clipped)):
+            if split[tidx] == i and t[0] != -1:
+                split_majority.extend(m)
+                split_true_clipped.extend(c)
 
         data['split_acc'].append(accuracy_score(split_true, split_preds))
         data['split_f1'].append(f1_score(split_true, split_preds, average='macro'))
         data['split_cmats'].append(confusion_matrix(split_true, split_preds, labels = [0,1,2]))
+        data['split_majority_acc'].append(accuracy_score(split_true_clipped, split_majority))
+        data['split_majority_cmats'].append(confusion_matrix(split_true_clipped, split_majority, labels = [0,1,2]))
 
     data['acc'] = [np.mean(data['split_acc'])]
     data['f1'] = [np.mean(data['split_f1'])]
     data['cmat'] = [np.sum(data['split_cmats'], axis = 0)]
+    data['majority_acc'] = [np.mean(data['split_majority_acc'])]
+    data['majority_cmat'] = [np.sum(data['split_majority_cmats'], axis = 0)]
 
+ 
     print("RF")
     print("split_acc: ", data['split_acc'])
     print("split_f1: ", data['split_f1'])
@@ -167,11 +194,14 @@ Args:
 Returns:
     data: dictionary containing all generated metrics
 """
-def analyze_mlp(model, X, y, cv = None):
+def analyze_mlp(model, X, y, cv = None, clip_val = 0):
     preds, true, split = get_mlp_preds(model, X, y, cv)
 
-    data = {'acc': [], 'f1': [], 'cmat': [], 'split_acc': [], 'split_f1': [],
-            'split_cmats': [], 'trip_acc': [], 'trip_f1': [], 'trip_cmats': []}
+    data = {'acc': [], 'f1': [], 'cmat': [], 'majority_acc': [], 'majority_cmat': [],
+            'split_acc': [], 'split_f1': [], 'split_cmats': [],
+            'split_majority_acc': [], 'split_majority_cmats': [],
+            'trip_acc': [], 'trip_f1': [], 'trip_cmats': [],
+            'trip_majority_acc': [], 'trip_majority_cmats': []}
 
     # Analyze accuracy for each trip with raw predictions
     for idx, (p, t) in enumerate(zip(preds, true)):
@@ -184,27 +214,45 @@ def analyze_mlp(model, X, y, cv = None):
             data['trip_f1'].append(-1)
             data['trip_cmats'].append([])
 
+    majority = [get_majority_preds(p) for p in preds]
+    majority_clipped = [maj[clip_val:] for maj in majority]
+    true_clipped = [t[clip_val:] for t in true]
+    
+    for idx, (m, c) in enumerate(zip(majority_clipped, true_clipped)):
+        if len(t) > 0 and t[0] != -1:
+            data['trip_majority_acc'].append(accuracy_score(m, c))
+            data['trip_majority_cmats'].append(confusion_matrix(m, c, labels = [0, 1, 2]))
+        else:
+            data['trip_majority_acc'].append(-1)
+            data['trip_majority_cmats'].append([])
+
+    # Get split data for acc and majority acc
     for i in range(max(split) + 1):
         split_preds = []
         split_true = []
-
+        split_majority = []
+        split_true_clipped = []
         for tidx, (p, t) in enumerate(zip(preds, true)):
             if split[tidx] == i and t[0] != -1:
                 split_preds.extend(p)
                 split_true.extend(t)
-
-        # for tidx in range(len(preds)):
-        #     if split[tidx] == i and true[tidx][0] != -1:
-        #         split_preds.extend(preds[tidx])
-        #         split_true.extend(true[tidx])
+        
+        for tidx, (m, c) in enumerate(zip(majority_clipped, true_clipped)):
+            if split[tidx] == i and t[0] != -1:
+                split_majority.extend(m)
+                split_true_clipped.extend(c)
 
         data['split_acc'].append(accuracy_score(split_true, split_preds))
         data['split_f1'].append(f1_score(split_true, split_preds, average='macro'))
         data['split_cmats'].append(confusion_matrix(split_true, split_preds, labels = [0,1,2]))
+        data['split_majority_acc'].append(accuracy_score(split_true_clipped, split_majority))
+        data['split_majority_cmats'].append(confusion_matrix(split_true_clipped, split_majority, labels = [0,1,2]))
 
     data['acc'] = [np.mean(data['split_acc'])]
     data['f1'] = [np.mean(data['split_f1'])]
     data['cmat'] = [np.sum(data['split_cmats'], axis = 0)]
+    data['majority_acc'] = [np.mean(data['split_majority_acc'])]
+    data['majority_cmat'] = [np.sum(data['split_majority_cmats'], axis = 0)]
 
     print("MLP")
     print("split_acc: ", data['split_acc'])
@@ -231,8 +279,11 @@ Returns:
 def analyze_lstm(model, X, y, cv = None):
     preds, true, split = get_lstm_preds(model, X, y, cv)
 
-    data = {'acc': [], 'f1': [], 'cmat': [], 'split_acc': [], 'split_f1': [],
-            'split_cmats': [], 'trip_acc': [], 'trip_f1': [], 'trip_cmats': []}
+    data = {'acc': [], 'f1': [], 'cmat': [], 'majority_acc': [], 'majority_cmat': [],
+            'split_acc': [], 'split_f1': [], 'split_cmats': [],
+            'split_majority_acc': [], 'split_majority_cmats': [],
+            'trip_acc': [], 'trip_f1': [], 'trip_cmats': [],
+            'trip_majority_acc': [], 'trip_majority_cmats': []}
 
     # Analyze accuracy for each trip with raw predictions
     for idx, (p, t) in enumerate(zip(preds, true)):
@@ -245,21 +296,41 @@ def analyze_lstm(model, X, y, cv = None):
             data['trip_f1'].append(-1)
             data['trip_cmats'].append([])
 
+    majority = [get_majority_preds(p) for p in preds]
+    
+    for idx, (m, t) in enumerate(zip(majority, true)):
+        if len(t) > 0 and t[0] != -1:
+            data['trip_majority_acc'].append(accuracy_score(m, t))
+            data['trip_majority_cmats'].append(confusion_matrix(m, t, labels = [0, 1, 2]))
+        else:
+            data['trip_majority_acc'].append(-1)
+            data['trip_majority_cmats'].append([])
+
+    # Get split data for acc and majority acc
     for i in range(max(split) + 1):
         split_preds = []
         split_true = []
+        split_majority = []
         for tidx, (p, t) in enumerate(zip(preds, true)):
             if split[tidx] == i and t[0] != -1:
                 split_preds.extend(p)
                 split_true.extend(t)
+        
+        for tidx, (m, t) in enumerate(zip(majority, true)):
+            if split[tidx] == i and t[0] != -1:
+                split_majority.extend(m)
 
         data['split_acc'].append(accuracy_score(split_true, split_preds))
         data['split_f1'].append(f1_score(split_true, split_preds, average='macro'))
         data['split_cmats'].append(confusion_matrix(split_true, split_preds, labels = [0,1,2]))
-    
+        data['split_majority_acc'].append(accuracy_score(split_true, split_majority))
+        data['split_majority_cmats'].append(confusion_matrix(split_true, split_majority, labels = [0,1,2]))
+
     data['acc'] = [np.mean(data['split_acc'])]
     data['f1'] = [np.mean(data['split_f1'])]
     data['cmat'] = [np.sum(data['split_cmats'], axis = 0)]
+    data['majority_acc'] = [np.mean(data['split_majority_acc'])]
+    data['majority_cmat'] = [np.sum(data['split_majority_cmats'], axis = 0)]
 
     print("LSTM")
     print("split_acc: ", data['split_acc'])

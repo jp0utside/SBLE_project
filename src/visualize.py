@@ -175,12 +175,38 @@ def generate_graphs(rf_data, mlp_data, lstm_data, trips):
     ax.grid(True, alpha = 0.3)
     ax.set_xlabel("Trip Accuracy Scores", fontsize = 15, fontfamily = "Avenir")
     ax.set_ylabel("Probability Density", fontsize = 15, fontfamily = "Avenir")
+    ax.axvline(x=0.3595, linestyle='--', color='#666666', alpha=0.8, label='Baseline Random Accuracy')
 
     plt.tight_layout()
     plt.subplots_adjust(bottom = 0.2)
     fig.text(0.5, 0.05, "Figure 2: Kernel Density of Trip Accuracy Prediction by Model", ha = 'center', va = 'center', fontsize = 20, fontfamily = 'Avenir next')
     plt.show()
+
+
+    """
+    Figure 3: KDE of model majority accuracy by trip
+    """
+    fig = plt.figure(figsize = (9, 6))
+    ax = fig.add_subplot(111)
+
+    for i, model in enumerate(data):
+        kde = scipy.gaussian_kde(model['trip_majority_acc'])
+        x_range = np.linspace(min(model['trip_majority_acc']), max(model['trip_majority_acc']), 200)
+
+        ax.plot(x_range, kde(x_range), model_color[i], lw = 2, label = model_name[i])
+        ax.fill_between(x_range, kde(x_range), color = model_color[i], alpha = 0.3)
+
+    ax.legend(prop = {'family': 'Avenir', 'size': 15})
     
+    ax.grid(True, alpha = 0.3)
+    ax.set_xlabel("Trip Accuracy Scores", fontsize = 15, fontfamily = "Avenir")
+    ax.set_ylabel("Probability Density", fontsize = 15, fontfamily = "Avenir")
+    ax.axvline(x=0.3595, linestyle='--', color='#666666', alpha=0.8, label='Baseline Random Accuracy')
+
+    plt.tight_layout()
+    plt.subplots_adjust(bottom = 0.2)
+    fig.text(0.5, 0.05, "Figure 3: Kernel Density of Trip Majority Accuracy Prediction by Model", ha = 'center', va = 'center', fontsize = 20, fontfamily = 'Avenir next')
+    plt.show()
 
 
     """
@@ -229,6 +255,26 @@ def generate_graphs(rf_data, mlp_data, lstm_data, trips):
     plt.subplots_adjust(bottom = 0.2)
     fig.text(0.5, 0.075, "Table 2: Macro-Averaged F1 Scores for Each Model", ha = 'center', va = 'center', fontsize = 20, fontfamily = 'Avenir next')
     plt.show()
+
+
+    """
+    Table 3: Majority accuracy of predictions from each model by split
+    """
+    table = [[], [], []]
+    for i, model in enumerate(data):
+        row = model['split_majority_acc'] + [np.mean(model['split_majority_acc'])] + [np.std(model['split_majority_acc'])]
+        row = [round(el*100, 2) for el in row]
+        table[i] = row
+
+    df = pd.DataFrame(table)
+    fig = plt.figure(figsize = (8, 2))
+    ax = fig.add_subplot(111)
+    fig, ax = graph_table(df, fig = fig, ax = ax, row_labels=rows, col_labels=cols)
+
+    plt.tight_layout()
+    plt.subplots_adjust(bottom = 0.2)
+    fig.text(0.5, 0.075, "Table 3: Majority Accuracy Scores for Each Model", ha = 'center', va = 'center', fontsize = 20, fontfamily = 'Avenir next')
+    plt.show()
     
 
     """
@@ -248,6 +294,25 @@ def generate_graphs(rf_data, mlp_data, lstm_data, trips):
         plt.tight_layout()
         plt.subplots_adjust(bottom = 0.2)
         fig.text(0.5, 0.035, "Matrix {}: Confusion Matrix Heat Map for {}".format(i + 1, model_name[i]), ha = 'center', va = 'center', fontsize = 20, fontfamily = 'Avenir next')
+        plt.show()
+
+    """
+    Matrices 4, 5, 6: Confusion matrix heat map for each model's aggregate major predictions
+    """
+    for i, model in enumerate(data):
+        fig = plt.figure(figsize = (7, 4))
+        ax = fig.add_subplot(111)
+
+        conf_matrix = model["majority_cmat"][0]
+        
+        graph_conf_heatmap(conf_matrix, fig, ax)
+        
+        ax.set_xlabel("Predicted", fontfamily = 'Avenir', fontsize = 15)
+        ax.set_ylabel("True", fontfamily = 'Avenir', fontsize = 15)
+
+        plt.tight_layout()
+        plt.subplots_adjust(bottom = 0.2)
+        fig.text(0.5, 0.035, "Matrix {}: Majority Confusion Matrix Heat Map for {}".format(i + 4, model_name[i]), ha = 'center', va = 'center', fontsize = 20, fontfamily = 'Avenir next')
         plt.show()
 
 """

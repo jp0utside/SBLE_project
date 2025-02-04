@@ -119,3 +119,12 @@ class trip:
         
         return new_trip
     
+    def __eq__(self, other):
+        if not isinstance(other, trip):
+            return False
+        
+        return ((self.user == other.user) and (self.start == other.start) and (self.on_bus == other.on_bus)
+                and (self.seat == other.seat) and (self.data.shape[0] == other.data.shape[0]) 
+                and (self.major == other.major) and (self.seat_time == other.seat_time) 
+                and (self.end == other.end))
+    

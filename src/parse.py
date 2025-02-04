@@ -6,6 +6,122 @@ from trip import trip
 import pickle
 # from filter import *
 
+"""
+Function to perform trip parsing process, but instead of generating trip objects,
+    add trip index and pre-trip status to each row of data.
+For a trip to be recorded in the resulting csv, it must have a valid start time, on bus time,
+    end time, and major. Otherwise, the trip_idx and is_pretrip columns are set to -1.
+
+Args:
+    sble_data: Pandas DataFrame of concatenated csvs of sble data read from data folder.
+    notif_data: Pandas DataFrame of concatenated csvs of notif data read from data folder.
+    trips: array of parsed trip objects generated using the csvs.
+    sble_filename: string indicating path and name to use to save cleaned sble data.
+    notif_filename: string indicating path and name to use to save cleaned notif data.
+Returns:
+    None
+"""
+def save_tagged_data(sble_data = None, notif_data = None, trips = None, sble_filename = "tagged_sble_data.csv", notif_filename = "tagged_notif_data.csv"):
+    if sble_data is None:
+        sble_data = get_sble_data()
+    
+    if notif_data is None:
+        notif_data = get_notif_data()
+    
+    if trips is None:
+        trips = get_trips_quick()
+    
+    new_sble = sble_data.copy()
+    new_notif = notif_data.copy()
+
+    new_sble["trip_idx"] = -1
+    new_sble["is_pretrip"] = -1
+
+    new_notif["trip_idx"] = -1
+    
+    # Removing trips which do not meet tagging criteria
+    new_trips = trips.copy()
+    for i in range(len(new_trips)):
+        trip = new_trips.pop(0)
+        user = trip.user
+        start = trip.start
+        on_bus = trip.on_bus
+        end = trip.end
+        major = trip.major
+        try:
+            if (len(user) > 0) & (major != -1) & (start != -1) & (on_bus != -1) & (end != -1):
+                new_trips.append(trip)
+        except:
+            pass
+    
+    for idx, trip in enumerate(new_trips):
+        user = trip.user
+        start = trip.start
+        on_bus = trip.on_bus
+        end = trip.end
+        major = trip.major
+
+        new_sble.loc[(new_sble["username"] == user) & (new_sble["timestamp"] >= start) & 
+                     (new_sble["timestamp"] <= end) & (new_sble["major"] == major), "trip_idx"] = idx
+
+        new_sble.loc[(new_sble["username"] == user) & (new_sble["timestamp"] >= start) & 
+                     (new_sble["timestamp"] <= end) & (new_sble["major"] == major) & 
+                     (new_sble["timestamp"] < on_bus), "is_pretrip"] = 1
+        
+        new_sble.loc[(new_sble["username"] == user) & (new_sble["timestamp"] >= start) & 
+                     (new_sble["timestamp"] <= end) & (new_sble["major"] == major) & 
+                     (new_sble["timestamp"] >= on_bus), "is_pretrip"] = 0
+        
+        new_notif.loc[(new_notif["username"] == user) & (new_notif["timestamp"] >= start) & 
+                      (new_notif["timestamp"] <= end), "trip_idx"] = idx
+    
+    new_sble.to_csv(sble_filename)
+    new_notif.to_csv(notif_filename)
+        
+"""
+Function to get array of trip objects using new, tagged sble and notif files.
+
+Args:
+    sble_data: Pandas DataFrame holding sble_data including new tagged columns.
+    notif_data: Pandas DataFrame holding notif_data including new tagged columns.
+
+Returns:
+    trips: array of trip objects parsed using the indices marked in the new files.
+"""
+def get_trips_from_files(sble_data = None, notif_data = None):
+    trips = []
+
+    for idx in range(max(sble_data["trip_idx"]) + 1):
+        sble = sble_data.loc[sble_data["trip_idx"] == idx]
+        notif = notif_data.loc[notif_data["trip_idx"] == idx]
+
+        if (sble.shape[0] > 0) & (notif.shape[0] > 0):
+            new_trip = trip(sble.iloc[0]["username"], notif.iloc[0]["timestamp"])
+            new_trip.end = sble.iloc[-1]["timestamp"]
+            if notif.loc[notif["message_type"] == "sitting_on_bus"].shape[0] > 0:
+                new_trip.on_bus = notif.loc[(notif["message_type"] == "sitting_on_bus") & (notif["message"] == 'true')].iloc[0]["timestamp"]
+            
+            if notif.loc[notif["message_type"] == "seat_location"].shape[0] > 0:
+                new_trip.seat = notif.loc[(notif["message_type"] == "seat_location")].iloc[0]["message"]
+                new_trip.seat_time = notif.loc[(notif["message_type"] == "seat_location")].iloc[0]["timestamp"]
+            
+            new_trip.major = sble.iloc[0]["major"]
+
+            new_trip.data = sble.copy()
+            trips.append(new_trip)
+    return trips
+        
+
+
+"""
+Function to load saved Python 'pickle' file containing parsed trip objects.
+
+Args:
+    path: string representing path which points to saved trip objects.
+
+Returns:
+    loaded_trips: array of trip objects contained in the saved object.
+"""
 def get_saved_trips(path = "trips.pickle"):
     with open(path, 'rb') as f:
         loaded_trips = pickle.load(f)
@@ -14,12 +130,28 @@ def get_saved_trips(path = "trips.pickle"):
 
 
 """
-Helper functions to import and concatenate data from saved csv files
+Function to import data of shuttle bus stops.
+
+Args:
+    dir_path: string pointing to path of csv containing stop name, longitude, latitude.
+
+Returns:
+    stop_data: Pandas DataFrame containing the stop data.
 """
 def get_stop_data(dir_path = "/Users/Jake/Computer Science/SBLE_project/data/stops.csv"):
     stop_data = pd.read_csv(dir_path)
     return stop_data
 
+"""
+Function to import all sble data files, concatenate and order by timestamp.
+Sble data files should be in directory 'data' with suffix '_data.csv'.
+
+Args:
+    dir_path: string pointing to path of folder containing sble data csvs.
+
+Returns:
+    data: Pandas DataFrame of concatenated and sorted sble data.
+"""
 def get_sble_data(dir_path = "/Users/Jake/Computer Science/SBLE_project/data"):
     
     files = glob.glob(dir_path + "/*_data*")
@@ -37,6 +169,16 @@ def get_sble_data(dir_path = "/Users/Jake/Computer Science/SBLE_project/data"):
     
     return data
 
+"""
+Function to import all notification data files, concatenate and order by timestamp.
+Notification data files should be in directory 'data' with suffix '_notification.csv'.
+
+Args:
+    dir_path: string pointing to path of folder containing notification data csvs.
+
+Returns:
+    data: Pandas DataFrame of concatenated and sorted notification data.
+"""
 def get_notif_data(dir_path = "/Users/Jake/Computer Science/SBLE_project/data"):
     files = glob.glob(dir_path + "/*_notification*")
     dfs = []

@@ -13,6 +13,7 @@ Params:
     data - the pandas dataframe of all sble data related to the trip
 """
 import pandas as pd
+import numpy as np
 
 class trip:
     """
@@ -31,6 +32,7 @@ class trip:
         self.seat = seat
         self.seat_time = seat_time
         self.data = pd.DataFrame()
+        self.notifs = pd.DataFrame()
         self.end = end
         self.didNotMarkExit = False
         self.major = -1
@@ -122,9 +124,79 @@ class trip:
     def __eq__(self, other):
         if not isinstance(other, trip):
             return False
-        
-        return ((self.user == other.user) and (self.start == other.start) and (self.on_bus == other.on_bus)
-                and (self.seat == other.seat) and (self.data.shape[0] == other.data.shape[0]) 
-                and (self.major == other.major) and (self.seat_time == other.seat_time) 
-                and (self.end == other.end))
+
+        sble_eq = True
+        notif_eq = True
+
+        if (self.data.shape[0] == other.data.shape[0]) and (self.notifs.shape[0] == other.notifs.shape[0]):
+            if (self.data.shape[0] > 0) and (other.data.shape[0] > 0) and (self.notifs.shape[0] > 0) and (other.notifs.shape[0] > 0):
+                sble_cols = self.data.columns.intersection(other.data.columns)
+                notif_cols = self.notifs.columns.intersection(other.notifs.columns)
+
+                if len(sble_cols) == 0 or len(notif_cols) == 0:
+                    return False
+                else:
+                    for col in sble_cols:
+                        dtype1 = self.data[col].dtype
+                        dtype2 = other.data[col].dtype
+
+                        if np.issubdtype(dtype1, np.number) and np.issubdtype(dtype2, np.number):
+                            if not np.allclose(self.data[col].fillna(0), other.data[col].fillna(0),
+                                            rtol = 1e-8, atol = 1e-8, equal_nan=True):
+                                return False
+                        else:
+                            if not (self.data[col].reset_index(drop = True) == other.data[col].reset_index(drop = True)).all():
+                                return False
+                    
+                    for col in notif_cols:
+                        dtype1 = self.notifs[col].dtype
+                        dtype2 = other.notifs[col].dtype
+
+                        if np.issubdtype(dtype1, np.number) and np.issubdtype(dtype2, np.number):
+                            if not np.allclose(self.notifs[col].fillna(0), other.notifs[col].fillna(0),
+                                            rtol = 1e-8, atol = 1e-8, equal_nan=True):
+                                return False
+                        else:
+                            if not (self.notifs[col].reset_index(drop = True) == other.notifs[col].reset_index(drop = True)).all():
+                                return False
+
+            elif (self.data.shape[0] > 0) and (other.data.shape[0] > 0):
+                sble_cols = self.data.columns.intersection(other.data.columns)
+                if len(sble_cols) == 0:
+                    return False
+                else:
+                    for col in sble_cols:
+                        dtype1 = self.data[col].dtype
+                        dtype2 = other.data[col].dtype
+
+                        if np.issubdtype(dtype1, np.number) and np.issubdtype(dtype2, np.number):
+                            if not np.allclose(self.data[col].fillna(0), other.data[col].fillna(0),
+                                            rtol = 1e-8, atol = 1e-8, equal_nan=True):
+                                return False
+                        else:
+                            if not (self.data[col].reset_index(drop = True) == other.data[col].reset_index(drop = True)).all():
+                                return False
+
+            elif (self.notifs.shape[0] > 0) and (other.notifs.shape[0] > 0):
+                notif_cols = self.notifs.columns.intersection(other.notifs.columns)
+                if len(notif_cols) == 0:
+                    return False
+                else:
+                    for col in notif_cols:
+                        dtype1 = self.notifs[col].dtype
+                        dtype2 = other.notifs[col].dtype
+
+                        if np.issubdtype(dtype1, np.number) and np.issubdtype(dtype2, np.number):
+                            if not np.allclose(self.notifs[col].fillna(0), other.notifs[col].fillna(0),
+                                            rtol = 1e-8, atol = 1e-8, equal_nan=True):
+                                return False
+                        else:
+                            if not (self.notifs[col].reset_index(drop = True) == other.notifs[col].reset_index(drop = True)).all():
+                                return False
+
+            else:
+                return False
+        else:
+            return False
+        return True
     

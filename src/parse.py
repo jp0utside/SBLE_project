@@ -35,45 +35,24 @@ def save_tagged_data(sble_data = None, notif_data = None, trips = None, sble_fil
     new_notif = notif_data.copy()
 
     new_sble["trip_idx"] = -1
-    new_sble["is_pretrip"] = -1
-
     new_notif["trip_idx"] = -1
     
-    # Removing trips which do not meet tagging criteria
-    new_trips = trips.copy()
-    for i in range(len(new_trips)):
-        trip = new_trips.pop(0)
-        user = trip.user
-        start = trip.start
-        on_bus = trip.on_bus
-        end = trip.end
-        major = trip.major
-        try:
-            if (len(user) > 0) & (major != -1) & (start != -1) & (on_bus != -1) & (end != -1):
-                new_trips.append(trip)
-        except:
-            pass
-    
-    for idx, trip in enumerate(new_trips):
-        user = trip.user
-        start = trip.start
-        on_bus = trip.on_bus
-        end = trip.end
-        major = trip.major
+    new_sble_key = new_sble[sble_data.columns].apply(tuple, axis = 1)
+    new_notif_key = new_notif[notif_data.columns].apply(tuple, axis = 1)
 
-        new_sble.loc[(new_sble["username"] == user) & (new_sble["timestamp"] >= start) & 
-                     (new_sble["timestamp"] <= end) & (new_sble["major"] == major), "trip_idx"] = idx
+    for idx, trip in enumerate(trips):
+        # print("idx: ", idx)
 
-        new_sble.loc[(new_sble["username"] == user) & (new_sble["timestamp"] >= start) & 
-                     (new_sble["timestamp"] <= end) & (new_sble["major"] == major) & 
-                     (new_sble["timestamp"] < on_bus), "is_pretrip"] = 1
+        if trip.data.shape[0] > 0:
+            trip_sble_key = trip.data[sble_data.columns].apply(tuple, axis = 1)
+            sble_matches = new_sble_key.isin(trip_sble_key)
+            new_sble.loc[sble_matches, "trip_idx"] = idx
         
-        new_sble.loc[(new_sble["username"] == user) & (new_sble["timestamp"] >= start) & 
-                     (new_sble["timestamp"] <= end) & (new_sble["major"] == major) & 
-                     (new_sble["timestamp"] >= on_bus), "is_pretrip"] = 0
-        
-        new_notif.loc[(new_notif["username"] == user) & (new_notif["timestamp"] >= start) & 
-                      (new_notif["timestamp"] <= end), "trip_idx"] = idx
+        if trip.notifs.shape[0] > 0:
+            trip_notif_key = trip.notifs[notif_data.columns].apply(tuple, axis = 1)
+            notif_matches = new_notif_key.isin(trip_notif_key)
+            new_notif.loc[notif_matches, "trip_idx"] = idx
+
     
     new_sble.to_csv(sble_filename)
     new_notif.to_csv(notif_filename)
@@ -95,20 +74,32 @@ def get_trips_from_files(sble_data = None, notif_data = None):
         sble = sble_data.loc[sble_data["trip_idx"] == idx]
         notif = notif_data.loc[notif_data["trip_idx"] == idx]
 
-        if (sble.shape[0] > 0) & (notif.shape[0] > 0):
-            new_trip = trip(sble.iloc[0]["username"], notif.iloc[0]["timestamp"])
-            new_trip.end = sble.iloc[-1]["timestamp"]
-            if notif.loc[notif["message_type"] == "sitting_on_bus"].shape[0] > 0:
-                new_trip.on_bus = notif.loc[(notif["message_type"] == "sitting_on_bus") & (notif["message"] == 'true')].iloc[0]["timestamp"]
-            
-            if notif.loc[notif["message_type"] == "seat_location"].shape[0] > 0:
-                new_trip.seat = notif.loc[(notif["message_type"] == "seat_location")].iloc[0]["message"]
-                new_trip.seat_time = notif.loc[(notif["message_type"] == "seat_location")].iloc[0]["timestamp"]
-            
-            new_trip.major = sble.iloc[0]["major"]
-
+        if sble.shape[0] > 0 and notif.shape[0] > 0:
+            new_trip = trip(notif.iloc[0]["username"], notif.iloc[0]["timestamp"])
             new_trip.data = sble.copy()
+            new_trip.notifs = notif.copy()
             trips.append(new_trip)
+    
+        elif notif.shape[0] > 0:
+            new_trip = trip(notif.iloc[0]["username"], notif.iloc[0]["timestamp"])
+            new_trip.notifs = notif.copy()
+            trips.append(new_trip)
+
+    for t in trips:
+        t.user = t.notifs.iloc[0]["username"]
+        t.start = t.notifs.iloc[0]["timestamp"]
+
+        if t.notifs.loc[(t.notifs["message_type"] == "sitting_on_bus") & (t.notifs["message"] == "true")].shape[0] > 0:
+            t.on_bus = t.notifs.loc[(t.notifs["message_type"] == "sitting_on_bus") & (t.notifs["message"] == "true")].iloc[0]["timestamp"]
+        
+        if t.notifs.loc[t.notifs["message_type"] == "seat_location"].shape[0] > 0:
+            t.seat = t.notifs.loc[t.notifs["message_type"] == "seat_location"].iloc[0]["message"]
+            t.seat_time = t.notifs.loc[t.notifs["message_type"] == "seat_location"].iloc[0]["timestamp"]
+        
+        if (t.data.shape[0] > 0) and (t.notifs.shape[0] > 0):
+            last_time = max([t.data.iloc[-1]["timestamp"], t.notifs.iloc[-1]["timestamp"]])
+            t.end = last_time
+        
     return trips
         
 
@@ -507,6 +498,16 @@ def get_trips(sble_data, notif_data, debug = False):
             
             trips = new_trips
         
+        # Adding notification data to trips for reference
+        for t in trips:
+            trip_notifs = user_notif.loc[user_notif["timestamp"] >= t.start]
+            trip_notifs = trip_notifs.loc[trip_notifs["timestamp"] <= t.end]
+
+            if (trip_notifs.iloc[-1]["message_type"] == "collecting_data") and (trip_notifs.iloc[-1]["message"] == "true"):
+                trip_notifs = trip_notifs.iloc[:-1]
+
+            t.notifs = trip_notifs.copy()
+
         # pre_count = len([t for t in trips if t.preSeatChange])
         # post_count = len([t for t in trips if t.postSeatChange])
         # print(f"After merging - len: {len(trips)}, Pre: {pre_count}, Post: {post_count}")
@@ -720,6 +721,40 @@ def merge_trips(t1, t2):
     new_trip.data = pd.concat([t1.data, t2.data])
 
     return new_trip
+
+def sort_by_start(trips):
+    if len(trips) > 1:
+        mid = len(trips) // 2
+        left = trips[:mid]
+        right = trips[:mid]
+
+        left = sort_by_start(left)
+        right = sort_by_start(right)
+
+        return merge_start(left, right)
+
+def merge_start(left, right):
+    sorted_trips = []
+
+    i = j = 0
+    while (i < len(left)) and (j < len(right)):
+        if right[j].start < left[i].start:
+            sorted_trips.append(right[j])
+            j += 1
+        else:
+            sorted_trips.append(left[i])
+            i += 1
+    
+    while i < len(left):
+        sorted_trips.append(left[i])
+        i += 1
+    
+    while j < len(right):
+        sorted_trips.append(right[j])
+        j += 1
+    
+    return sorted_trips
+
 
 """
 Sorting function to sort array of trip objects

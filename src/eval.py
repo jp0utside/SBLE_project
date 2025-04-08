@@ -477,7 +477,7 @@ Return:
 """
 
 def get_majority_preds(preds):
-    votes = {0: 0, 1: 0, 2: 0}
+    votes = {-1: 0, 0: 0, 1: 0, 2: 0}
     majority_preds = []
 
     for pred in preds:

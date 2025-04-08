@@ -99,21 +99,7 @@ def main():
         "lstm": SklearnLSTMWrapper(features = rssi_features, scaler = StandardScaler(), pca = PCA(n_components = 5), hidden_size = 50, lr = 0.001, num_epochs = 5, sub_sequence_length = 12, batch_size = 25, num_layers = 1, bidirectional = False, recurrent_dropout = 0.25, l2_lambda = 0.05)
     }
 
-    # trips = get_trips_quick()
-    # rf_data, mlp_data, lstm_data = full_suite(models_config_1['rf'], models_config_1['mlp'], models_config_1['lstm'], trips, split_seed = 27)
-
-    # trips = get_saved_trips()
-
-    # with open('rf_data_new.pickle', 'rb') as f:
-    #     rf_data = pickle.load(f)
-
-    # with open('mlp_data_new.pickle', 'rb') as f:
-    #     mlp_data = pickle.load(f)
     
-    # with open('lstm_data_new.pickle', 'rb') as f:
-    #     lstm_data = pickle.load(f)
-
-    # generate_graphs(rf_data, mlp_data, lstm_data, trips)
 
 
 

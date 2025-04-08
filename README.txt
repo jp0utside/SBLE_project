@@ -80,3 +80,87 @@ This code was written for the SBLE seat position classifier project under Prof. 
     each trip is included in the testing set.
 - For an even more manual approach, each wrapper has fit, predict, and predict_proba functions to be used after defining the objects with 
     their desired hyperparemeters.
+
+## Example Usage
+### Parsing Trips from Scratch and Generating New Tagged Data & Notification Files
+```python
+trips = get_trips_quick()
+sble = get_sble_data()
+notif = get_notif_data()
+sb_fn = "tagged_sble_data.csv"
+not_fn = "tagged_notif_data.csv"
+save_tagged_data(sble_data = sble, notif_data = notif, trips = trips, sble_filename = sb_fn, notif_filename = not_fn)
+```
+
+### Training and Testing each Model with Tagged Data
+```python
+sble = pd.read_csv("tagged_sble_data.csv")
+notif = pd.read_csv("tagged_notif_data.csv")
+trips = get_trips_from_files(sble_data = sble, notif_data = notif)
+
+rf_model = RandomForest(features = rssi_features, scaler = RobustScaler(), n_estimators = 50, criterion = 'log_loss', max_features = 'sqrt', max_depth = 10, min_samples_split = 20, min_samples_leaf = 12, ccp_alpha = 0)
+rf_acc, rf_cm = test_random_forest(trips, rf_model)
+
+mlp_model = MLP(features = rssi_features, scaler = RobustScaler(), hidden_layer_sizes = (50, 50), batch_size = 16, activation = 'relu', learning_rate = 'adaptive', learning_rate_init = 0.001, alpha = 0.01, max_iter = 500, early_stopping = True, n_iter_no_change = 25)
+mlp_acc, mlp_cm = test_mlp(trips, mlp_model)
+
+lstm_model = SklearnLSTMWrapper(features = rssi_features, scaler = StandardScaler(), pca = PCA(n_components = 5), hidden_size = 50, lr = 0.001, num_epochs = 5, sub_sequence_length = 12, batch_size = 25, num_layers = 1, bidirectional = False, recurrent_dropout = 0.25, l2_lambda = 0.05)
+lstm_acc, lstm_cm = test_lstm(trips, lstm_model)
+```
+
+### Retrieving all Predictions Made by each Model Type
+```python
+sble = pd.read_csv("tagged_sble_data.csv")
+notif = pd.read_csv("tagged_notif_data.csv")
+trips = get_trips_from_files(sble_data = sble, notif_data = notif)
+data = get_tagged_dataset(trips)
+X = [frame[all_features] for frame in data]
+y = [frame.iloc[0]["seat"] if frame.shape[0] > 0 else -1 for frame in data]
+cv = StratifiedKFold(n_splits = 5, random_state = 33, shuffle = True)
+
+rf_model = RandomForest(features = rssi_features, scaler = RobustScaler(), n_estimators = 50, criterion = 'log_loss', max_features = 'sqrt', max_depth = 10, min_samples_split = 20, min_samples_leaf = 12, ccp_alpha = 0)
+rf_preds, rf_true, row_split = get_rf_preds(rf_model, X, y, cv) 
+
+mlp_model = MLP(features = rssi_features, scaler = RobustScaler(), hidden_layer_sizes = (50, 50), batch_size = 16, activation = 'relu', learning_rate = 'adaptive', learning_rate_init = 0.001, alpha = 0.01, max_iter = 500, early_stopping = True, n_iter_no_change = 25)
+mlp_preds, mlp_true, row_split = get_mlp_preds(mlp_model, X, y, cv)
+
+lstm_model = SklearnLSTMWrapper(features = rssi_features, scaler = StandardScaler(), pca = PCA(n_components = 5), hidden_size = 50, lr = 0.001, num_epochs = 5, sub_sequence_length = 12, batch_size = 25, num_layers = 1, bidirectional = False, recurrent_dropout = 0.25, l2_lambda = 0.05)
+lstm_preds, lstm_true, row_split = get_lstm_preds(lstm_model, X, y, cv)
+```
+
+### Retrieving all Evaluation Metrics for each Model Type
+```python
+sble = pd.read_csv("tagged_sble_data.csv")
+notif = pd.read_csv("tagged_notif_data.csv")
+trips = get_trips_from_files(sble_data = sble, notif_data = notif)
+data = get_tagged_dataset(trips)
+X = [frame[all_features] for frame in data]
+y = [frame.iloc[0]["seat"] if frame.shape[0] > 0 else -1 for frame in data]
+cv = StratifiedKFold(n_splits = 5, random_state = 33, shuffle = True)
+
+rf_model = RandomForest(features = rssi_features, scaler = RobustScaler(), n_estimators = 50, criterion = 'log_loss', max_features = 'sqrt', max_depth = 10, min_samples_split = 20, min_samples_leaf = 12, ccp_alpha = 0)
+mlp_model = MLP(features = rssi_features, scaler = RobustScaler(), hidden_layer_sizes = (50, 50), batch_size = 16, activation = 'relu', learning_rate = 'adaptive', learning_rate_init = 0.001, alpha = 0.01, max_iter = 500, early_stopping = True, n_iter_no_change = 25)
+lstm_model = SklearnLSTMWrapper(features = rssi_features, scaler = StandardScaler(), pca = PCA(n_components = 5), hidden_size = 50, lr = 0.001, num_epochs = 5, sub_sequence_length = 12, batch_size = 25, num_layers = 1, bidirectional = False, recurrent_dropout = 0.25, l2_lambda = 0.05)
+
+rf_eval = analyze_rf(rf_model, X, y, cv)
+mlp_eval = analyze_mlp(mlp_model, X, y, cv)
+lstm_eval = analyze_lstm(lstm_model, X, y, cv)
+
+# to get dictionary of evaluation for all models
+rf_eval, mlp_eval, lstm_eval = full_suite(rf_model, mlp_model, lstm_model, trips)
+```
+
+### Generating Full Graphics Portfolio of Model Results
+```python
+sble = pd.read_csv("tagged_sble_data.csv")
+notif = pd.read_csv("tagged_notif_data.csv")
+trips = get_trips_from_files(sble_data = sble, notif_data = notif)
+
+rf_model = RandomForest(features = rssi_features, scaler = RobustScaler(), n_estimators = 50, criterion = 'log_loss', max_features = 'sqrt', max_depth = 10, min_samples_split = 20, min_samples_leaf = 12, ccp_alpha = 0)
+mlp_model = MLP(features = rssi_features, scaler = RobustScaler(), hidden_layer_sizes = (50, 50), batch_size = 16, activation = 'relu', learning_rate = 'adaptive', learning_rate_init = 0.001, alpha = 0.01, max_iter = 500, early_stopping = True, n_iter_no_change = 25)
+lstm_model = SklearnLSTMWrapper(features = rssi_features, scaler = StandardScaler(), pca = PCA(n_components = 5), hidden_size = 50, lr = 0.001, num_epochs = 5, sub_sequence_length = 12, batch_size = 25, num_layers = 1, bidirectional = False, recurrent_dropout = 0.25, l2_lambda = 0.05)
+
+rf_eval, mlp_eval, lstm_eval = full_suite(rf_model, mlp_model, lstm_model, trips)
+
+generate_graphs(rf_eval, mlp_eval, lstm_eval, trips)
+```

@@ -4,6 +4,7 @@ This code was written for the SBLE seat position classifier project under Prof. 
     The purpose of this project is to create a classifier which can determine the seat location (front, middle, or back) of 
     shuttle bus passengers using beacon measurements from two Bluetooth Low Energy beacons fixed to the roof above the front and
     back of the shuttle.
+**NOTE: All sensitive data related to and used in this project has been omitted.**
 
 ## File Structure
 - /data: this directory holds the SBLE and notification data files used for model training and testing. At the

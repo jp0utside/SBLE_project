@@ -1,0 +1,39 @@
+# Sensitive Project Data
+cleaned_trips/
+data/
+matlab_archive/
+ArcGIS/
+"Archive.zip"
+"How to read SBLE data.pdf"
+
+# Files for Project Report
+"New Report Graphs/"
+"Report Graphs/"
+"SBLE Report Cover Page.pdf"
+"SBLE Report FINAL SUBMISSION.pdf"
+"SBLE Report Revised Final.pdf"
+"SBLE Report Revised JW.pdf"
+"Signature_for_Approval_of_Masters_Project_Jp.pdf"
+
+# Python Objects
+__pycache__/
+*.pyc
+*.pyo
+*.pickle
+src/gridsearch_results/
+src/*.csv
+
+# Virtual Environments
+venv/
+env/
+.venv/
+.env
+
+# IDE Files
+.vscode/
+.idea/
+*.swp
+
+# OS Files
+.DS_Store
+Thumbs.db
